@@ -1,0 +1,47 @@
+{
+    "name": "hiqdev/yii2-hiar",
+    "description": "API to ActiveRecord wrapper for Yii 2",
+    "keywords": ["api", "ActiveRecord", "yii2", "extension"],
+    "homepage": "https://hiqdev.com/yii2-hiar",
+    "type": "yii2-extension",
+    "support": {
+        "email":  "support@hipanel.com",
+        "source": "https://github.com/hiqdev/yii2-hiar",
+        "issues": "https://github.com/hiqdev/yii2-hiar/issues",
+        "wiki":   "https://github.com/hiqdev/yii2-hiar/wiki",
+        "forum":  "https://forum.hiqdev.com/yii2"
+    },
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Andrii Vasyliev",
+            "email": "sol@hiqdev.com",
+            "homepage": "https://hipanel.com/",
+            "role": "Project lead"
+        },
+        {
+            "name": "Dmitry Naumenko",
+            "email": "silverfire@hiqdev.com",
+            "role": "Lead backend developer"
+        },
+        {
+            "name": "Andrey Klochok",
+            "email": "andreyklochok@gmail.com",
+            "role": "Lead frontend developer"
+        },
+        {
+            "name": "Yuriy Myronchuk",
+            "email": "bladeroot@hiqdev.com",
+            "role": "QA Lead"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": { "hiqdev\\hiar\\": "" }
+    },
+    "minimum-stability": "stable"
+}
