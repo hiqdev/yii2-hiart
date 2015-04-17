@@ -7,6 +7,7 @@
 
 namespace hiqdev\hiar;
 
+use frontend\components\Re;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;
