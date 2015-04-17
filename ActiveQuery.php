@@ -5,7 +5,7 @@
  * @license http://hiqdev.com/yii2-hiar/license
  */
 
-namespace frontend\components\hiresource;
+namespace hiqdev\hiar;
 
 use frontend\components\Re;
 use yii\db\ActiveQueryInterface;
