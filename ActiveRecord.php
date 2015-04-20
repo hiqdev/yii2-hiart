@@ -14,6 +14,7 @@ use yii\db\BaseActiveRecord;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
 use yii\helpers\StringHelper;
+use yii\helpers\ArrayHelper;
 use common\components\Err;
 
 class ActiveRecord extends BaseActiveRecord
@@ -107,6 +108,60 @@ class ActiveRecord extends BaseActiveRecord
     public static function primaryKey () {
         return ['id'];
     }
+
+    /**
+     * +     * The name of the main attribute
+     * +     *
+     * Examples:
+     *
+     * This will directly reference to the attribute 'name'
+     * ```
+     *     return 'name';
+     * ```
+     *
+     * This will concatenate listed attributes, separated with `delimiter` value.
+     * If delimiter is not set, space is used by default.
+     * ```
+     *     return ['seller', 'client', 'delimiter' => '/'];
+     * ```
+     *
+     * The callable method, that will get [[$model]] and should return value of name attribute
+     * ```
+     *     return function ($model) {
+     *        return $model->someField ? $model->name : $model->otherName;
+     *     };
+     * ```
+     *
+     * @return string|callable|array
+     * @throws InvalidConfigException
+     * @author SilverFire
+     */
+    public function primaryValue () {
+        return static::formName();
+    }
+
+    /**
+     * Returns the value of the primary attribute
+     *
+     * @return mixed|null
+     * @throws InvalidConfigException
+     * @see primaryValue()
+     */
+    public function getPrimaryValue () {
+        $primaryValue = $this->primaryValue();
+
+        $result = null;
+        if ($primaryValue instanceof \Closure) {
+            return call_user_func($primaryValue, [$this]);
+        } else if (is_array($primaryValue)) {
+            $delimiter = ArrayHelper::remove($primaryValue, 'delimiter', ' ');
+
+            return implode($delimiter, $this->getAttributes($primaryValue));
+        } else {
+            return $this->getAttribute($primaryValue);
+        }
+    }
+
 
     /**
      * Returns the list of all attribute names of the model.

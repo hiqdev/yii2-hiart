@@ -94,6 +94,7 @@ class Collection extends Component
 
     /**
      * Sets the scenario of the default model
+     *
      * @param $value string scenario
      */
     public function setScenario ($value) {
@@ -102,6 +103,7 @@ class Collection extends Component
 
     /**
      * Gets the scenario the default model
+     *
      * @return string the scenario
      */
     public function getScenario () {
@@ -221,15 +223,16 @@ class Collection extends Component
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
 
         if (Err::isError($results)) {
-            throw new HiResException('Hiresource method: Insert -- ' . Json::encode($results), Err::getError($results));
+            throw new HiResException(Err::getError($results), Json::encode($results));
         }
 
         $pk = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             /* @var $model ActiveRecord */
-            $values     = &$data[$key];
-            $result     = &$results[$key];
-            $model->$pk = $result['id'];
+            $values = &$data[$key];
+            $result = &$results[$key];
+
+            $model->{$pk} = $result['id'];
             if ($pk != 'id') {
                 $values[$pk] = $result['id'];
             }
@@ -252,15 +255,15 @@ class Collection extends Component
         }
         if (!$this->beforeSave()) {
             return false;
-        }
+        };
 
         $data    = $this->collectData($attributes, $options);
         $command = $this->first->getScenarioCommand('update', true);
 
-        $result = $this->first->getDb()->createCommand()->perform($command, $data);
+        $results = $this->first->getDb()->createCommand()->perform($command, $data);
 
         if ($result === false || Err::isError($result)) {
-            return false;
+            throw new HiResException(Err::getError($results), Json::encode($results));
         }
 
         foreach ($this->models as $key => $model) {
@@ -282,7 +285,7 @@ class Collection extends Component
     /**
      * Collects data from the stored models
      *
-     * @param array $attributes list of attributes names
+     * @param string|array $attributes list of attributes names
      * @param callable|array $options overrides the model attributes
      * If is array - merges with the model attributes
      * If is callable - gets two arguments:
@@ -291,7 +294,8 @@ class Collection extends Component
      * @return array
      */
     public function collectData ($attributes = null, $options = []) {
-        $data = [];
+        $data       = [];
+        $attributes = (array)$attributes;
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             $key = $model->getPrimaryKey();
@@ -309,6 +313,23 @@ class Collection extends Component
         }
 
         return $data;
+    }
+
+    /**
+     * Whether one of models has an error
+     *
+     * @return bool
+     */
+    public function hasErrors () {
+        $hasErrors = false;
+        foreach ($this->models as $model) {
+            /* @var $model ActiveRecord */
+            if ($model->hasErrors()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function validate ($attributes = null) {
@@ -380,4 +401,9 @@ class Collection extends Component
 
         return true;
     }
+
+    public function isEmpty () {
+        return empty($this->models);
+    }
+
 }
