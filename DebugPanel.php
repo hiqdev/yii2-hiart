@@ -34,7 +34,7 @@ class DebugPanel extends Panel
      * @inheritdoc
      */
     public function getName () {
-        return 'HiResource';
+        return 'HiActiveResource';
     }
 
     /**
