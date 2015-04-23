@@ -124,6 +124,32 @@ class Collection extends Component
     }
 
     /**
+     * We can load data from 3 different structures:
+     *
+     * 1) POST: [
+     *     'attribute1' => 'value1',
+     *     'attribute2' => 'value2'
+     * ]
+     *
+     * 2) POST: [
+     *     'ModelName' => [
+     *         'attribute1' => 'value1',
+     *         'attribute2' => 'value2'
+     *     ]
+     * ]
+     *
+     * 3) POST: [
+     *      'ModelName' => [
+     *          1   => [
+     *              'attribute1' => 'value1',
+     *              'attribute2' => 'value2'
+     *          ],
+     *          2   => [
+     *              ...
+     *          ]
+     *      ]
+     * }
+     *
      * @param array|callable $data - the data to be proceeded.
      * If is callable - gets arguments:
      *   - model
@@ -137,6 +163,14 @@ class Collection extends Component
 
         if ($data === null) {
             $data = \Yii::$app->request->post($this->formName) ?: [\Yii::$app->request->post()];
+
+            /*
+             * If all keys are not empty and are strings - then wrap with an empty array to normalize to
+             * ModelName[][attribute]
+             */
+            if (array_sum(array_map(function ($key) { return !empty($key) && is_string($key); }, array_keys($data))) > 0) {
+                $data = [$data];
+            }
         } elseif ($data instanceof \Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
         }
@@ -144,14 +178,14 @@ class Collection extends Component
         foreach ($data as $key => $value) {
             if ($this->loadFormatter instanceof \Closure) {
                 $item = call_user_func($this->loadFormatter, $this->model, $key, $value);
+                $key  = $item[0];
             } else {
                 $item = [$key, $value];
             }
+            $options      = ArrayHelper::merge(['class' => $this->model->className()], $this->modelOptions);
+            $models[$key] = \Yii::createObject($options);
 
-            $options = ArrayHelper::merge(['class' => $this->model->className()], $this->modelOptions);
-
-            $models[$item[0]]                     = \Yii::createObject($options);
-            $finalData[$this->formName][$item[0]] = $item[1];
+            $finalData[$this->formName][$key] = $item[1];
         }
         $this->model->loadMultiple($models, $finalData);
 
