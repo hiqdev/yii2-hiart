@@ -9,6 +9,7 @@ namespace hiqdev\hiar;
 
 use yii\debug\Panel;
 use yii\helpers\ArrayHelper;
+use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\log\Logger;
 use yii\helpers\Html;
@@ -68,6 +69,13 @@ HTML;
         ArrayHelper::multisort($timings, 3, SORT_DESC);
         $rows = [];
         $i    = 0;
+        // Try to get API URL
+        try {
+            $hiresource = \Yii::$app->get('hiresource');
+            $apiUrl = (StringHelper::endsWith($hiresource->config['api_url'], '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
+        } catch (\yii\base\InvalidConfigException $e) {
+            // Pass
+        }
         foreach ($timings as $logId => $timing) {
             $duration = sprintf('%.1f ms', $timing[3] * 1000);
             $message  = $timing[1];
@@ -90,10 +98,10 @@ HTML;
             }
             $ajaxUrl = Url::to(['hiresource-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
-                    'class' => 'elastic-link',
+                    'class' => 'hiar-link',
                     'data'  => ['id' => $i]
                 ]) . '<br/>';
-            $url_encoded = Html::encode($url);
+            $url_encoded = Html::encode((isset($apiUrl)) ? substr_replace($url, ' ' . $apiUrl . $url, strpos($url, ' ')) : $url);
             $rows[]  = <<<HTML
 <tr>
     <td style="width: 10%;">$duration</td>
@@ -137,7 +145,7 @@ function syntaxHighlight(json) {
     });
 }
 
-$('.elastic-link').on('click', function (event) {
+$('.hiar-link').on('click', function (event) {
     event.preventDefault();
 
     var id = $(this).data('id');
@@ -156,10 +164,8 @@ $('.elastic-link').on('click', function (event) {
             }
             result.find('.time').html(data.time);
             if (is_json) {
-                console.log('123');
                 result.find('.result').html( syntaxHighlight( JSON.stringify( JSON.parse(data.result), undefined, 10) ) );
             } else {
-                console.log('321');
                 result.find('.result').html( data.result );
             }
         },
