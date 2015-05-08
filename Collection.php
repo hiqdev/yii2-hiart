@@ -162,14 +162,9 @@ class Collection extends Component
         $finalData = [];
 
         if ($data === null) {
-            $data = \Yii::$app->request->post($this->formName) ?: [\Yii::$app->request->post()];
-
-            /*
-             * If all keys are not empty and are strings - then wrap with an empty array to normalize to
-             * ModelName[][attribute]
-             */
-            if (array_sum(array_map(function ($key) { return !empty($key) && is_string($key); }, array_keys($data))) > 0) {
-                $data = [$data];
+            $data = \Yii::$app->request->post();
+            if (isset($data[$this->formName])) {
+                $data = $data[$this->formName];
             }
         } elseif ($data instanceof \Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
@@ -296,7 +291,7 @@ class Collection extends Component
 
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
 
-        if ($result === false || Err::isError($result)) {
+        if ($results === false || Err::isError($results)) {
             throw new HiResException(Err::getError($results), Json::encode($results));
         }
 
@@ -355,7 +350,6 @@ class Collection extends Component
      * @return bool
      */
     public function hasErrors () {
-        $hasErrors = false;
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             if ($model->hasErrors()) {
