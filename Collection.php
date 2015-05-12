@@ -132,18 +132,13 @@ class Collection extends Component
      * We can load data from 3 different structures:
      *
      * 1) POST: [
-     *     'attribute1' => 'value1',
-     *     'attribute2' => 'value2'
-     * ]
-     *
-     * 2) POST: [
      *     'ModelName' => [
      *         'attribute1' => 'value1',
      *         'attribute2' => 'value2'
      *     ]
      * ]
      *
-     * 3) POST: [
+     * 2) POST: [
      *      'ModelName' => [
      *          1   => [
      *              'attribute1' => 'value1',
