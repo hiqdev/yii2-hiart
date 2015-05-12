@@ -34,7 +34,8 @@ class Collection extends Component
     public $models;
 
     /**
-     * @var string the name of the form
+     * @var string the name of the form. Sets automatically on [[set()]]
+     * @see set()
      */
     public $formName;
 
@@ -53,7 +54,10 @@ class Collection extends Component
     public $loadFormatter;
 
     /**
-     * @var \yii\base\Model
+     * @var \yii\base\Model the template model instance. May be set manually by [[setModel()]] or
+     * automatically on [[set()]] call
+     * @see setModel()
+     * @see set()
      */
     protected $model;
 
@@ -64,12 +68,13 @@ class Collection extends Component
     public $modelOptions = [];
 
     /**
-     * @var ActiveRecord
+     * @var ActiveRecord the first model of the set. Fills automatically by [[set()]]
+     * @see set()
      */
     public $first;
 
     /**
-     * @var array
+     * @var array the model's attributes that will be saved
      */
     public $attributes;
 
