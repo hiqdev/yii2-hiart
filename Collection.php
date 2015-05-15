@@ -228,6 +228,10 @@ class Collection extends Component
      * @throws HiResException
      */
     public function save ($runValidation = true, $attributes = null, $options = []) {
+        if ($this->isEmpty()) {
+            throw new InvalidCallException('Collection is empty, nothing to save');
+        }
+
         if ($this->first->getIsNewRecord()) {
             return $this->insert($runValidation, $attributes, $options);
         } else {
@@ -389,6 +393,9 @@ class Collection extends Component
 
     public function beforeSave ($insert = false) {
         $event = new ModelEvent();
+        if ($this->isEmpty()) {
+            $event->isValid = false;
+        }
         $this->trigger($insert ? self::EVENT_BEFORE_INSERT : self::EVENT_BEFORE_UPDATE, $event);
 
         return $event->isValid;
