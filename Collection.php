@@ -27,6 +27,8 @@ class Collection extends Component
     const EVENT_BEFORE_VALIDATE = 'beforeValidate';
     const EVENT_AFTER_VALIDATE  = 'afterValidate';
     const EVENT_AFTER_SAVE      = 'afterSave';
+    const EVENT_BEFORE_LOAD     = 'beforeLoad';
+    const EVENT_AFTER_LOAD      = 'afterLoad';
 
     /**
      * @var array of models
@@ -164,7 +166,7 @@ class Collection extends Component
         if ($data === null) {
             $data = \Yii::$app->request->post();
             if (isset($data[$this->formName])) {
-                $data = $data[$this->formName];
+                $data = [$data[$this->formName]];
             }
         } elseif ($data instanceof \Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
@@ -403,6 +405,18 @@ class Collection extends Component
 
     public function afterSave () {
         $this->trigger(self::EVENT_AFTER_SAVE);
+    }
+
+
+    public function beforeLoad () {
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_LOAD, $event);
+
+        return $event->isValid;
+    }
+
+    public function afterLoad () {
+        $this->trigger(self::EVENT_AFTER_LOAD);
     }
 
     /**
