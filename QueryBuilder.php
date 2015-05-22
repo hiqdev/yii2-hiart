@@ -136,7 +136,7 @@ class QueryBuilder extends \yii\base\Object
     {
         $key = array_shift($operands);
 
-        return [$key.'_in  ' => join(',', reset($operands))];
+        return [$key.'_in' => implode(',', array_shift($operands))];
     }
 
     private function buildEqCondition ($operator, $operands) {
