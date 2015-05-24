@@ -1,6 +1,21 @@
-# phpstorm project files
-.idea
-# composer itself and .lock are not needed
-composer.phar
+# runtime dir
+/runtime
+
+# vendor dir
+/vendor
+
+# composer lock file
 composer.lock
-/vendor/
+
+# IDE & OS files
+.*.swp
+.idea
+nbproject
+.buildpath
+.project
+.settings
+Thumbs.db
+.DS_Store
+
+# Added by HiDev
+

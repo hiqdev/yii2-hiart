@@ -1,47 +1,54 @@
 {
-    "name": "hiqdev/yii2-hiar",
-    "description": "API to ActiveRecord wrapper for Yii 2",
-    "keywords": ["api", "ActiveRecord", "yii2", "extension"],
-    "homepage": "https://hiqdev.com/yii2-hiar",
+    "name": "hiqdev/yii2-hiart",
     "type": "yii2-extension",
-    "support": {
-        "email":  "support@hipanel.com",
-        "source": "https://github.com/hiqdev/yii2-hiar",
-        "issues": "https://github.com/hiqdev/yii2-hiar/issues",
-        "wiki":   "https://github.com/hiqdev/yii2-hiar/wiki",
-        "forum":  "https://forum.hiqdev.com/yii2"
-    },
+    "description": "Tools to use API as ActiveRecord for Yii2",
+    "keywords": [
+        "API",
+        "ActiveRecord",
+        "extension",
+        "yii2"
+    ],
+    "homepage": "https://hiqdev.com/yii2-hiart",
     "license": "BSD-3-Clause",
+    "support": {
+        "email": "support@hiqdev.com",
+        "source": "https://github.com/hiqdev/yii2-hiart",
+        "issues": "https://github.com/hiqdev/yii2-hiart/issues",
+        "wiki": "https://github.com/hiqdev/yii2-hiart/wiki",
+        "forum": "https://forum.hiqdev.com/yii2"
+    },
     "authors": [
         {
             "name": "Andrii Vasyliev",
+            "role": "Project lead",
             "email": "sol@hiqdev.com",
-            "homepage": "https://hipanel.com/",
-            "role": "Project lead"
+            "homepage": "https://hipanel.com/"
         },
         {
             "name": "Dmitry Naumenko",
+            "role": "Lead backend developer",
             "email": "silverfire@hiqdev.com",
-            "role": "Lead backend developer"
+            "homepage": "http://silverfire.me/"
         },
         {
             "name": "Andrey Klochok",
-            "email": "andreyklochok@gmail.com",
-            "role": "Lead frontend developer"
+            "role": "Lead frontend developer",
+            "email": "tafid@hiqdev.com",
+            "homepage": "https://hiqdev.com/"
         },
         {
             "name": "Yuriy Myronchuk",
+            "role": "QA Lead",
             "email": "bladeroot@hiqdev.com",
-            "role": "QA Lead"
+            "homepage": "https://hiqdev.com/"
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": "*",
-        "ext-curl": "*"
+        "yiisoft/yii2": "~2.0"
     },
     "autoload": {
-        "psr-4": { "hiqdev\\hiar\\": "" }
-    },
-    "minimum-stability": "stable"
+        "psr-4": {
+            "hiqdev\\hiart\\": ""
+        }
+    }
 }
