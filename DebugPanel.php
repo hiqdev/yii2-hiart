@@ -1,11 +1,11 @@
 <?php
 /**
- * @link http://hiqdev.com/yii2-hiar
+ * @link http://hiqdev.com/yii2-hiart
  * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiar/license
+ * @license http://hiqdev.com/yii2-hiart/license
  */
 
-namespace hiqdev\hiar;
+namespace hiqdev\hiart;
 
 use yii\debug\Panel;
 use yii\helpers\ArrayHelper;
@@ -25,7 +25,7 @@ class DebugPanel extends Panel
 
     public function init () {
         $this->actions['hiresource-query'] = [
-            'class' => 'hiqdev\\hiar\\DebugAction',
+            'class' => 'hiqdev\\hiart\\DebugAction',
             'panel' => $this,
             'db'    => $this->db,
         ];
@@ -98,7 +98,7 @@ HTML;
             }
             $ajaxUrl = Url::to(['hiresource-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
-                    'class' => 'hiar-link',
+                    'class' => 'hiart-link',
                     'data'  => ['id' => $i]
                 ]) . '<br/>';
             $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ',  ' ' . $apiUrl, $url) : $url);
@@ -145,7 +145,7 @@ function syntaxHighlight(json) {
     });
 }
 
-$('.hiar-link').on('click', function (event) {
+$('.hiart-link').on('click', function (event) {
     event.preventDefault();
 
     var id = $(this).data('id');
@@ -235,7 +235,7 @@ HTML;
      */
     public function save () {
         $target   = $this->module->logTarget;
-        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, ['hiqdev\hiar\Connection::httpRequest']);
+        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, ['hiqdev\hiart\Connection::httpRequest']);
 
         return ['messages' => $messages];
     }

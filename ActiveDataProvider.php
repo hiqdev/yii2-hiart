@@ -1,11 +1,11 @@
 <?php
 /**
- * @link http://hiqdev.com/yii2-hiar
+ * @link http://hiqdev.com/yii2-hiart
+ * @license http://hiqdev.com/yii2-hiart/license
  * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiar/license
  */
 
-namespace hiqdev\hiar;
+namespace hiqdev\hiart;
 
 
 class ActiveDataProvider extends \yii\data\ActiveDataProvider

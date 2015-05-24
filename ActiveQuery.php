@@ -1,11 +1,11 @@
 <?php
 /**
- * @link http://hiqdev.com/yii2-hiar
+ * @link http://hiqdev.com/yii2-hiart
  * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiar/license
+ * @license http://hiqdev.com/yii2-hiart/license
  */
 
-namespace hiqdev\hiar;
+namespace hiqdev\hiart;
 
 use hipanel\base\Re;
 use yii\db\ActiveQueryInterface;
