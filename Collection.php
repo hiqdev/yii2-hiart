@@ -380,7 +380,7 @@ class Collection extends Component
 
     public function beforeValidate () {
         $event = new ModelEvent();
-        $this->trigger(self::EVENT_BEFORE_VALIDATE, $event);
+        $this->triggerAll(self::EVENT_BEFORE_VALIDATE, $event);
 
         return $event->isValid;
     }
@@ -388,7 +388,7 @@ class Collection extends Component
     public function afterValidate () {
         $event = new ModelEvent();
 
-        $this->trigger(self::EVENT_AFTER_VALIDATE, $event);
+        $this->triggerAll(self::EVENT_AFTER_VALIDATE, $event);
 
         return $event->isValid;
     }
@@ -398,13 +398,13 @@ class Collection extends Component
         if ($this->isEmpty()) {
             $event->isValid = false;
         }
-        $this->trigger($insert ? self::EVENT_BEFORE_INSERT : self::EVENT_BEFORE_UPDATE, $event);
+        $this->triggerAll($insert ? self::EVENT_BEFORE_INSERT : self::EVENT_BEFORE_UPDATE, $event);
 
         return $event->isValid;
     }
 
     public function afterSave () {
-        $this->trigger(self::EVENT_AFTER_SAVE);
+        $this->triggerAll(self::EVENT_AFTER_SAVE);
     }
 
 
@@ -426,7 +426,7 @@ class Collection extends Component
      * @param ModelEvent $event
      * @return bool whether is valid
      */
-    public function triggerAll ($name, ModelEvent $event = null) {
+    public function triggerModels ($name, ModelEvent $event = null) {
         if ($event == null) {
             $event = new ModelEvent();
         }
@@ -435,6 +435,23 @@ class Collection extends Component
             $model->trigger($name, $event);
         }
 
+        return $event->isValid;
+    }
+
+    /**
+     * Calls [[triggerModels()]], then calls [[trigger()]]
+     *
+     * @param string $name the event name
+     * @param ModelEvent $event
+     * @return bool whether is valid
+     */
+    public function triggerAll($name, ModelEvent $event = null) {
+        if ($event == null) {
+            $event = new ModelEvent();
+        }
+        if ($this->triggerModels($name, $event)) {
+            $this->trigger($name, $event);
+        }
         return $event->isValid;
     }
 
