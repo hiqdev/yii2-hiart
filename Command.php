@@ -9,6 +9,7 @@ namespace hiqdev\hiart;
 
 use yii\base\Component;
 use yii\base\InvalidCallException;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -51,7 +52,7 @@ class Command extends Component
 //            $query = Json::encode($query);
 //        }
         $options = array_merge($query, $options);
-        $url = $this->index.'Search';
+        $url = $this->index . 'Search';
 
         return $this->db->get($url, $options);
     }
@@ -59,9 +60,8 @@ class Command extends Component
     public function getList($options = [])
     {
         $options = array_merge($this->queryParts, $options);
-        return $this->db->get($this->index.'GetList', $options);
+        return $this->db->get($this->index . 'GetList', $options);
     }
-
 
 
     public function insert($action, $data, $id = null, $options = [])
@@ -74,16 +74,20 @@ class Command extends Component
         $options = array_merge($data, $options);
 
         if ($id !== null) {
-            return $this->db->put($action.'Update', array_merge($options,['id'=>$id]));
+            return $this->db->put($action . 'Update', array_merge($options, ['id' => $id]));
         } else {
-            return $this->db->post($action.'Create', $options);
+            return $this->db->post($action . 'Create', $options);
         }
     }
 
-    public function get()
+//    public function get()
+//    {
+//        unset($this->queryParts['limit']);
+//        return $this->db->get($this->type.'GetInfo', $this->queryParts);
+//    }
+    public function get($modelName, $primaryKey, $options)
     {
-        unset($this->queryParts['limit']);
-        return $this->db->get($this->type.'GetInfo', $this->queryParts);
+        return $this->db->get($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
     }
 
     public function mget($index, $type, $ids, $options = [])
@@ -100,14 +104,14 @@ class Command extends Component
 
     public function delete($index, $id, $options = [])
     {
-        return $this->db->delete($index.'Delete', array_merge($options,['id'=>$id]));
+        return $this->db->delete($index . 'Delete', array_merge($options, ['id' => $id]));
     }
 
-	public function update($index, $id, $data, $options = [])
-	{
+    public function update($index, $id, $data, $options = [])
+    {
         $options['id'] = $id;
-        return $this->db->put($index.'Update', array_merge($data,$options));
-	}
+        return $this->db->put($index . 'Update', array_merge($data, $options));
+    }
 
     /**
      * @param $action

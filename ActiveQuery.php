@@ -135,8 +135,11 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * if the query results in nothing.
      */
     public function one ($db = null) {
-        $result = $this->createCommand($db)->get();
+//        $result = $this->createCommand($db)->get();
 
+        if (($result = parent::one($db)) === false) {
+            return null;
+        }
         if ($this->asArray) {
             // TODO implement with()
 //            /* @var $modelClass ActiveRecord */
