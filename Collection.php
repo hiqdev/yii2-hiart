@@ -366,12 +366,32 @@ class Collection extends Component
         return false;
     }
 
+    /**
+     * Returns the first error of the collection
+     *
+     * @return bool|mixed
+     */
+    public function getFirstError () {
+        foreach ($this->models as $model) {
+            /* @var $model ActiveRecord */
+            if ($model->hasErrors()) {
+                $errors = $model->getFirstErrors();
+                return array_shift($errors);
+            }
+        }
+
+        return false;
+    }
+
+
     public function validate ($attributes = null) {
         if (!$this->beforeValidate()) {
             return false;
         }
 
-        $this->first->validateMultiple($this->models, $attributes);
+        if (!$this->first->validateMultiple($this->models, $attributes)) {
+            return false;
+        }
 
         $this->afterValidate();
 
