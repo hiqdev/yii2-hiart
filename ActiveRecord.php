@@ -369,14 +369,19 @@ class ActiveRecord extends BaseActiveRecord
                 throw new InvalidConfigException('Scenario not specified');
             }
         } else {
-            $scenarioCommands = static::scenarioCommands();
+            $scenarioCommands = static::scenarioCommands($bulk);
             if ($command = $scenarioCommands[$this->scenario]) {
                 if ($command === false) {
                     throw new NotSupportedException('The scenario can not be saved');
-                } elseif (is_array($command) && $command[0] === null) {
-                    $command = $command[1];
                 }
-                $result = ucfirst($command);
+
+                if (is_array($command) && $command[0] === null) {
+                    $result = $command[1];
+                } elseif (is_array($command)) {
+                    $result = $command;
+                } else {
+                    $result = ucfirst($command);
+                }
             } else {
                 $result = Inflector::id2camel($this->scenario);
             }
