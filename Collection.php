@@ -100,6 +100,14 @@ class Collection extends Component
     }
 
     /**
+     * Returns the [[model]]
+     * @return Model
+     */
+    public function getModel () {
+        return $this->model;
+    }
+
+    /**
      * Sets the scenario of the default model
      *
      * @param $value string scenario
@@ -166,7 +174,19 @@ class Collection extends Component
         if ($data === null) {
             $data = \Yii::$app->request->post();
             if (isset($data[$this->formName])) {
-                $data = [$data[$this->formName]];
+                $data = $data[$this->formName];
+
+                $is_bulk = true;
+                foreach ($data as $k => $v) {
+                    if (!is_array($v)) {
+                        $is_bulk = false;
+                        break;
+                    }
+                }
+
+                if (!$is_bulk) {
+                    $data = [$data];
+                }
             }
         } elseif ($data instanceof \Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
