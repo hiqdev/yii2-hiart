@@ -29,7 +29,8 @@ class Collection extends Component
     const EVENT_AFTER_SAVE      = 'afterSave';
     const EVENT_BEFORE_LOAD     = 'beforeLoad';
     const EVENT_AFTER_LOAD      = 'afterLoad';
-
+    const EVENT_BEFORE_DELETE   = 'beforeDelete';
+    const EVENT_AFTER_DELETE    = 'afterDelete';
     /**
      * @var array of models
      */
@@ -95,6 +96,10 @@ class Collection extends Component
             $this->model = \Yii::createObject($model);
         }
         $this->updateFormName();
+
+        if (empty($this->getScenario()) && $model->scenario != $model::SCENARIO_DEFAULT) {
+            $this->setScenario($model->scenario);
+        }
 
         return $this->model;
     }
@@ -208,6 +213,15 @@ class Collection extends Component
 
         return $this->set($models);
     }
+//
+//    public function perform ($options)
+//    {
+//        if (is_string($options)) {
+//            $options = ['scenario' => $options];
+//        }
+//
+//        return $this->load($this->first->perform($options['scenario'], $this->models, true));
+//    }
 
     /**
      * Sets the array of AR models to the collection
@@ -337,6 +351,21 @@ class Collection extends Component
         return true;
     }
 
+    public function delete()
+    {
+        \yii\helpers\VarDumper::dump(1, 10, true);die();
+        $result = false;
+        if ($this->beforeDelete()) {
+            $data    = $this->collectData();
+            $command = $this->first->getScenarioCommand('delete', true);
+
+            $results = $this->first->getDb()->createCommand()->perform($command, $data);
+            $this->afterDelete();
+        }
+
+        return $result;
+    }
+
     /**
      * Collects data from the stored models
      *
@@ -457,6 +486,19 @@ class Collection extends Component
 
     public function afterLoad () {
         $this->trigger(self::EVENT_AFTER_LOAD);
+    }
+
+    public function beforeDelete()
+    {
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_DELETE, $event);
+
+        return $event->isValid;
+    }
+
+    public function afterDelete()
+    {
+        $this->trigger(self::EVENT_AFTER_DELETE);
     }
 
     /**

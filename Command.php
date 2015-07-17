@@ -52,7 +52,7 @@ class Command extends Component
 //            $query = Json::encode($query);
 //        }
         $options = array_merge($query, $options);
-        $url = $this->index . 'Search';
+        $url = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
 
         return $this->db->get($url, $options);
     }
