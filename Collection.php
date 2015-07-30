@@ -97,7 +97,8 @@ class Collection extends Component
         }
         $this->updateFormName();
 
-        if (empty($this->getScenario()) && $model->scenario != $model::SCENARIO_DEFAULT) {
+        $test = $this->getScenario();
+        if (empty($test) && $model->scenario != $model::SCENARIO_DEFAULT) {
             $this->setScenario($model->scenario);
         }
 
