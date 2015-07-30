@@ -325,9 +325,9 @@ class ActiveRecord extends BaseActiveRecord
         $this->afterSave(false, $changedAttributes);
 
         if ($result === false || Err::isError($result)) {
-            return 0;
+            throw new HiResException('Hiresource method: update', Err::getError($result));
         } else {
-            return 1;
+            return $result;
         }
     }
 
