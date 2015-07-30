@@ -113,6 +113,15 @@ class Collection extends Component
         return $this->model;
     }
 
+    public function getIds()
+    {
+        $ids = [];
+        foreach ($this->models as $model) {
+            $ids[] = $model->id;
+        }
+        return $ids;
+    }
+
     /**
      * Sets the scenario of the default model
      *
