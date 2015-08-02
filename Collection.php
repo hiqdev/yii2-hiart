@@ -236,10 +236,14 @@ class Collection extends Component
     /**
      * Sets the array of AR models to the collection
      *
-     * @param array $models - array of AR Models
+     * @param array|Model $models - array of AR Models or a single model
      * @return $this
      */
-    public function set (array $models) {
+    public function set ($models) {
+        if ($models instanceof Model) {
+            $models = [$models];
+        }
+
         /* @var $first ActiveRecord */
         $first = reset($models);
         if ($first === false) {
