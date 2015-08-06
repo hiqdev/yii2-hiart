@@ -34,7 +34,7 @@ class Collection extends Component
     /**
      * @var array of models
      */
-    public $models;
+    public $models = [];
 
     /**
      * @var string the name of the form. Sets automatically on [[set()]]
@@ -202,6 +202,11 @@ class Collection extends Component
                 if (!$is_bulk) {
                     $data = [$data];
                 }
+            } else if ($data['selection']) {
+                foreach ($data['selection'] as $id) {
+                    $res[$id] = compact('id');
+                }
+                $data = $res;
             }
         } elseif ($data instanceof \Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
@@ -446,6 +451,10 @@ class Collection extends Component
         return false;
     }
 
+    public function count()
+    {
+        return is_array($this->models) ? count($this->models) : 0;
+    }
 
     public function validate ($attributes = null) {
         if (!$this->beforeValidate()) {
