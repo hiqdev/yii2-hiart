@@ -8,6 +8,8 @@
 namespace hiqdev\hiart;
 
 use common\components\Err;
+use Closure;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\base\Component;
 use yii\base\InvalidCallException;
@@ -93,7 +95,7 @@ class Collection extends Component
         if ($model instanceof Model) {
             $this->model = $model;
         } else {
-            $this->model = \Yii::createObject($model);
+            $this->model = Yii::createObject($model);
         }
         $this->updateFormName();
 
@@ -187,7 +189,7 @@ class Collection extends Component
         $finalData = [];
 
         if ($data === null) {
-            $data = \Yii::$app->request->post();
+            $data = Yii::$app->request->post();
             if (isset($data[$this->formName])) {
                 $data = $data[$this->formName];
 
@@ -208,19 +210,19 @@ class Collection extends Component
                 }
                 $data = $res;
             }
-        } elseif ($data instanceof \Closure) {
+        } elseif ($data instanceof Closure) {
             $data = call_user_func($data, $this->model, $this->formName);
         }
 
         foreach ($data as $key => $value) {
-            if ($this->loadFormatter instanceof \Closure) {
+            if ($this->loadFormatter instanceof Closure) {
                 $item = call_user_func($this->loadFormatter, $this->model, $key, $value);
                 $key  = $item[0];
             } else {
                 $item = [$key, $value];
             }
             $options      = ArrayHelper::merge(['class' => $this->model->className()], $this->modelOptions);
-            $models[$key] = \Yii::createObject($options);
+            $models[$key] = Yii::createObject($options);
 
             $finalData[$this->formName][$key] = $item[1];
         }
@@ -402,7 +404,7 @@ class Collection extends Component
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             $key = $model->getPrimaryKey();
-            if ($options instanceof \Closure) {
+            if ($options instanceof Closure) {
                 $row = call_user_func($options, $model->getAttributes($attributes), $model);
             } else {
                 $row = array_merge($model->getAttributes($attributes), $options);
