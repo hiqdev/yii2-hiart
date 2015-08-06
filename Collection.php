@@ -349,7 +349,6 @@ class Collection extends Component
 
         $data    = $this->collectData($attributes, $options);
         $command = $this->first->getScenarioCommand('update', true);
-
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
 
         if ($results === false || Err::isError($results)) {
