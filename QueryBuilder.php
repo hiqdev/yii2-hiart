@@ -10,6 +10,7 @@ namespace hiqdev\hiart;
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
 use yii\helpers\Json;
+
 /**
  * QueryBuilder builds an HiActiveResource query based on the specification given as a [[Query]] object.
  */
@@ -135,8 +136,9 @@ class QueryBuilder extends \yii\base\Object
     private function buildInCondition($operator, $operands)
     {
         $key = array_shift($operands);
+        $value = array_shift($operands);
 
-        return [$key.'_in' => implode(',', array_shift($operands))];
+        return [$key.'_in' => (array)$value];
     }
 
     private function buildEqCondition ($operator, $operands) {
