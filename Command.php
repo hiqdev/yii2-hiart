@@ -7,6 +7,7 @@
 
 namespace hiqdev\hiart;
 
+use common\components\Err;
 use yii\base\Component;
 use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
@@ -41,36 +42,30 @@ class Command extends Component
      * Sends a request to the _search API and returns the result
      * @param array $options
      * @return mixed
+     * @throws ErrorResponseException
      */
     public function search($options = [])
     {
         $query = $this->queryParts;
-//        if (empty($query)) {
-//            $query = '{}';
-//        }
-//        if (is_array($query)) {
-//            $query = Json::encode($query);
-//        }
+
         $options = array_merge($query, $options);
         $url = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
 
-        return $this->db->get($url, $options);
+        $result = $this->db->get($url, $options);
+        return $result;
     }
 
     public function getList($options = [])
     {
         $options = array_merge($this->queryParts, $options);
-        return $this->db->get($this->index . 'GetList', $options);
+        $command = $this->index . 'GetList';
+        $result = $this->db->get($command, $options);
+        return $result;
     }
 
 
     public function insert($action, $data, $id = null, $options = [])
     {
-//        if (empty($data)) {
-//            $body = '{}';
-//        } else {
-//            $body = is_array($data) ? Json::encode($data) : $data;
-//        }
         $options = array_merge($data, $options);
 
         if ($id !== null) {
@@ -80,11 +75,6 @@ class Command extends Component
         }
     }
 
-//    public function get()
-//    {
-//        unset($this->queryParts['limit']);
-//        return $this->db->get($this->type.'GetInfo', $this->queryParts);
-//    }
     public function get($modelName, $primaryKey, $options)
     {
         return $this->db->get($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));

@@ -7,6 +7,7 @@
 
 namespace hiqdev\hiart;
 
+use common\components\Err;
 use hipanel\base\Re;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;

@@ -89,7 +89,6 @@ class Collection extends Component
      * @param Model|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
      * using given options array
      * @return object|Model
-     * @throws InvalidConfigException
      */
     public function setModel ($model) {
         if ($model instanceof Model) {
@@ -282,7 +281,6 @@ class Collection extends Component
      * @param array $options the array of options that will be passed to [[insert]] or [[update]] methods to override
      * model parameters.
      * @return boolean whether the saving succeeds
-     * @throws HiResException
      */
     public function save ($runValidation = true, $attributes = null, $options = []) {
         if ($this->isEmpty()) {
@@ -311,11 +309,6 @@ class Collection extends Component
         $command = $this->first->getScenarioCommand('create', true);
 
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
-
-        if (Err::isError($results)) {
-            throw new HiResException(Err::getError($results), Json::encode($results));
-        }
-
         $pk = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             /* @var $model ActiveRecord */
@@ -350,10 +343,6 @@ class Collection extends Component
         $data    = $this->collectData($attributes, $options);
         $command = $this->first->getScenarioCommand('update', true);
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
-
-        if ($results === false || Err::isError($results)) {
-            throw new HiResException(Err::getError($results), Json::encode($results));
-        }
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];

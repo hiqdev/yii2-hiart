@@ -71,7 +71,6 @@ class ActiveRecord extends BaseActiveRecord
      * Please refer to the [elasticsearch documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html)
      * for more details on these options.
      * @return null|static The record instance or null if it was not found.
-     * @throws HiResException
      */
     public static function get($primaryKey, $options = [])
     {
@@ -80,9 +79,7 @@ class ActiveRecord extends BaseActiveRecord
         }
         $command = static::getDb()->createCommand();
         $result = $command->get(static::type(), $primaryKey, $options);
-        if (Err::isError($result)) {
-            throw new HiResException('Hiresource method: get', Err::getError($result));
-        }
+
         if ($result) {
             $model = static::instantiate($result);
             static::populateRecord($model, $result);
@@ -245,15 +242,12 @@ class ActiveRecord extends BaseActiveRecord
         $command = $this->getScenarioCommand('create');
         $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
-        $response = static::getDb()->createCommand()->perform($command, $data);
+        $result = static::getDb()->createCommand()->perform($command, $data);
 
-        if (Err::isError($response)) {
-            throw new HiResException('Hiresource method: Insert -- ' . Json::encode($response), Err::getError($response));
-        }
         $pk = static::primaryKey()[0];
-        $this->$pk = $response['id'];
+        $this->$pk = $result['id'];
         if ($pk != 'id') {
-            $values[$pk] = $response['id'];
+            $values[$pk] = $result['id'];
         }
         $changedAttributes = array_fill_keys(array_keys($values), null);
         $this->setOldAttributes($values);
@@ -272,10 +266,6 @@ class ActiveRecord extends BaseActiveRecord
         $data = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
-
-        if (Err::isError($result)) {
-            throw new HiResException('Hiresource method: Delete -- ' . Json::encode($result), Err::getError($result));
-        }
 
         $this->setOldAttributes(null);
         $this->afterDelete();
@@ -315,7 +305,6 @@ class ActiveRecord extends BaseActiveRecord
         $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
-
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -324,11 +313,7 @@ class ActiveRecord extends BaseActiveRecord
 
         $this->afterSave(false, $changedAttributes);
 
-        if ($result === false || Err::isError($result)) {
-            throw new HiResException('Hiresource method: update', Err::getError($result));
-        } else {
-            return $result;
-        }
+        return $result;
     }
 
     /**
@@ -338,16 +323,11 @@ class ActiveRecord extends BaseActiveRecord
      * @param array $options
      * @param bool $bulk
      * @return array
-     * @throws HiResException
      */
     public static function perform($action, $options = [], $bulk = false)
     {
         $action = ($bulk == true) ? static::index() . $action : static::modelName() . $action;
         $result = static::getDb()->createCommand()->perform($action, $options);
-        if (Err::isError($result)) {
-            throw new HiResException('Hiresource method: ' . $action, Err::getError($result));
-        }
-
         return $result;
     }
 
