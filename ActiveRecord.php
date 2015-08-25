@@ -73,7 +73,7 @@ class ActiveRecord extends BaseActiveRecord
      * @return null|static The record instance or null if it was not found.
      * @throws HiResException
      */
-    public static function get($primaryKey, $options = [])
+    public static function get($primaryKey = null, $options = [])
     {
         if ($primaryKey === null) {
             return null;
