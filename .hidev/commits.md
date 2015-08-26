@@ -3,11 +3,13 @@ hiqdev/yii2-hiart commits history
 
 ## Under development
 
+- Fixed PHP warnings
+    - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
 - Added basics
+    - f8ece0b 2015-08-26 moved to src (sol@hiqdev.com)
     - f63b354 2015-08-26 rehideved (sol@hiqdev.com)
     - e534bea 2015-08-25 Added Connection (d.naumenko.a@gmail.com)
     - 93c054e 2015-08-25 Added ErrorResponseException, HiResException~>HiArtException, added global checking of error responses, other minor (d.naumenko.a@gmail.com)
-    - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
     - 3d87c1a 2015-08-19 Fixed QueryBuiled in condition - force type casting to array (d.naumenko.a@gmail.com)
     - ae4b098 2015-08-06 * Collection: + count and populate from selection (sol@hiqdev.com)
     - 104c0fb 2015-08-02 Collection::set now can accept single item (d.naumenko.a@gmail.com)
@@ -20,6 +22,7 @@ hiqdev/yii2-hiart commits history
     - fd386c9 2015-06-10 Fixed validate() - fail if one of models failed to validate (d.naumenko.a@gmail.com)
     - 3cfe245 2015-06-03 Fix findOne method (andreyklochok@gmail.com)
     - a9eb1cd 2015-05-28 Collection triggers events of each model to saved (d.naumenko.a@gmail.com)
+- Changed: renamed to hiart
     - cec1ad7 2015-05-24 renamed hiart <- hiar in files (sol@hiqdev.com)
     - 9f25b4a 2015-05-24 RENAMED to hiart (sol@hiqdev.com)
     - 672c3ca 2015-05-22 Fixed inCond (d.naumenko.a@gmail.com)
