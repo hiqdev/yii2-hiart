@@ -1,7 +1,9 @@
 hiqdev/yii2-hiart changelog
 ---------------------------
 
-### 0.1.0 under development
+## Under development
 
-- inited
+- Added basics
+
+## Development started 2015-04-17
 

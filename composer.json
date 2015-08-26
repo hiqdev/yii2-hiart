@@ -3,12 +3,12 @@
     "type": "yii2-extension",
     "description": "Tools to use API as ActiveRecord for Yii2",
     "keywords": [
-        "API",
+        "api",
         "ActiveRecord",
         "extension",
         "yii2"
     ],
-    "homepage": "https://hiqdev.com/yii2-hiart",
+    "homepage": "https://github.com/hiqdev/yii2-hiart",
     "license": "BSD-3-Clause",
     "support": {
         "email": "support@hiqdev.com",
