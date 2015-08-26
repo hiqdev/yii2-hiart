@@ -5,7 +5,7 @@ package:
     title:          Tools to use API as ActiveRecord for Yii2
     type:           yii2-extension
     keywords:       api, ActiveRecord, extension, yii2
-    description:    Grid DetailView: use grid/Columns for DetailView and more later
+    description:    Use your API as ActiveRecord
     year:           2015
 
 require:

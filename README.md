@@ -1,7 +1,7 @@
 Tools to use API as ActiveRecord for Yii2
 -----------------------------------------
 
-Grid DetailView: use grid/Columns for DetailView and more later
+Use your API as ActiveRecord
 
 [![Latest Stable Version](https://poser.pugx.org/hiqdev/yii2-hiart/v/stable.png)](https://packagist.org/packages/hiqdev/yii2-hiart)
 [![Total Downloads](https://poser.pugx.org/hiqdev/yii2-hiart/downloads.png)](https://packagist.org/packages/hiqdev/yii2-hiart)
