@@ -1,8 +1,12 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -38,9 +42,8 @@ class Query extends Component implements QueryInterface
 
     public $suggest = [];
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -83,6 +86,7 @@ class Query extends Component implements QueryInterface
             }
             $models[$key] = $row;
         }
+
         return $models;
     }
 
@@ -112,6 +116,7 @@ class Query extends Component implements QueryInterface
             }
             $result = $rows;
         }
+
         return $result;
     }
 
@@ -129,17 +134,18 @@ class Query extends Component implements QueryInterface
             } elseif (isset($record['_source'][$field])) {
                 return $record['_source'][$field];
             } elseif (isset($record['fields'][$field])) {
-                return count($record['fields'][$field]) == 1 ? reset($record['fields'][$field]) : $record['fields'][$field];
+                return count($record['fields'][$field]) === 1 ? reset($record['fields'][$field]) : $record['fields'][$field];
             }
         }
-        return null;
+
+        return;
     }
 
     public function column($field, $db = null)
     {
-        $command = $this->createCommand($db);
+        $command                        = $this->createCommand($db);
         $command->queryParts['_source'] = [$field];
-        $result = $command->search();
+        $result                         = $command->search();
         if (empty($result['hits']['hits'])) {
             return [];
         }
@@ -153,13 +159,15 @@ class Query extends Component implements QueryInterface
                 $column[] = null;
             }
         }
+
         return $column;
     }
 
     public function count($q = '*', $db = null)
     {
-        $options = [];
+        $options          = [];
         $options['count'] = 1;
+
         return $this->createCommand($db)->search($options);
     }
 
@@ -171,18 +179,21 @@ class Query extends Component implements QueryInterface
     public function stats($groups)
     {
         $this->stats = $groups;
+
         return $this;
     }
 
     public function highlight($highlight)
     {
         $this->highlight = $highlight;
+
         return $this;
     }
 
     public function addAggregation($name, $type, $options)
     {
         $this->aggregations[$name] = [$type => $options];
+
         return $this;
     }
 
@@ -194,25 +205,29 @@ class Query extends Component implements QueryInterface
     public function addSuggester($name, $definition)
     {
         $this->suggest[$name] = $definition;
+
         return $this;
     }
 
     public function query($query)
     {
         $this->query = $query;
+
         return $this;
     }
 
     public function filter($filter)
     {
         $this->filter = $filter;
+
         return $this;
     }
 
     public function from($index, $type = null)
     {
         $this->index = $index;
-        $this->type = $type;
+        $this->type  = $type;
+
         return $this;
     }
 
@@ -223,6 +238,7 @@ class Query extends Component implements QueryInterface
         } else {
             $this->fields = func_get_args();
         }
+
         return $this;
     }
 
@@ -233,12 +249,14 @@ class Query extends Component implements QueryInterface
         } else {
             $this->source = func_get_args();
         }
+
         return $this;
     }
 
     public function timeout($timeout)
     {
         $this->timeout = $timeout;
+
         return $this;
     }
 }

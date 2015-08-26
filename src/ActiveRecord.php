@@ -1,21 +1,22 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\BaseActiveRecord;
-use yii\helpers\Inflector;
-use yii\helpers\Json;
-use yii\helpers\StringHelper;
 use yii\helpers\ArrayHelper;
-use common\components\Err;
+use yii\helpers\Inflector;
+use yii\helpers\StringHelper;
 
 class ActiveRecord extends BaseActiveRecord
 {
@@ -35,7 +36,8 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return ActiveQuery the newly created [[ActiveQuery]] instance.
      */
     public static function find()
@@ -44,7 +46,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function findOne($condition)
     {
@@ -54,7 +56,6 @@ class ActiveRecord extends BaseActiveRecord
         } else {
             return static::get($condition);
         }
-
     }
 
     public function isScenarioDefault()
@@ -66,19 +67,20 @@ class ActiveRecord extends BaseActiveRecord
      * Gets a record by its primary key.
      *
      * @param mixed $primaryKey the primaryKey value
-     * @param array $options options given in this parameter are passed to elasticsearch
-     * as request URI parameters.
-     * Please refer to the [elasticsearch documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html)
-     * for more details on these options.
+     * @param array $options    options given in this parameter are passed to elasticsearch
+     *                          as request URI parameters.
+     *                          Please refer to the [elasticsearch documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html)
+     *                          for more details on these options.
+     *
      * @return null|static The record instance or null if it was not found.
      */
     public static function get($primaryKey = null, $options = [])
     {
         if ($primaryKey === null) {
-            return null;
+            return;
         }
         $command = static::getDb()->createCommand();
-        $result = $command->get(static::type(), $primaryKey, $options);
+        $result  = $command->get(static::type(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -88,7 +90,7 @@ class ActiveRecord extends BaseActiveRecord
             return $model;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -115,7 +117,7 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * +     * The name of the main attribute
      * +     *
-     * Examples:
+     * Examples:.
      *
      * This will directly reference to the attribute 'name'
      * ```
@@ -135,8 +137,10 @@ class ActiveRecord extends BaseActiveRecord
      *     };
      * ```
      *
-     * @return string|callable|array
      * @throws InvalidConfigException
+     *
+     * @return string|callable|array
+     *
      * @author SilverFire
      */
     public function primaryValue()
@@ -145,10 +149,12 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Returns the value of the primary attribute
+     * Returns the value of the primary attribute.
+     *
+     * @throws InvalidConfigException
      *
      * @return mixed|null
-     * @throws InvalidConfigException
+     *
      * @see primaryValue()
      */
     public function getPrimaryValue()
@@ -158,7 +164,7 @@ class ActiveRecord extends BaseActiveRecord
         $result = null;
         if ($primaryValue instanceof \Closure) {
             return call_user_func($primaryValue, [$this]);
-        } else if (is_array($primaryValue)) {
+        } elseif (is_array($primaryValue)) {
             $delimiter = ArrayHelper::remove($primaryValue, 'delimiter', ' ');
 
             return implode($delimiter, $this->getAttributes($primaryValue));
@@ -166,7 +172,6 @@ class ActiveRecord extends BaseActiveRecord
             return $this->getAttribute($primaryValue);
         }
     }
-
 
     /**
      * Returns the list of all attribute names of the model.
@@ -178,8 +183,9 @@ class ActiveRecord extends BaseActiveRecord
      * You may define [path mapping](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-id-field.html)
      * for the `_id` field so that it is part of the `_source` fields and thus becomes part of the attributes.
      *
-     * @return string[] list of attribute names.
      * @throws \yii\base\InvalidConfigException if not overridden in a child class.
+     *
+     * @return string[] list of attribute names.
      */
     public function attributes()
     {
@@ -204,7 +210,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function index()
     {
-//        return Inflector::pluralize(Inflector::camel2id(StringHelper::basename(get_called_class()), '-'));
+        //        return Inflector::pluralize(Inflector::camel2id(StringHelper::basename(get_called_class()), '-'));
         return mb_strtolower(StringHelper::basename(get_called_class()) . 's');
     }
 
@@ -218,7 +224,7 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * Declares the name of the model associated with this class.
-     * By default this method returns the class name by calling [[Inflector::camel2id()]]
+     * By default this method returns the class name by calling [[Inflector::camel2id()]].
      *
      * @return string the module name
      */
@@ -240,13 +246,13 @@ class ActiveRecord extends BaseActiveRecord
         $values = $this->getDirtyAttributes($attributes);
 
         $command = $this->getScenarioCommand('create');
-        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
-        $pk = static::primaryKey()[0];
+        $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
-        if ($pk != 'id') {
+        if ($pk !== 'id') {
             $values[$pk] = $result['id'];
         }
         $changedAttributes = array_fill_keys(array_keys($values), null);
@@ -263,7 +269,7 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('delete');
-        $data = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
@@ -302,9 +308,9 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('update');
-        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $result            = static::getDb()->createCommand()->perform($command, $data);
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -317,28 +323,32 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Custom method for HiResource
+     * Custom method for HiResource.
      *
      * @param $action
      * @param array $options
-     * @param bool $bulk
+     * @param bool  $bulk
+     *
      * @return array
      */
     public static function perform($action, $options = [], $bulk = false)
     {
-        $action = ($bulk == true) ? static::index() . $action : static::modelName() . $action;
+        $action = ($bulk === true) ? static::index() . $action : static::modelName() . $action;
         $result = static::getDb()->createCommand()->perform($action, $options);
+
         return $result;
     }
 
     /**
-     * Creates the command name for the specified scenario name
+     * Creates the command name for the specified scenario name.
      *
      * @param string $default
-     * @param bool $bulk
-     * @return string
+     * @param bool   $bulk
+     *
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @return string
      */
     public function getScenarioCommand($default = '', $bulk = false)
     {
@@ -402,7 +412,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getIsNewRecord()
     {

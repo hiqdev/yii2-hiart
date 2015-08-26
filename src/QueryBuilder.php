@@ -1,15 +1,18 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
-use yii\helpers\Json;
 
 /**
  * QueryBuilder builds an HiActiveResource query based on the specification given as a [[Query]] object.
@@ -17,8 +20,8 @@ use yii\helpers\Json;
 class QueryBuilder extends \yii\base\Object
 {
     private $_sort = [
-        SORT_ASC =>'_asc',
-        SORT_DESC=>'_desc',
+        SORT_ASC  => '_asc',
+        SORT_DESC => '_desc',
     ];
 
     public $db;
@@ -36,7 +39,7 @@ class QueryBuilder extends \yii\base\Object
             $parts['limit'] = $query->limit;
         }
         if ($query->offset > 0) {
-            $parts['page'] = ceil($query->offset/$query->limit)+1;
+            $parts['page'] = ceil($query->offset / $query->limit) + 1;
         }
         if (!empty($query->query)) {
             $parts['query'] = $query->limit;
@@ -49,19 +52,19 @@ class QueryBuilder extends \yii\base\Object
         }
 
         if (!empty($query->orderBy)) {
-            $parts['orderby'] = key($query->orderBy).$this->_sort[reset($query->orderBy)];
+            $parts['orderby'] = key($query->orderBy) . $this->_sort[reset($query->orderBy)];
         }
 
         return [
             'queryParts' => $parts,
-            'index' => $query->index,
-            'type' => $query->type,
-            'options' => $options,
+            'index'      => $query->index,
+            'type'       => $query->type,
+            'options'    => $options,
         ];
     }
 
-    public function buildCondition($condition) {
-
+    public function buildCondition($condition)
+    {
         static $builders = [
             'and'     => 'buildAndCondition',
             'between' => 'buildBetweenCondition',
@@ -97,7 +100,7 @@ class QueryBuilder extends \yii\base\Object
         foreach ($condition as $attribute => $value) {
             if (is_array($value)) { // IN condition
                 // $parts[] = [$attribute.'s' => join(',',$value)];
-                $parts[$attribute.'s'] = join(',',$value);
+                $parts[$attribute . 's'] = implode(',', $value);
             } else {
                 $parts[$attribute] = $value;
             }
@@ -106,11 +109,13 @@ class QueryBuilder extends \yii\base\Object
         return $parts;
     }
 
-    private function buildLikeCondition ($operator, $operands) {
+    private function buildLikeCondition($operator, $operands)
+    {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires three operands.");
         }
-        return [$operands[0].'_like' => $operands[1]];
+
+        return [$operands[0] . '_like' => $operands[1]];
     }
 
     private function buildAndCondition($operator, $operands)
@@ -135,13 +140,14 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildInCondition($operator, $operands)
     {
-        $key = array_shift($operands);
+        $key   = array_shift($operands);
         $value = array_shift($operands);
 
-        return [$key.'_in' => (array)$value];
+        return [$key . '_in' => (array) $value];
     }
 
-    private function buildEqCondition ($operator, $operands) {
+    private function buildEqCondition($operator, $operands)
+    {
         $key = array_shift($operands);
 
         return [$key => reset($operands)];
@@ -151,5 +157,4 @@ class QueryBuilder extends \yii\base\Object
     {
         throw new NotSupportedException('composite in is not supported by HiActiveResource.');
     }
-
 }

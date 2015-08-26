@@ -1,15 +1,17 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use common\components\Err;
 use yii\base\Component;
-use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
@@ -24,6 +26,7 @@ class Command extends Component
     public $db;
     /**
      * @var string|array the indexes to execute the query on. Defaults to null meaning all indexes
+     *
      * @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search.html#search-multi-index
      */
     public $index;
@@ -37,21 +40,24 @@ class Command extends Component
     public $queryParts;
     public $options = [];
 
-
     /**
-     * Sends a request to the _search API and returns the result
+     * Sends a request to the _search API and returns the result.
+     *
      * @param array $options
-     * @return mixed
+     *
      * @throws ErrorResponseException
+     *
+     * @return mixed
      */
     public function search($options = [])
     {
         $query = $this->queryParts;
 
         $options = array_merge($query, $options);
-        $url = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
+        $url     = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
 
         $result = $this->db->get($url, $options);
+
         return $result;
     }
 
@@ -59,10 +65,10 @@ class Command extends Component
     {
         $options = array_merge($this->queryParts, $options);
         $command = $this->index . 'GetList';
-        $result = $this->db->get($command, $options);
+        $result  = $this->db->get($command, $options);
+
         return $result;
     }
-
 
     public function insert($action, $data, $id = null, $options = [])
     {
@@ -100,6 +106,7 @@ class Command extends Component
     public function update($index, $id, $data, $options = [])
     {
         $options['id'] = $id;
+
         return $this->db->put($index . 'Update', array_merge($data, $options));
     }
 

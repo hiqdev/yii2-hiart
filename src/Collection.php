@@ -1,26 +1,28 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use common\components\Err;
 use Closure;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\base\Component;
 use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidValueException;
 use yii\base\Model;
 use yii\base\ModelEvent;
-use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
 
 /**
- * Class Collection manages the collection of the models
+ * Class Collection manages the collection of the models.
  */
 class Collection extends Component
 {
@@ -40,15 +42,16 @@ class Collection extends Component
 
     /**
      * @var string the name of the form. Sets automatically on [[set()]]
+     *
      * @see set()
      */
     public $formName;
 
     /**
      * @var callable the function to format loaded data. Gets three attributes:
-     *  - model (instance of operating model)
-     *  - key   - the key of the loaded item
-     *  - value - the value of the loaded item
+     *               - model (instance of operating model)
+     *               - key   - the key of the loaded item
+     *               - value - the value of the loaded item
      *
      * Should return array, where the first item is the new key, and the second - a new value. Example:
      *
@@ -60,7 +63,8 @@ class Collection extends Component
 
     /**
      * @var \yii\base\Model the template model instance. May be set manually by [[setModel()]] or
-     * automatically on [[set()]] call
+     *                      automatically on [[set()]] call
+     *
      * @see setModel()
      * @see set()
      */
@@ -68,12 +72,14 @@ class Collection extends Component
 
     /**
      * @var array options that will be passed to the new model when loading data in [[load]]
+     *
      * @see load()
      */
     public $modelOptions = [];
 
     /**
      * @var ActiveRecord the first model of the set. Fills automatically by [[set()]]
+     *
      * @see set()
      */
     public $first;
@@ -84,13 +90,15 @@ class Collection extends Component
     public $attributes;
 
     /**
-     * Sets the model of the collection
+     * Sets the model of the collection.
      *
      * @param Model|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
-     * using given options array
+     *                           using given options array
+     *
      * @return object|Model
      */
-    public function setModel ($model) {
+    public function setModel($model)
+    {
         if ($model instanceof Model) {
             $this->model = $model;
         } else {
@@ -99,7 +107,7 @@ class Collection extends Component
         $this->updateFormName();
 
         $test = $this->getScenario();
-        if (empty($test) && $model->scenario != $model::SCENARIO_DEFAULT) {
+        if (empty($test) && $model->scenario !== $model::SCENARIO_DEFAULT) {
             $this->setScenario($model->scenario);
         }
 
@@ -107,10 +115,12 @@ class Collection extends Component
     }
 
     /**
-     * Returns the [[model]]
+     * Returns the [[model]].
+     *
      * @return Model
      */
-    public function getModel () {
+    public function getModel()
+    {
         return $this->model;
     }
 
@@ -120,33 +130,37 @@ class Collection extends Component
         foreach ($this->models as $model) {
             $ids[] = $model->id;
         }
+
         return $ids;
     }
 
     /**
-     * Sets the scenario of the default model
+     * Sets the scenario of the default model.
      *
      * @param $value string scenario
      */
-    public function setScenario ($value) {
+    public function setScenario($value)
+    {
         $this->modelOptions['scenario'] = $value;
     }
 
     /**
-     * Gets the scenario the default model
+     * Gets the scenario the default model.
      *
      * @return string the scenario
      */
-    public function getScenario () {
+    public function getScenario()
+    {
         return $this->modelOptions['scenario'];
     }
 
     /**
-     * Updates [[formName]] from the current [[model]]
+     * Updates [[formName]] from the current [[model]].
      *
      * @return string the form name
      */
-    public function updateFormName () {
+    public function updateFormName()
+    {
         if (!($this->model instanceof Model)) {
             throw new InvalidCallException('The model should be set first');
         }
@@ -155,7 +169,7 @@ class Collection extends Component
     }
 
     /**
-     * We can load data from 3 different structures:
+     * We can load data from 3 different structures:.
      *
      * 1) POST: [
      *     'ModelName' => [
@@ -177,13 +191,16 @@ class Collection extends Component
      * }
      *
      * @param array|callable $data - the data to be proceeded.
-     * If is callable - gets arguments:
-     *   - model
-     *   - fromName
-     * @return Collection
+     *                             If is callable - gets arguments:
+     *                             - model
+     *                             - fromName
+     *
      * @throws InvalidConfigException
+     *
+     * @return Collection
      */
-    public function load ($data = null) {
+    public function load($data = null)
+    {
         $models    = [];
         $finalData = [];
 
@@ -203,7 +220,7 @@ class Collection extends Component
                 if (!$is_bulk) {
                     $data = [$data];
                 }
-            } else if ($data['selection']) {
+            } elseif ($data['selection']) {
                 foreach ($data['selection'] as $id) {
                     $res[$id] = compact('id');
                 }
@@ -240,12 +257,14 @@ class Collection extends Component
 //    }
 
     /**
-     * Sets the array of AR models to the collection
+     * Sets the array of AR models to the collection.
      *
      * @param array|Model $models - array of AR Models or a single model
+     *
      * @return $this
      */
-    public function set ($models) {
+    public function set($models)
+    {
         if ($models instanceof Model) {
             $models = [$models];
         }
@@ -270,19 +289,21 @@ class Collection extends Component
     }
 
     /**
-     * Saves the current collection
+     * Saves the current collection.
      *
      * This method will call [[insert()]] or [[update()]].
      *
-     * @param boolean $runValidation whether to perform validation before saving the collection.
-     * @param array $attributes list of attribute names that need to be saved. Defaults to null,
-     * meaning all attributes that are loaded will be saved. If the scenario is specified, will use only
-     * fields from the scenario
-     * @param array $options the array of options that will be passed to [[insert]] or [[update]] methods to override
-     * model parameters.
-     * @return boolean whether the saving succeeds
+     * @param bool  $runValidation whether to perform validation before saving the collection.
+     * @param array $attributes    list of attribute names that need to be saved. Defaults to null,
+     *                             meaning all attributes that are loaded will be saved. If the scenario is specified, will use only
+     *                             fields from the scenario
+     * @param array $options       the array of options that will be passed to [[insert]] or [[update]] methods to override
+     *                             model parameters.
+     *
+     * @return bool whether the saving succeeds
      */
-    public function save ($runValidation = true, $attributes = null, $options = []) {
+    public function save($runValidation = true, $attributes = null, $options = [])
+    {
         if ($this->isEmpty()) {
             throw new InvalidCallException('Collection is empty, nothing to save');
         }
@@ -294,7 +315,8 @@ class Collection extends Component
         }
     }
 
-    public function insert ($runValidation = true, $attributes = null, $options = []) {
+    public function insert($runValidation = true, $attributes = null, $options = [])
+    {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
         }
@@ -309,14 +331,14 @@ class Collection extends Component
         $command = $this->first->getScenarioCommand('create', true);
 
         $results = $this->first->getDb()->createCommand()->perform($command, $data);
-        $pk = $this->first->primaryKey()[0];
+        $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             /* @var $model ActiveRecord */
             $values = &$data[$key];
             $result = &$results[$key];
 
             $model->{$pk} = $result['id'];
-            if ($pk != 'id') {
+            if ($pk !== 'id') {
                 $values[$pk] = $result['id'];
             }
             $changedAttributes = array_fill_keys(array_keys($values), null);
@@ -329,7 +351,8 @@ class Collection extends Component
         return true;
     }
 
-    public function update ($runValidation = true, $attributes = null, $options = []) {
+    public function update($runValidation = true, $attributes = null, $options = [])
+    {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
         }
@@ -362,7 +385,8 @@ class Collection extends Component
 
     public function delete()
     {
-        \yii\helpers\VarDumper::dump(1, 10, true);die();
+        \yii\helpers\VarDumper::dump(1, 10, true);
+        die();
         $result = false;
         if ($this->beforeDelete()) {
             $data    = $this->collectData();
@@ -376,19 +400,21 @@ class Collection extends Component
     }
 
     /**
-     * Collects data from the stored models
+     * Collects data from the stored models.
      *
-     * @param string|array $attributes list of attributes names
-     * @param callable|array $options overrides the model attributes
-     * If is array - merges with the model attributes
-     * If is callable - gets two arguments:
-     *   1) the array of model attributes
-     *   2) the model object
+     * @param string|array   $attributes list of attributes names
+     * @param callable|array $options    overrides the model attributes
+     *                                   If is array - merges with the model attributes
+     *                                   If is callable - gets two arguments:
+     *                                   1) the array of model attributes
+     *                                   2) the model object
+     *
      * @return array
      */
-    public function collectData ($attributes = null, $options = []) {
+    public function collectData($attributes = null, $options = [])
+    {
         $data       = [];
-        $attributes = (array)$attributes;
+        $attributes = (array) $attributes;
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             $key = $model->getPrimaryKey();
@@ -409,11 +435,12 @@ class Collection extends Component
     }
 
     /**
-     * Whether one of models has an error
+     * Whether one of models has an error.
      *
      * @return bool
      */
-    public function hasErrors () {
+    public function hasErrors()
+    {
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             if ($model->hasErrors()) {
@@ -425,15 +452,17 @@ class Collection extends Component
     }
 
     /**
-     * Returns the first error of the collection
+     * Returns the first error of the collection.
      *
      * @return bool|mixed
      */
-    public function getFirstError () {
+    public function getFirstError()
+    {
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             if ($model->hasErrors()) {
                 $errors = $model->getFirstErrors();
+
                 return array_shift($errors);
             }
         }
@@ -446,7 +475,8 @@ class Collection extends Component
         return is_array($this->models) ? count($this->models) : 0;
     }
 
-    public function validate ($attributes = null) {
+    public function validate($attributes = null)
+    {
         if (!$this->beforeValidate()) {
             return false;
         }
@@ -460,14 +490,16 @@ class Collection extends Component
         return true;
     }
 
-    public function beforeValidate () {
+    public function beforeValidate()
+    {
         $event = new ModelEvent();
         $this->triggerAll(self::EVENT_BEFORE_VALIDATE, $event);
 
         return $event->isValid;
     }
 
-    public function afterValidate () {
+    public function afterValidate()
+    {
         $event = new ModelEvent();
 
         $this->triggerAll(self::EVENT_AFTER_VALIDATE, $event);
@@ -475,7 +507,8 @@ class Collection extends Component
         return $event->isValid;
     }
 
-    public function beforeSave ($insert = false) {
+    public function beforeSave($insert = false)
+    {
         $event = new ModelEvent();
         if ($this->isEmpty()) {
             $event->isValid = false;
@@ -485,19 +518,21 @@ class Collection extends Component
         return $event->isValid;
     }
 
-    public function afterSave () {
+    public function afterSave()
+    {
         $this->triggerAll(self::EVENT_AFTER_SAVE);
     }
 
-
-    public function beforeLoad () {
+    public function beforeLoad()
+    {
         $event = new ModelEvent();
         $this->trigger(self::EVENT_BEFORE_LOAD, $event);
 
         return $event->isValid;
     }
 
-    public function afterLoad () {
+    public function afterLoad()
+    {
         $this->trigger(self::EVENT_AFTER_LOAD);
     }
 
@@ -515,14 +550,16 @@ class Collection extends Component
     }
 
     /**
-     * Iterates over all of the models and triggers some event
+     * Iterates over all of the models and triggers some event.
      *
-     * @param string $name the event name
+     * @param string     $name  the event name
      * @param ModelEvent $event
+     *
      * @return bool whether is valid
      */
-    public function triggerModels ($name, ModelEvent $event = null) {
-        if ($event == null) {
+    public function triggerModels($name, ModelEvent $event = null)
+    {
+        if ($event === null) {
             $event = new ModelEvent();
         }
         foreach ($this->models as $model) {
@@ -534,28 +571,32 @@ class Collection extends Component
     }
 
     /**
-     * Calls [[triggerModels()]], then calls [[trigger()]]
+     * Calls [[triggerModels()]], then calls [[trigger()]].
      *
-     * @param string $name the event name
+     * @param string     $name  the event name
      * @param ModelEvent $event
+     *
      * @return bool whether is valid
      */
-    public function triggerAll($name, ModelEvent $event = null) {
-        if ($event == null) {
+    public function triggerAll($name, ModelEvent $event = null)
+    {
+        if ($event === null) {
             $event = new ModelEvent();
         }
         if ($this->triggerModels($name, $event)) {
             $this->trigger($name, $event);
         }
+
         return $event->isValid;
     }
 
-    public function isConsistent () {
+    public function isConsistent()
+    {
         $new       = $this->first->getIsNewRecord();
         $className = $this->first->className();
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
-            if ($new != $model->getIsNewRecord() || $className != $model->className()) {
+            if ($new !== $model->getIsNewRecord() || $className !== $model->className()) {
                 return false;
             }
         }
@@ -563,8 +604,8 @@ class Collection extends Component
         return true;
     }
 
-    public function isEmpty () {
+    public function isEmpty()
+    {
         return empty($this->models);
     }
-
 }
