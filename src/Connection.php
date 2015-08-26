@@ -11,7 +11,6 @@
 
 namespace hiqdev\hiart;
 
-use common\components\Err;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -41,10 +40,10 @@ class Connection extends Component
     private function _getAuth()
     {
         $res = [];
-        if (\Yii::$app->user->identity) {
-            $res['access_token'] = \Yii::$app->user->identity->getAccessToken();
+        if (Yii::$app->user->identity) {
+            $res['access_token'] = Yii::$app->user->identity->getAccessToken();
         } else {
-            \Yii::$app->user->loginRequired();
+            Yii::$app->user->loginRequired();
         }
 
         return $res;
@@ -265,7 +264,7 @@ class Connection extends Component
     protected function httpRequest($method, $url, $requestBody = null, $raw = false)
     {
         $this->auth = [
-            'access_token' => \Yii::$app->user->identity->getAccessToken(),
+            'access_token' => Yii::$app->user->identity->getAccessToken(),
         ];
         $method = strtoupper($method);
         // response body and headers
@@ -416,6 +415,11 @@ class Connection extends Component
     }
 
     /**
+     * Callback to test if API response has error.
+     */
+    public $errorChecker;
+
+    /**
      * @param array  $response response data from API
      * @param string $url      request URL
      * @param array  $options  request data
@@ -426,8 +430,9 @@ class Connection extends Component
      */
     protected function checkResponse($response, $url, $options)
     {
-        if (Err::is($response)) {
-            throw new ErrorResponseException(Err::get($response), [
+        $error = call_user_func($this->errorChecker, $response);
+        if ($error) {
+            throw new ErrorResponseException($error, [
                 'requestUrl' => $url,
                 'request'    => $options,
                 'response'   => $response,
