@@ -1,18 +1,22 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
 use yii\debug\Panel;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\log\Logger;
-use yii\helpers\Html;
 use yii\web\View;
 
 /**
@@ -22,8 +26,8 @@ class DebugPanel extends Panel
 {
     public $db = 'hiresource';
 
-
-    public function init () {
+    public function init()
+    {
         $this->actions['hiresource-query'] = [
             'class' => 'hiqdev\\hiart\\DebugAction',
             'panel' => $this,
@@ -32,16 +36,18 @@ class DebugPanel extends Panel
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getName () {
+    public function getName()
+    {
         return 'HiActiveResource';
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getSummary () {
+    public function getSummary()
+    {
         $timings    = $this->calculateTimings();
         $queryCount = count($timings);
         $queryTime  = 0;
@@ -62,9 +68,10 @@ HTML;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getDetail () {
+    public function getDetail()
+    {
         $timings = $this->calculateTimings();
         ArrayHelper::multisort($timings, 3, SORT_DESC);
         $rows = [];
@@ -72,7 +79,7 @@ HTML;
         // Try to get API URL
         try {
             $hiresource = \Yii::$app->get('hiresource');
-            $apiUrl = (StringHelper::endsWith($hiresource->config['api_url'], '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
+            $apiUrl     = (StringHelper::endsWith($hiresource->config['api_url'], '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
         } catch (\yii\base\InvalidConfigException $e) {
             // Pass
         }
@@ -80,7 +87,7 @@ HTML;
             $duration = sprintf('%.1f ms', $timing[3] * 1000);
             $message  = $timing[1];
             $traces   = $timing[4];
-            if (($pos = mb_strpos($message, "#")) !== false) {
+            if (($pos = mb_strpos($message, '#')) !== false) {
                 $url  = mb_substr($message, 0, $pos);
                 $body = mb_substr($message, $pos + 1);
             } else {
@@ -99,10 +106,10 @@ HTML;
             $ajaxUrl = Url::to(['hiresource-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
                     'class' => 'hiart-link',
-                    'data'  => ['id' => $i]
+                    'data'  => ['id' => $i],
                 ]) . '<br/>';
             $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ',  ' ' . $apiUrl, $url) : $url);
-            $rows[]  = <<<HTML
+            $rows[]      = <<<HTML
 <tr>
     <td style="width: 10%;">$duration</td>
     <td style="width: 75%;"><div><b>$url_encoded</b><br/><p>$body</p>$traceString</div></td>
@@ -112,7 +119,7 @@ HTML;
     <td class="time"></td><td colspan="3" class="result"></td>
 </tr>
 HTML;
-            $i++;
+            ++$i;
         }
         $rows = implode("\n", $rows);
 
@@ -180,7 +187,6 @@ $('.hiart-link').on('click', function (event) {
 JS
             , View::POS_READY);
 
-
         return <<<HTML
 <h1>HiResource Queries</h1>
 
@@ -201,7 +207,8 @@ HTML;
 
     private $_timings;
 
-    public function calculateTimings () {
+    public function calculateTimings()
+    {
         if ($this->_timings !== null) {
             return $this->_timings;
         }
@@ -210,10 +217,10 @@ HTML;
         $stack    = [];
         foreach ($messages as $i => $log) {
             list($token, $level, $category, $timestamp) = $log;
-            $log[5] = $i;
-            if ($level == Logger::LEVEL_PROFILE_BEGIN) {
+            $log[5]                                     = $i;
+            if ($level === Logger::LEVEL_PROFILE_BEGIN) {
                 $stack[] = $log;
-            } elseif ($level == Logger::LEVEL_PROFILE_END) {
+            } elseif ($level === Logger::LEVEL_PROFILE_END) {
                 if (($last = array_pop($stack)) !== null && $last[0] === $token) {
                     $timings[$last[5]] = [count($stack), $token, $last[3], $timestamp - $last[3], $last[4]];
                 }
@@ -231,9 +238,10 @@ HTML;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function save () {
+    public function save()
+    {
         $target   = $this->module->logTarget;
         $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, ['hiqdev\hiart\Connection::httpRequest']);
 

@@ -1,13 +1,16 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use common\components\Err;
 use hipanel\base\Re;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
@@ -24,14 +27,14 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     const EVENT_INIT = 'init';
 
-
     /**
      * Constructor.
      *
      * @param array $modelClass the model class associated with this query
-     * @param array $config configurations to be applied to the newly created query object
+     * @param array $config     configurations to be applied to the newly created query object
      */
-    public function __construct ($modelClass, $config = []) {
+    public function __construct($modelClass, $config = [])
+    {
         $this->modelClass = $modelClass;
         parent::__construct($config);
     }
@@ -42,7 +45,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * an [[EVENT_INIT]] event. If you override this method, make sure you call the parent implementation at the end
      * to ensure triggering of the event.
      */
-    public function init () {
+    public function init()
+    {
         parent::init();
         $this->trigger(self::EVENT_INIT);
     }
@@ -51,10 +55,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Creates a DB command that can be used to execute this query.
      *
      * @param Connection $db the DB connection used to create the DB command.
-     * If null, the DB connection returned by [[modelClass]] will be used.
+     *                       If null, the DB connection returned by [[modelClass]] will be used.
+     *
      * @return Command the created DB command instance.
      */
-    public function createCommand ($db = null) {
+    public function createCommand($db = null)
+    {
         if ($this->primaryModel !== null) {
             // lazy loading
             if (is_array($this->via)) {
@@ -89,7 +95,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->type  = $modelClass::type();
         }
 
-
         $commandConfig = $db->getQueryBuilder()->build($this);
 
         return $db->createCommand($commandConfig);
@@ -99,10 +104,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Executes query and returns all results as an array.
      *
      * @param Connection $db the DB connection used to create the DB command.
-     * If null, the DB connection returned by [[modelClass]] will be used.
+     *                       If null, the DB connection returned by [[modelClass]] will be used.
+     *
      * @return array the query results. If the query results in nothing, an empty array will be returned.
      */
-    public function all ($db = null) {
+    public function all($db = null)
+    {
         if ($this->asArray) {
             // TODO implement with
             return parent::all($db);
@@ -130,16 +137,18 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Executes query and returns a single row of result.
      *
      * @param Connection $db the DB connection used to create the DB command.
-     * If null, the DB connection returned by [[modelClass]] will be used.
+     *                       If null, the DB connection returned by [[modelClass]] will be used.
+     *
      * @return ActiveRecord|array|null a single row of query result. Depending on the setting of [[asArray]],
-     * the query result may be either an array or an ActiveRecord object. Null will be returned
-     * if the query results in nothing.
+     *                                 the query result may be either an array or an ActiveRecord object. Null will be returned
+     *                                 if the query results in nothing.
      */
-    public function one ($db = null) {
-//        $result = $this->createCommand($db)->get();
+    public function one($db = null)
+    {
+        //        $result = $this->createCommand($db)->get();
 
         if (($result = parent::one($db)) === false) {
-            return null;
+            return;
         }
         if ($this->asArray) {
             // TODO implement with()
@@ -174,9 +183,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function search ($db = null, $options = []) {
+    public function search($db = null, $options = [])
+    {
         $result = $this->createCommand($db)->search($options);
         // TODO implement with() for asArray
         if (!empty($result) && !$this->asArray) {
@@ -194,10 +204,11 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function column ($field, $db = null) {
-        if ($field == '_id') {
+    public function column($field, $db = null)
+    {
+        if ($field === '_id') {
             $command                        = $this->createCommand($db);
             $command->queryParts['fields']  = [];
             $command->queryParts['_source'] = false;
@@ -216,7 +227,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return parent::column($field, $db);
     }
 
-    public function getList ($as_array = true, $db = null, $options = []) {
+    public function getList($as_array = true, $db = null, $options = [])
+    {
         $rawResult = $this->createCommand($db)->getList($options);
         foreach ($rawResult as $k => $v) {
             $result[] = ['gl_key' => $k, 'gl_value' => $v];

@@ -1,17 +1,22 @@
 <?php
-/**
- * @link http://hiqdev.com/yii2-hiart
- * @copyright Copyright (c) 2015 HiQDev
- * @license http://hiqdev.com/yii2-hiart/license
+
+/*
+ * Tools to use API as ActiveRecord for Yii2
+ *
+ * @link      https://github.com/hiqdev/yii2-hiart
+ * @package   yii2-hiart
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
  */
+
 namespace hiqdev\hiart;
 
+use Yii;
 use yii\base\Action;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
 use yii\web\Response;
-use Yii;
 
 /**
  * Debug Action is used by [[DebugPanel]] to perform HiActiveResource queries using ajax.
@@ -31,10 +36,8 @@ class DebugAction extends Action
      */
     public $controller;
 
-
     public function run($logId, $tag)
     {
-
         $this->controller->loadData($tag);
 
         $timings = $this->panel->calculateTimings();
@@ -43,27 +46,27 @@ class DebugAction extends Action
             throw new HttpException(404, 'Log message not found.');
         }
         $message = $timings[$logId][1];
-        if (($pos = mb_strpos($message, "#")) !== false) {
-            $url = mb_substr($message, 0, $pos);
+        if (($pos = mb_strpos($message, '#')) !== false) {
+            $url  = mb_substr($message, 0, $pos);
             $body = mb_substr($message, $pos + 1);
         } else {
-            $url = $message;
+            $url  = $message;
             $body = null;
         }
         $method = mb_substr($url, 0, $pos = mb_strpos($url, ' '));
-        $url = mb_substr($url, $pos + 1);
+        $url    = mb_substr($url, $pos + 1);
 
         $options = ['pretty' => true];
 
         /* @var $db Connection */
-        $db = \Yii::$app->get($this->db);
+        $db   = \Yii::$app->get($this->db);
         $time = microtime(true);
         switch ($method) {
-            case 'GET': $result = $db->get($url, $options, $body, true); break;
-            case 'POST': $result = $db->post($url, $options, $body, true); break;
-            case 'PUT': $result = $db->put($url, $options, $body, true); break;
+            case 'GET': $result    = $db->get($url, $options, $body, true); break;
+            case 'POST': $result   = $db->post($url, $options, $body, true); break;
+            case 'PUT': $result    = $db->put($url, $options, $body, true); break;
             case 'DELETE': $result = $db->delete($url, $options, $body, true); break;
-            case 'HEAD': $result = $db->head($url, $options, $body); break;
+            case 'HEAD': $result   = $db->head($url, $options, $body); break;
             default:
                 throw new NotSupportedException("Request method '$method' is not supported by elasticsearch.");
         }
@@ -78,7 +81,7 @@ class DebugAction extends Action
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'time' => sprintf('%.1f ms', $time * 1000),
+            'time'   => sprintf('%.1f ms', $time * 1000),
             'result' => $result,
         ];
     }

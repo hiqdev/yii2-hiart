@@ -7,6 +7,7 @@ hiqdev/yii2-hiart commits history
     - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
 - Changed: moved to src
     - 1218ec5 2015-08-26 fixed project description (sol@hiqdev.com)
+    - fb39db4 2015-08-26 php-cs-fixed (sol@hiqdev.com)
     - f8ece0b 2015-08-26 moved to src (sol@hiqdev.com)
     - f63b354 2015-08-26 rehideved (sol@hiqdev.com)
 - Added basics
