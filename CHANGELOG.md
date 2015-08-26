@@ -4,6 +4,7 @@ hiqdev/yii2-hiart changelog
 ## Under development
 
 - Fixed PHP warnings
+- Changed: moved to src
 - Added basics
 - Changed: renamed to hiart
 

@@ -5,9 +5,11 @@ hiqdev/yii2-hiart commits history
 
 - Fixed PHP warnings
     - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
-- Added basics
+- Changed: moved to src
+    - 1218ec5 2015-08-26 fixed project description (sol@hiqdev.com)
     - f8ece0b 2015-08-26 moved to src (sol@hiqdev.com)
     - f63b354 2015-08-26 rehideved (sol@hiqdev.com)
+- Added basics
     - e534bea 2015-08-25 Added Connection (d.naumenko.a@gmail.com)
     - 93c054e 2015-08-25 Added ErrorResponseException, HiResException~>HiArtException, added global checking of error responses, other minor (d.naumenko.a@gmail.com)
     - 3d87c1a 2015-08-19 Fixed QueryBuiled in condition - force type casting to array (d.naumenko.a@gmail.com)
