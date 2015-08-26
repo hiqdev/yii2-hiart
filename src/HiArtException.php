@@ -18,6 +18,6 @@ class HiArtException extends \yii\db\Exception
      */
     public function getName()
     {
-        return 'HiPanel active record exception';
+        return 'HiArt active record exception';
     }
 }
