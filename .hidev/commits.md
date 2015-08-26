@@ -4,6 +4,7 @@ hiqdev/yii2-hiart commits history
 ## Under development
 
 - Added basics
+    - f63b354 2015-08-26 rehideved (sol@hiqdev.com)
     - e534bea 2015-08-25 Added Connection (d.naumenko.a@gmail.com)
     - 93c054e 2015-08-25 Added ErrorResponseException, HiResException~>HiArtException, added global checking of error responses, other minor (d.naumenko.a@gmail.com)
     - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
