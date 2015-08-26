@@ -1,7 +1,11 @@
 hiqdev/yii2-hiart commits history
 ---------------------------------
 
-## Under development
+## 0.0.2 Under development
+
+- TODO: Remove hipanel\base\Re::l use
+
+## 0.0.1 2015-08-26
 
 - Added Connection::errorChecker callback to test if API response was error
     - 2913e20 2015-08-26 + Connection::errorChecker callback to test if API response was error (sol@hiqdev.com)
