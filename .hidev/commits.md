@@ -3,6 +3,8 @@ hiqdev/yii2-hiart commits history
 
 ## Under development
 
+- Added Connection::errorChecker callback to test if API response was error
+    - 2913e20 2015-08-26 + Connection::errorChecker callback to test if API response was error (sol@hiqdev.com)
 - Fixed PHP warnings
     - 161858f 2015-08-25 Fix warnings (andreyklochok@gmail.com)
 - Changed: moved to src
