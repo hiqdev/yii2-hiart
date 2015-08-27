@@ -4,6 +4,8 @@ hiqdev/yii2-hiart commits history
 ## 0.0.2 Under development
 
 - TODO: Remove hipanel\base\Re::l use
+- Fixed PHP warnings
+    - b89f0c8 2015-08-27 fixed PHP warning (sol@hiqdev.com)
 
 ## 0.0.1 2015-08-26
 
