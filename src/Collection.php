@@ -369,7 +369,7 @@ class Collection extends Component
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
-            $values            = &$data[$key];
+            $values            = array_key_exists($key, $data) ? $data[$key] : $data[$model->id]; /// XXX not good
             foreach ($values as $name => $value) {
                 /* @var $model ActiveRecord */
                 $changedAttributes[$name] = $model->getOldAttribute($name);
