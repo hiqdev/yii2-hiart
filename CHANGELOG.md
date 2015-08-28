@@ -4,6 +4,7 @@ hiqdev/yii2-hiart changelog
 ## 0.0.2 Under development
 
 - TODO: Remove hipanel\base\Re::l use
+- Fixed 'raw' processing
 - Fixed PHP warnings
 
 ## 0.0.1 2015-08-26

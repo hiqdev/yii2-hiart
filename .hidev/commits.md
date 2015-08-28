@@ -4,6 +4,8 @@ hiqdev/yii2-hiart commits history
 ## 0.0.2 Under development
 
 - TODO: Remove hipanel\base\Re::l use
+- Fixed 'raw' processing
+    - 3a11077 2015-08-28 fixed back 'raw' processing (sol@hiqdev.com)
 - Fixed PHP warnings
     - b89f0c8 2015-08-27 fixed PHP warning (sol@hiqdev.com)
 
