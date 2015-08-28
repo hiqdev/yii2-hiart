@@ -363,12 +363,11 @@ class Connection extends Component
                         'responseBody'    => $this->decodeErrorBody($body),
                     ]);
                 }
-                if ($raw) {
+                if (isset($headers['content-type']) && !strncmp($headers['content-type'], 'application/json', 16)) {
+                    return $raw ? $body : Json::decode($body);
+                } else {
                     return $body;
-                } elseif (isset($headers['content-type']) && !strncmp($headers['content-type'], 'application/json', 16)) {
-                    return Json::decode($body);
                 }
-
                 throw new HiArtException('Unsupported data received from Hiresource: ' . $headers['content-type'], [
                     'requestUrl'      => $url,
                     'requestBody'     => $requestBody,
