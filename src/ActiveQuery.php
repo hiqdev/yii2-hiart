@@ -106,16 +106,17 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * @param Connection $db the DB connection used to create the DB command.
      *                       If null, the DB connection returned by [[modelClass]] will be used.
      *
+     * @param array $options Options that will be passed to search command
      * @return array the query results. If the query results in nothing, an empty array will be returned.
      */
-    public function all($db = null)
+    public function all($db = null, $options = [])
     {
         if ($this->asArray) {
             // TODO implement with
             return parent::all($db);
         }
 
-        $result = $this->createCommand($db)->search();
+        $result = $this->createCommand($db)->search($options);
 
         if (empty($result)) {
             return [];

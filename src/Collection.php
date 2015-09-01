@@ -206,6 +206,7 @@ class Collection extends Component
 
         if ($data === null) {
             $data = Yii::$app->request->post();
+
             if (isset($data[$this->formName])) {
                 $data = $data[$this->formName];
 
@@ -221,6 +222,7 @@ class Collection extends Component
                     $data = [$data];
                 }
             } elseif ($data['selection']) {
+                $res = [];
                 foreach ($data['selection'] as $id) {
                     $res[$id] = compact('id');
                 }
@@ -385,8 +387,6 @@ class Collection extends Component
 
     public function delete()
     {
-        \yii\helpers\VarDumper::dump(1, 10, true);
-        die();
         $result = false;
         if ($this->beforeDelete()) {
             $data    = $this->collectData();
