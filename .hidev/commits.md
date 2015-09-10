@@ -3,10 +3,12 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
-- TODO: Remove hipanel\base\Re::l use
+- Added second argument to ActiveQuery::all that will be passed to Command::search
+    - 8f703e7 2015-09-01 ActiveQuery::all - added second argument that will be passed to Command::search (d.naumenko.a@gmail.com)
 - Fixed 'raw' processing
     - 3a11077 2015-08-28 fixed back 'raw' processing (sol@hiqdev.com)
 - Fixed PHP warnings
+    - 9e108ab 2015-09-10 fixed PHP warning (sol@hiqdev.com)
     - b89f0c8 2015-08-27 fixed PHP warning (sol@hiqdev.com)
 
 ## 0.0.1 2015-08-26

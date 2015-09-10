@@ -3,7 +3,7 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
-- TODO: Remove hipanel\base\Re::l use
+- Added second argument to ActiveQuery::all that will be passed to Command::search
 - Fixed 'raw' processing
 - Fixed PHP warnings
 

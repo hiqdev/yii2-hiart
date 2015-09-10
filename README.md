@@ -5,6 +5,7 @@ Use your API as ActiveRecord
 
 [![Latest Stable Version](https://poser.pugx.org/hiqdev/yii2-hiart/v/stable.png)](https://packagist.org/packages/hiqdev/yii2-hiart)
 [![Total Downloads](https://poser.pugx.org/hiqdev/yii2-hiart/downloads.png)](https://packagist.org/packages/hiqdev/yii2-hiart)
+[![Dependency Status](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master/badge.svg)](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master)
 
 ## Installation
 
