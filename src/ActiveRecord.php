@@ -20,9 +20,6 @@ use yii\helpers\StringHelper;
 
 class ActiveRecord extends BaseActiveRecord
 {
-    public $gl_key;
-    public $gl_value;
-
     /**
      * Returns the database connection used by this AR class.
      * By default, the "hiresoruce" application component is used as the database connection.
