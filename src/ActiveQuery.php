@@ -11,7 +11,7 @@
 
 namespace hiqdev\hiart;
 
-use hipanel\base\Re;
+use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;
@@ -247,6 +247,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $result = $result ?: [];
 
 //        return $this->createCommand($db)->getList($options);
-        return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) { return Re::l($o->gl_value); }) : $result;
+        return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) { return Yii::t('app', $o->gl_value); }) : $result;
     }
 }
