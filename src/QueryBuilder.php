@@ -20,7 +20,7 @@ use yii\base\NotSupportedException;
 class QueryBuilder extends \yii\base\Object
 {
     private $_sort = [
-        SORT_ASC  => '_asc',
+        SORT_ASC => '_asc',
         SORT_DESC => '_desc',
     ];
 
@@ -57,20 +57,22 @@ class QueryBuilder extends \yii\base\Object
 
         return [
             'queryParts' => $parts,
-            'index'      => $query->index,
-            'type'       => $query->type,
-            'options'    => $options,
+            'index' => $query->index,
+            'type' => $query->type,
+            'options' => $options,
         ];
     }
 
     public function buildCondition($condition)
     {
         static $builders = [
-            'and'     => 'buildAndCondition',
+            'and' => 'buildAndCondition',
             'between' => 'buildBetweenCondition',
-            'eq'      => 'buildEqCondition',
-            'in'      => 'buildInCondition',
-            'like'    => 'buildLikeCondition',
+            'eq' => 'buildEqCondition',
+            'in' => 'buildInCondition',
+            'like' => 'buildLikeCondition',
+            'gt' => 'buildGreaterThenCondition',
+            'lt' => 'buildLessThanCondition',
         ];
         if (empty($condition)) {
             return [];
@@ -111,12 +113,27 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildLikeCondition($operator, $operands)
     {
+        return [$operands[0] . '_like' => $operands[1]];
+    }
+
+    private function buildGreaterThenCondition($operator, $operands)
+    {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires three operands.");
         }
 
-        return [$operands[0] . '_like' => $operands[1]];
+        return [$operands[0] . '_gt' => $operands[1]];
     }
+
+    private function buildLessThanCondition($operator, $operands)
+    {
+        if (!isset($operands[0], $operands[1])) {
+            throw new InvalidParamException("Operator '$operator' requires three operands.");
+        }
+
+        return [$operands[0] . '_lt' => $operands[1]];
+    }
+
 
     private function buildAndCondition($operator, $operands)
     {
@@ -140,10 +157,10 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildInCondition($operator, $operands)
     {
-        $key   = array_shift($operands);
+        $key = array_shift($operands);
         $value = array_shift($operands);
 
-        return [$key . '_in' => (array) $value];
+        return [$key . '_in' => (array)$value];
     }
 
     private function buildEqCondition($operator, $operands)
