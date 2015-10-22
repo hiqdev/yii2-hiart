@@ -64,7 +64,7 @@ class ActiveRecord extends BaseActiveRecord
      * Gets a record by its primary key.
      *
      * @param mixed $primaryKey the primaryKey value
-     * @param array $options    options given in this parameter are passed to elasticsearch
+     * @param array $options options given in this parameter are passed to elasticsearch
      *                          as request URI parameters.
      *                          Please refer to the [elasticsearch documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html)
      *                          for more details on these options.
@@ -77,7 +77,7 @@ class ActiveRecord extends BaseActiveRecord
             return;
         }
         $command = static::getDb()->createCommand();
-        $result  = $command->get(static::type(), $primaryKey, $options);
+        $result = $command->get(static::type(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -211,6 +211,53 @@ class ActiveRecord extends BaseActiveRecord
         return mb_strtolower(StringHelper::basename(get_called_class()) . 's');
     }
 
+    public static function joinIndex()
+    {
+        return static::index();
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param ActiveRecord $record the record to be populated. In most cases this will be an instance
+     * created by [[instantiate()]] beforehand.
+     * @param array $row attribute values (name => value)
+     */
+    public static function populateRecord($record, $row)
+    {
+        $arrayAttributes = array_flip($record->arrayAttributes());
+        foreach ($row as $key => $value) {
+            if (is_array($value) && !isset($arrayAttributes[$key]) && count($value) == 1) {
+                $row[$key] = reset($value);
+            }
+        }
+        $attributes = $row;
+
+        parent::populateRecord($record, $attributes);
+    }
+
+    /**
+     * Creates an active record instance.
+     *
+     * This method is called together with [[populateRecord()]] by [[ActiveQuery]].
+     * It is not meant to be used for creating new records directly.
+     *
+     * You may override this method if the instance being created
+     * depends on the row data to be populated into the record.
+     * For example, by creating a record based on the value of a column,
+     * you may implement the so-called single-table inheritance mapping.
+     * @param array $row row data to be populated into the record.
+     * This array consists of the following keys:
+     *  - `_source`: refers to the attributes of the record.
+     *  - `_type`: the type this record is stored in.
+     *  - `_index`: the index this record is stored in.
+     * @return static the newly created active record
+     */
+    public static function instantiate($row)
+    {
+        return new static;
+    }
+
     /**
      * @return string the name of the type of this record.
      */
@@ -243,11 +290,11 @@ class ActiveRecord extends BaseActiveRecord
         $values = $this->getDirtyAttributes($attributes);
 
         $command = $this->getScenarioCommand('create');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
-        $pk        = static::primaryKey()[0];
+        $pk = static::primaryKey()[0];
         $this->$pk = $result['id'];
         if ($pk !== 'id') {
             $values[$pk] = $result['id'];
@@ -266,7 +313,7 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('delete');
-        $data    = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
+        $data = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
@@ -305,9 +352,9 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('update');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
-        $result            = static::getDb()->createCommand()->perform($command, $data);
+        $result = static::getDb()->createCommand()->perform($command, $data);
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -324,7 +371,7 @@ class ActiveRecord extends BaseActiveRecord
      *
      * @param $action
      * @param array $options
-     * @param bool  $bulk
+     * @param bool $bulk
      *
      * @return array
      */
@@ -340,7 +387,7 @@ class ActiveRecord extends BaseActiveRecord
      * Creates the command name for the specified scenario name.
      *
      * @param string $default
-     * @param bool   $bulk
+     * @param bool $bulk
      *
      * @throws InvalidConfigException
      * @throws NotSupportedException
@@ -415,4 +462,27 @@ class ActiveRecord extends BaseActiveRecord
     {
         return !$this->getPrimaryKey();
     }
+
+    /**
+     * This method has no effect in Elasticsearch ActiveRecord.
+     *
+     * Elasticsearch ActiveRecord uses [native Optimistic locking](http://www.elastic.co/guide/en/elasticsearch/guide/current/optimistic-concurrency-control.html).
+     * See [[update()]] for more details.
+     */
+    public function optimisticLock()
+    {
+        return null;
+    }
+
+    /**
+     * Destroys the relationship in current model.
+     *
+     * This method is not supported by elasticsearch.
+     */
+    public function unlinkAll($name, $delete = false)
+    {
+        throw new NotSupportedException('unlinkAll() is not supported by elasticsearch, use unlink() instead.');
+    }
+
+
 }

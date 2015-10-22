@@ -20,27 +20,18 @@ class Query extends Component implements QueryInterface
 {
     use QueryTrait;
 
-    public $fields;
-
-    public $source;
-
     public $index;
 
     public $type;
 
-    public $timeout;
+    public $where;
+    public $_limit;
+    public $offset;
+    public $orderBy;
+    public $select;
+    public $join;
 
-    public $query;
 
-    public $filter;
-
-    public $highlight;
-
-    public $aggregations = [];
-
-    public $stats = [];
-
-    public $suggest = [];
 
     /**
      * {@inheritdoc}
@@ -50,7 +41,7 @@ class Query extends Component implements QueryInterface
         parent::init();
         // setting the default limit according to api defaults
         if ($this->limit === null) {
-            $this->limit = 25;
+            $this->limit = 'ALL';
         }
     }
 
@@ -63,6 +54,12 @@ class Query extends Component implements QueryInterface
         $commandConfig = $db->getQueryBuilder()->build($this);
 
         return $db->createCommand($commandConfig);
+    }
+
+    public function join($type)
+    {
+        $this->join[] = $type;
+        return $this;
     }
 
     public function all($db = null)
@@ -258,5 +255,21 @@ class Query extends Component implements QueryInterface
         $this->timeout = $timeout;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLimit()
+    {
+        return $this->_limit;
+    }
+
+    /**
+     * @param mixed $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->_limit = $limit;
     }
 }

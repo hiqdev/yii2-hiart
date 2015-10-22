@@ -56,7 +56,7 @@ class DebugAction extends Action
         $method = mb_substr($url, 0, $pos = mb_strpos($url, ' '));
         $url    = mb_substr($url, $pos + 1);
 
-        $options = ['pretty' => true];
+        parse_str($body, $options);
 
         /* @var $db Connection */
         $db   = \Yii::$app->get($this->db);

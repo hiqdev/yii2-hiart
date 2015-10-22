@@ -13,6 +13,7 @@ namespace hiqdev\hiart;
 
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
+use yii\helpers\ArrayHelper;
 
 /**
  * QueryBuilder builds an HiActiveResource query based on the specification given as a [[Query]] object.
@@ -32,28 +33,21 @@ class QueryBuilder extends \yii\base\Object
         parent::__construct($config);
     }
 
+    /**
+     * @param ActiveQuery $query
+     * @return array
+     * @throws NotSupportedException
+     */
     public function build($query)
     {
         $options = $parts = [];
-        if ($query->limit !== null && $query->limit >= 0) {
-            $parts['limit'] = $query->limit;
-        }
-        if ($query->offset > 0) {
-            $parts['page'] = ceil($query->offset / $query->limit) + 1;
-        }
-        if (!empty($query->query)) {
-            $parts['query'] = $query->limit;
-        }
+        $query->prepare();
 
-        if (!empty($query->where)) {
-            $whereFilter = $this->buildCondition($query->where);
-//            \yii\helpers\VarDumper::dump($whereFilter, 10, true);
-            $parts = array_merge($parts, $whereFilter);
-        }
+        $this->buildSelect($query->select, $parts);
+        $this->buildLimit($query->limit, $parts);
+        $this->buildPage($query->offset, $query->limit, $parts);
 
-        if (!empty($query->orderBy)) {
-            $parts['orderby'] = key($query->orderBy) . $this->_sort[reset($query->orderBy)];
-        }
+        $parts = ArrayHelper::merge($parts, $this->buildCondition($query->where));
 
         return [
             'queryParts' => $parts,
@@ -61,6 +55,32 @@ class QueryBuilder extends \yii\base\Object
             'type' => $query->type,
             'options' => $options,
         ];
+    }
+
+    public function buildLimit ($limit, &$parts) {
+        if (!empty($limit)) {
+            $parts['limit'] = $limit;
+        }
+    }
+
+    public function buildPage ($offset, $limit, &$parts) {
+        if ($offset > 0) {
+            $parts['page'] = ceil($offset / $limit) + 1;
+        }
+    }
+
+    public function buildOrderBy ($orderBy, &$parts) {
+        if (!empty($orderBy)) {
+            $parts['orderby'] = key($orderBy) . $this->_sort[reset($orderBy)];
+        }
+    }
+
+    public function buildSelect ($select, &$parts) {
+        if (!empty($select)) {
+            foreach ($select as $attribute) {
+                $parts['select'][$attribute] = $attribute;
+            }
+        }
     }
 
     public function buildCondition($condition)
@@ -157,10 +177,28 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildInCondition($operator, $operands)
     {
-        $key = array_shift($operands);
-        $value = array_shift($operands);
+        if (!isset($operands[0], $operands[1])) {
+            throw new InvalidParamException("Operator '$operator' requires two operands.");
+        }
 
-        return [$key . '_in' => (array)$value];
+        list($column, $values) = $operands;
+
+        if (count($column) > 1) {
+            return $this->buildCompositeInCondition($operator, $column, $values);
+        } elseif (is_array($column)) {
+            $column = reset($column);
+        }
+
+        foreach ((array) $values as $i => $value) {
+            if (is_array($value)) {
+                $values[$i] = $value = isset($value[$column]) ? $value[$column] : null;
+            }
+            if ($value === null) {
+                unset($values[$i]);
+            }
+        }
+
+        return [$column . '_in' => $values];
     }
 
     private function buildEqCondition($operator, $operands)
