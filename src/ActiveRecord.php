@@ -13,6 +13,7 @@ namespace hiqdev\hiart;
 
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
+use yii\db\ActiveQueryInterface;
 use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
@@ -484,5 +485,13 @@ class ActiveRecord extends BaseActiveRecord
         throw new NotSupportedException('unlinkAll() is not supported by elasticsearch, use unlink() instead.');
     }
 
-
+    /**
+     * {@inheritdoc}
+     * @return ActiveQueryInterface|ActiveQuery the relational query object. If the relation does not exist
+     * and `$throwException` is false, null will be returned.
+     */
+    public function getRelation($name, $throwException = true)
+    {
+        return parent::getRelation($name, $throwException);
+    }
 }

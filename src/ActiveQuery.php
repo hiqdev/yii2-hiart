@@ -245,33 +245,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                     $model = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
-                    foreach ($row as $key => $value) {
-                        if (!is_array($value) || $model->hasAttribute($key)) continue;
-                        foreach ($this->join as $name) {
-                            if ($model->isRelationPopulated($name)) continue 2;
-                            $records = [];
-                            $relation = $model->getRelation($name);
-                            $relationClass = $relation->modelClass;
-
-                            if ($relation->multiple) {
-                                foreach ($value as $item) {
-                                    $relationModel = $relationClass::instantiate($item);
-                                    $relationModelClass = get_class($relationModel);
-                                    $relationModelClass::populateRecord($relationModel, $item);
-
-                                    $records[] = $relationModel;
-                                }
-                            } else {
-                                $relationModel = $relationClass::instantiate($value);
-                                $relationModelClass = get_class($relationModel);
-                                $relationModelClass::populateRecord($relationModel, $value);
-
-                                $records = $relationModel;
-                            }
-
-                            $model->populateRelation($name, $records);
-                        }
-                    }
+                    $this->populateJoinedRelations($model, $row);
                     $models[] = $model;
                 }
             } else {
@@ -290,6 +264,42 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
 
         return $models;
+    }
+
+    /**
+     * Populates joined relations from [[join]] array.
+     *
+     * @param ActiveRecord $model
+     * @param array $row
+     */
+    public function populateJoinedRelations($model, array $row) {
+        foreach ($row as $key => $value) {
+            if (!is_array($value) || $model->hasAttribute($key)) continue;
+            foreach ($this->join as $name) {
+                if ($model->isRelationPopulated($name)) continue 2;
+                $records = [];
+                $relation = $model->getRelation($name);
+                $relationClass = $relation->modelClass;
+
+                if ($relation->multiple) {
+                    foreach ($value as $item) {
+                        $relationModel = $relationClass::instantiate($item);
+                        $relationModelClass = get_class($relationModel);
+                        $relationModelClass::populateRecord($relationModel, $item);
+                        $relation->populateJoinedRelations($relationModel, $item);
+                        $records[] = $relationModel;
+                    }
+                } else {
+                    $relationModel = $relationClass::instantiate($value);
+                    $relationModelClass = get_class($relationModel);
+                    $relationModelClass::populateRecord($relationModel, $value);
+                    $relation->populateJoinedRelations($relationModel, $value);
+                    $records = $relationModel;
+                }
+
+                $model->populateRelation($name, $records);
+            }
+        }
     }
 
     /**
