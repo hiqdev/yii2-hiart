@@ -3,6 +3,10 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Added recursive joining
+    - 7bf29fe 2015-10-23  + ActiveQuery added recusion population of joined relation (d.naumenko.a@gmail.com)
+- Changed default limit to ALL
+    - 2eb1a29 2015-10-22  + Implemented relations population using `with`, `joinWith`  * Changed default limit to ALL :!: (d.naumenko.a@gmail.com)
 - Added lt/gt to QueryBuilder
     - 1445eb0 2015-10-25 php-cs-fixed (sol@hiqdev.com)
     - 86796b5 2015-10-08 QueryBuilder - added lt, gt condition handling (d.naumenko.a@gmail.com)

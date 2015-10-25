@@ -3,6 +3,8 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Added recursive joining
+- Changed default limit to ALL
 - Added lt/gt to QueryBuilder
 - Fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
 - Removed gl_key, gl_value
