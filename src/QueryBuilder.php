@@ -6,7 +6,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
+ * @copyright Copyright (c) 2015, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -20,7 +20,7 @@ use yii\base\NotSupportedException;
 class QueryBuilder extends \yii\base\Object
 {
     private $_sort = [
-        SORT_ASC => '_asc',
+        SORT_ASC  => '_asc',
         SORT_DESC => '_desc',
     ];
 
@@ -57,22 +57,22 @@ class QueryBuilder extends \yii\base\Object
 
         return [
             'queryParts' => $parts,
-            'index' => $query->index,
-            'type' => $query->type,
-            'options' => $options,
+            'index'      => $query->index,
+            'type'       => $query->type,
+            'options'    => $options,
         ];
     }
 
     public function buildCondition($condition)
     {
         static $builders = [
-            'and' => 'buildAndCondition',
+            'and'     => 'buildAndCondition',
             'between' => 'buildBetweenCondition',
-            'eq' => 'buildEqCondition',
-            'in' => 'buildInCondition',
-            'like' => 'buildLikeCondition',
-            'gt' => 'buildGreaterThenCondition',
-            'lt' => 'buildLessThanCondition',
+            'eq'      => 'buildEqCondition',
+            'in'      => 'buildInCondition',
+            'like'    => 'buildLikeCondition',
+            'gt'      => 'buildGreaterThenCondition',
+            'lt'      => 'buildLessThanCondition',
         ];
         if (empty($condition)) {
             return [];
@@ -134,7 +134,6 @@ class QueryBuilder extends \yii\base\Object
         return [$operands[0] . '_lt' => $operands[1]];
     }
 
-
     private function buildAndCondition($operator, $operands)
     {
         $parts = [];
@@ -157,10 +156,10 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildInCondition($operator, $operands)
     {
-        $key = array_shift($operands);
+        $key   = array_shift($operands);
         $value = array_shift($operands);
 
-        return [$key . '_in' => (array)$value];
+        return [$key . '_in' => (array) $value];
     }
 
     private function buildEqCondition($operator, $operands)

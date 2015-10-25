@@ -6,7 +6,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015, HiQDev (https://hiqdev.com/)
+ * @copyright Copyright (c) 2015, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -103,10 +103,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * Executes query and returns all results as an array.
      *
-     * @param Connection $db the DB connection used to create the DB command.
-     *                       If null, the DB connection returned by [[modelClass]] will be used.
+     * @param Connection $db      the DB connection used to create the DB command.
+     *                            If null, the DB connection returned by [[modelClass]] will be used.
+     * @param array      $options Options that will be passed to search command
      *
-     * @param array $options Options that will be passed to search command
      * @return array the query results. If the query results in nothing, an empty array will be returned.
      */
     public function all($db = null, $options = [])
