@@ -125,7 +125,7 @@ class Connection extends Component
      */
     public function get($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url, $options), $body, $raw);
+        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options), $raw);
 
         return $this->checkResponse($result, $url, $options);
     }
@@ -144,7 +144,7 @@ class Connection extends Component
      */
     public function head($url, $options = [], $body = null)
     {
-        $result = $this->httpRequest('HEAD', $this->createUrl($url, $options), $body);
+        $result = $this->httpRequest('HEAD', $this->createUrl($url), http_build_query($options));
 
         return $this->checkResponse($result, $url, $options);
     }
@@ -164,7 +164,7 @@ class Connection extends Component
      */
     public function post($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url, $options), $body, $raw);
+        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options), $raw);
 
         return $this->checkResponse($result, $url, $options);
     }
@@ -184,7 +184,7 @@ class Connection extends Component
      */
     public function put($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url, $options), $body, $raw);
+        $result = $this->httpRequest('PUT', $this->createUrl($url), http_build_query($options), $raw);
 
         return $this->checkResponse($result, $url, $options);
     }
@@ -204,7 +204,7 @@ class Connection extends Component
      */
     public function delete($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url, $options), $body, $raw);
+        $result = $this->httpRequest('DELETE', $this->createUrl($url), http_build_query($options), $raw);
 
         return $this->checkResponse($result, $url, $options);
     }
@@ -217,7 +217,7 @@ class Connection extends Component
      */
     public function perform($url, $options = [])
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url, $options));
+        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options));
 
         return $this->checkResponse($result, $url, $options);
     }

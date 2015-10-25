@@ -56,7 +56,7 @@ class Command extends Component
         $options = array_merge($query, $options);
         $url     = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
 
-        $result = $this->db->get($url, $options);
+        $result = $this->db->post($url, $options);
 
         return $result;
     }
@@ -65,7 +65,7 @@ class Command extends Component
     {
         $options = array_merge($this->queryParts, $options);
         $command = $this->index . 'GetList';
-        $result  = $this->db->get($command, $options);
+        $result  = $this->db->post($command, $options);
 
         return $result;
     }
@@ -83,14 +83,14 @@ class Command extends Component
 
     public function get($modelName, $primaryKey, $options)
     {
-        return $this->db->get($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
+        return $this->db->post($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
     }
 
     public function mget($index, $type, $ids, $options = [])
     {
         $body = Json::encode(['ids' => array_values($ids)]);
 
-        return $this->db->get([$index, $type, '_mget'], $options, $body);
+        return $this->db->post([$index, $type, '_mget'], $options, $body);
     }
 
     public function exists($index, $type, $id)

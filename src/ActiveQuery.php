@@ -12,6 +12,7 @@
 namespace hiqdev\hiart;
 
 use Yii;
+use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;
@@ -19,7 +20,10 @@ use yii\helpers\ArrayHelper;
 
 class ActiveQuery extends Query implements ActiveQueryInterface
 {
-    use ActiveQueryTrait;
+    use ActiveQueryTrait {
+        createModels as defaultCreateModels;
+    }
+
     use ActiveRelationTrait;
 
     /**
@@ -28,14 +32,20 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     const EVENT_INIT = 'init';
 
     /**
+     * @var array a list of relations that this query should be joined with
+     */
+    public $joinWith = [];
+
+    /**
      * Constructor.
      *
      * @param array $modelClass the model class associated with this query
-     * @param array $config     configurations to be applied to the newly created query object
+     * @param array $config configurations to be applied to the newly created query object
      */
     public function __construct($modelClass, $config = [])
     {
         $this->modelClass = $modelClass;
+
         parent::__construct($config);
     }
 
@@ -92,12 +102,91 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
         if ($this->index === null) {
             $this->index = $modelClass::index();
-            $this->type  = $modelClass::type();
+            $this->type = $modelClass::type();
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
 
         return $db->createCommand($commandConfig);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function prepare()
+    {
+        // NOTE: because the same ActiveQuery may be used to build different SQL statements
+        // (e.g. by ActiveDataProvider, one for count query, the other for row data query,
+        // it is important to make sure the same ActiveQuery can be used to build SQL statements
+        // multiple times.
+        if (!empty($this->joinWith)) {
+            $this->buildJoinWith();
+            $this->joinWith = null;
+        }
+    }
+
+    public function joinWith($with)
+    {
+        $this->joinWith[] = [(array)$with, true];
+
+        return $this;
+    }
+
+    private function buildJoinWith()
+    {
+        $join = $this->join;
+
+        $this->join = [];
+
+        foreach ($this->joinWith as $config) {
+            list ($with, $eagerLoading) = $config;
+
+            foreach ($with as $name => $callback) {
+                if (is_int($name)) {
+                    $this->join($callback);
+                    unset($with[$name]);
+                } else {
+                    throw new NotSupportedException('joinWith() using query modification is not supported, use with() instead.');
+                }
+            }
+        }
+
+        // remove duplicated joins added by joinWithRelations that may be added
+        // e.g. when joining a relation and a via relation at the same time
+        $uniqueJoins = [];
+        foreach ($this->join as $j) {
+            $uniqueJoins[serialize($j)] = $j;
+        }
+        $this->join = array_values($uniqueJoins);
+
+        if (!empty($join)) {
+            // append explicit join to joinWith()
+            // https://github.com/yiisoft/yii2/issues/2880
+            $this->join = empty($this->join) ? $join : array_merge($this->join, $join);
+        }
+
+        if (empty($this->select)) {
+            $this->addSelect(['*' => '*']);
+            foreach ($this->joinWith as $join) {
+                $this->addSelect(reset($join));
+            }
+        }
+    }
+
+    public function select($columns)
+    {
+        $this->select = $columns;
+        return $this;
+    }
+
+    public function addSelect($columns)
+    {
+        if ($this->select === null) {
+            $this->select = $columns;
+        } else {
+            $this->select = array_merge($this->select, $columns);
+        }
+        return $this;
     }
 
     /**
@@ -123,7 +212,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
 
         $models = $this->createModels($result);
-
         if (!empty($this->with)) {
             $this->findWith($this->with, $models);
         }
@@ -132,6 +220,86 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
 
         return $models;
+    }
+
+    private function createModels($rows)
+    {
+        $models = [];
+        if ($this->asArray) {
+            if ($this->indexBy === null) {
+                return $rows;
+            }
+            foreach ($rows as $row) {
+                if (is_string($this->indexBy)) {
+                    $key = $row[$this->indexBy];
+                } else {
+                    $key = call_user_func($this->indexBy, $row);
+                }
+                $models[$key] = $row;
+            }
+        } else {
+            /* @var $class ActiveRecord */
+            $class = $this->modelClass;
+            if ($this->indexBy === null) {
+                foreach ($rows as $row) {
+                    $model = $class::instantiate($row);
+                    $modelClass = get_class($model);
+                    $modelClass::populateRecord($model, $row);
+                    $this->populateJoinedRelations($model, $row);
+                    $models[] = $model;
+                }
+            } else {
+                foreach ($rows as $row) {
+                    $model = $class::instantiate($row);
+                    $modelClass = get_class($model);
+                    $modelClass::populateRecord($model, $row);
+                    if (is_string($this->indexBy)) {
+                        $key = $model->{$this->indexBy};
+                    } else {
+                        $key = call_user_func($this->indexBy, $model);
+                    }
+                    $models[$key] = $model;
+                }
+            }
+        }
+
+        return $models;
+    }
+
+    /**
+     * Populates joined relations from [[join]] array.
+     *
+     * @param ActiveRecord $model
+     * @param array $row
+     */
+    public function populateJoinedRelations($model, array $row) {
+        foreach ($row as $key => $value) {
+            if (!is_array($value) || $model->hasAttribute($key)) continue;
+            foreach ($this->join as $name) {
+                if ($model->isRelationPopulated($name)) continue 2;
+                $records = [];
+                $relation = $model->getRelation($name);
+                $relationClass = $relation->modelClass;
+
+                if ($relation->multiple) {
+                    foreach ($value as $item) {
+                        $relationModel = $relationClass::instantiate($item);
+                        $relationModelClass = get_class($relationModel);
+                        $relationModelClass::populateRecord($relationModel, $item);
+                        $relation->populateJoinedRelations($relationModel, $item);
+                        $records[] = $relationModel;
+                    }
+                } else {
+                    $relationModel = $relationClass::instantiate($value);
+                    $relationModelClass = get_class($relationModel);
+                    $relationModelClass::populateRecord($relationModel, $value);
+                    $relation->populateJoinedRelations($relationModel, $value);
+                    $records = $relationModel;
+                }
+
+                $model->populateRelation($name, $records);
+            }
+        }
     }
 
     /**
@@ -210,10 +378,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function column($field, $db = null)
     {
         if ($field === '_id') {
-            $command                        = $this->createCommand($db);
-            $command->queryParts['fields']  = [];
+            $command = $this->createCommand($db);
+            $command->queryParts['fields'] = [];
             $command->queryParts['_source'] = false;
-            $result                         = $command->search();
+            $result = $command->search();
             if (empty($result['hits']['hits'])) {
                 return [];
             }
@@ -247,6 +415,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $result = $result ?: [];
 
 //        return $this->createCommand($db)->getList($options);
-        return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) { return Yii::t('app', $o->gl_value); }) : $result;
+        return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) {
+            return Yii::t('app', $o->gl_value);
+        }) : $result;
     }
 }
