@@ -15,14 +15,14 @@
         "source": "https://github.com/hiqdev/yii2-hiart",
         "issues": "https://github.com/hiqdev/yii2-hiart/issues",
         "wiki": "https://github.com/hiqdev/yii2-hiart/wiki",
-        "forum": "https://forum.hiqdev.com/yii2"
+        "forum": "http://forum.hiqdev.com/yii2"
     },
     "authors": [
         {
             "name": "Andrii Vasyliev",
             "role": "Project lead",
             "email": "sol@hiqdev.com",
-            "homepage": "https://hipanel.com/"
+            "homepage": "http://hipanel.com/"
         },
         {
             "name": "Dmitry Naumenko",
@@ -34,13 +34,13 @@
             "name": "Andrey Klochok",
             "role": "Lead frontend developer",
             "email": "tafid@hiqdev.com",
-            "homepage": "https://hiqdev.com/"
+            "homepage": "http://hiqdev.com/"
         },
         {
             "name": "Yuriy Myronchuk",
             "role": "QA Lead",
             "email": "bladeroot@hiqdev.com",
-            "homepage": "https://hiqdev.com/"
+            "homepage": "http://hiqdev.com/"
         }
     ],
     "require": {

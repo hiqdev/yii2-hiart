@@ -3,6 +3,12 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Added lt/gt to QueryBuilder
+    - 86796b5 2015-10-08 QueryBuilder - added lt, gt condition handling (d.naumenko.a@gmail.com)
+- Fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
+    - d286a03 2015-09-21 fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
+- Removed gl_key, gl_value
+    - e60f2da 2015-09-14 ActiveRecord - removed gl_key, gl_value (d.naumenko.a@gmail.com)
 - Added second argument to ActiveQuery::all that will be passed to Command::search
     - 8f703e7 2015-09-01 ActiveQuery::all - added second argument that will be passed to Command::search (d.naumenko.a@gmail.com)
 - Fixed 'raw' processing

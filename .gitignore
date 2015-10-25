@@ -4,8 +4,10 @@ vendor
 # composer lock files
 composer.lock
 
-# hidev composer.json
+# hidev internals
 .hidev/composer.json
+.hidev/composer.lock
+.hidev/vendor
 
 # IDE & OS files
 .*.swp
