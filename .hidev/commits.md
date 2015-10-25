@@ -4,6 +4,7 @@ hiqdev/yii2-hiart commits history
 ## 0.0.2 Under development
 
 - Added lt/gt to QueryBuilder
+    - 1445eb0 2015-10-25 php-cs-fixed (sol@hiqdev.com)
     - 86796b5 2015-10-08 QueryBuilder - added lt, gt condition handling (d.naumenko.a@gmail.com)
 - Fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
     - d286a03 2015-09-21 fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
