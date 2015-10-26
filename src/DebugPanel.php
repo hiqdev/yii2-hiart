@@ -108,9 +108,9 @@ HTML;
                     'class' => 'hiart-link',
                     'data'  => ['id' => $i],
                 ]) . '<br/>';
-            $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ',  ' ' . $apiUrl, $url) : $url);
+            $url_encoded  = Html::encode((isset($apiUrl)) ? str_replace(' ',  ' ' . $apiUrl, $url) : $url);
             $body_encoded = Html::encode($body);
-            $rows[]      = <<<HTML
+            $rows[]       = <<<HTML
 <tr>
     <td style="width: 10%;">$duration</td>
     <td style="width: 75%;"><div><b>$url_encoded</b><br/><p>$body_encoded</p>$traceString</div></td>

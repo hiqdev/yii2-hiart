@@ -35,8 +35,10 @@ class QueryBuilder extends \yii\base\Object
 
     /**
      * @param ActiveQuery $query
-     * @return array
+     *
      * @throws NotSupportedException
+     *
+     * @return array
      */
     public function build($query)
     {
@@ -57,7 +59,8 @@ class QueryBuilder extends \yii\base\Object
         ];
     }
 
-    public function buildLimit ($limit, &$parts) {
+    public function buildLimit($limit, &$parts)
+    {
         if (!empty($limit)) {
             if ($limit == -1) {
                 $limit = 'ALL';
@@ -66,19 +69,22 @@ class QueryBuilder extends \yii\base\Object
         }
     }
 
-    public function buildPage ($offset, $limit, &$parts) {
+    public function buildPage($offset, $limit, &$parts)
+    {
         if ($offset > 0) {
             $parts['page'] = ceil($offset / $limit) + 1;
         }
     }
 
-    public function buildOrderBy ($orderBy, &$parts) {
+    public function buildOrderBy($orderBy, &$parts)
+    {
         if (!empty($orderBy)) {
             $parts['orderby'] = key($orderBy) . $this->_sort[reset($orderBy)];
         }
     }
 
-    public function buildSelect ($select, &$parts) {
+    public function buildSelect($select, &$parts)
+    {
         if (!empty($select)) {
             foreach ($select as $attribute) {
                 $parts['select'][$attribute] = $attribute;

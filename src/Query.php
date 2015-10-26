@@ -31,8 +31,6 @@ class Query extends Component implements QueryInterface
     public $select;
     public $join;
 
-
-
     /**
      * {@inheritdoc}
      */
@@ -59,6 +57,7 @@ class Query extends Component implements QueryInterface
     public function join($type)
     {
         $this->join[] = $type;
+
         return $this;
     }
 

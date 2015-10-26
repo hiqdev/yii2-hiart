@@ -40,7 +40,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Constructor.
      *
      * @param array $modelClass the model class associated with this query
-     * @param array $config configurations to be applied to the newly created query object
+     * @param array $config     configurations to be applied to the newly created query object
      */
     public function __construct($modelClass, $config = [])
     {
@@ -102,7 +102,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
         if ($this->index === null) {
             $this->index = $modelClass::index();
-            $this->type = $modelClass::type();
+            $this->type  = $modelClass::type();
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
@@ -111,7 +111,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function prepare()
     {
@@ -127,7 +127,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     public function joinWith($with)
     {
-        $this->joinWith[] = [(array)$with, true];
+        $this->joinWith[] = [(array) $with, true];
 
         return $this;
     }
@@ -139,7 +139,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $this->join = [];
 
         foreach ($this->joinWith as $config) {
-            list ($with, $eagerLoading) = $config;
+            list($with, $eagerLoading) = $config;
 
             foreach ($with as $name => $callback) {
                 if (is_int($name)) {
@@ -176,6 +176,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function select($columns)
     {
         $this->select = $columns;
+
         return $this;
     }
 
@@ -186,6 +187,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         } else {
             $this->select = array_merge($this->select, $columns);
         }
+
         return $this;
     }
 
@@ -242,7 +244,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $class = $this->modelClass;
             if ($this->indexBy === null) {
                 foreach ($rows as $row) {
-                    $model = $class::instantiate($row);
+                    $model      = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
                     $this->populateJoinedRelations($model, $row);
@@ -250,7 +252,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 }
             } else {
                 foreach ($rows as $row) {
-                    $model = $class::instantiate($row);
+                    $model      = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
                     if (is_string($this->indexBy)) {
@@ -270,27 +272,32 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Populates joined relations from [[join]] array.
      *
      * @param ActiveRecord $model
-     * @param array $row
+     * @param array        $row
      */
-    public function populateJoinedRelations($model, array $row) {
+    public function populateJoinedRelations($model, array $row)
+    {
         foreach ($row as $key => $value) {
-            if (empty($this->join) || !is_array($value) || $model->hasAttribute($key)) continue;
+            if (empty($this->join) || !is_array($value) || $model->hasAttribute($key)) {
+                continue;
+            }
             foreach ($this->join as $name) {
-                if ($model->isRelationPopulated($name)) continue 2;
-                $records = [];
-                $relation = $model->getRelation($name);
+                if ($model->isRelationPopulated($name)) {
+                    continue 2;
+                }
+                $records       = [];
+                $relation      = $model->getRelation($name);
                 $relationClass = $relation->modelClass;
 
                 if ($relation->multiple) {
                     foreach ($value as $item) {
-                        $relationModel = $relationClass::instantiate($item);
+                        $relationModel      = $relationClass::instantiate($item);
                         $relationModelClass = get_class($relationModel);
                         $relationModelClass::populateRecord($relationModel, $item);
                         $relation->populateJoinedRelations($relationModel, $item);
                         $records[] = $relationModel;
                     }
                 } else {
-                    $relationModel = $relationClass::instantiate($value);
+                    $relationModel      = $relationClass::instantiate($value);
                     $relationModelClass = get_class($relationModel);
                     $relationModelClass::populateRecord($relationModel, $value);
                     $relation->populateJoinedRelations($relationModel, $value);
@@ -378,10 +385,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function column($field, $db = null)
     {
         if ($field === '_id') {
-            $command = $this->createCommand($db);
-            $command->queryParts['fields'] = [];
+            $command                        = $this->createCommand($db);
+            $command->queryParts['fields']  = [];
             $command->queryParts['_source'] = false;
-            $result = $command->search();
+            $result                         = $command->search();
             if (empty($result['hits']['hits'])) {
                 return [];
             }

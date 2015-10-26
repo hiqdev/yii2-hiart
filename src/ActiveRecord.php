@@ -65,7 +65,7 @@ class ActiveRecord extends BaseActiveRecord
      * Gets a record by its primary key.
      *
      * @param mixed $primaryKey the primaryKey value
-     * @param array $options options given in this parameter are passed to API.
+     * @param array $options    options given in this parameter are passed to API.
      *
      * @return null|static The record instance or null if it was not found.
      */
@@ -75,7 +75,7 @@ class ActiveRecord extends BaseActiveRecord
             return;
         }
         $command = static::getDb()->createCommand();
-        $result = $command->get(static::type(), $primaryKey, $options);
+        $result  = $command->get(static::type(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -207,16 +207,18 @@ class ActiveRecord extends BaseActiveRecord
      * depends on the row data to be populated into the record.
      * For example, by creating a record based on the value of a column,
      * you may implement the so-called single-table inheritance mapping.
+     *
      * @param array $row row data to be populated into the record.
-     * This array consists of the following keys:
-     *  - `_source`: refers to the attributes of the record.
-     *  - `_type`: the type this record is stored in.
-     *  - `_index`: the index this record is stored in.
+     *                   This array consists of the following keys:
+     *                   - `_source`: refers to the attributes of the record.
+     *                   - `_type`: the type this record is stored in.
+     *                   - `_index`: the index this record is stored in.
+     *
      * @return static the newly created active record
      */
     public static function instantiate($row)
     {
-        return new static;
+        return new static();
     }
 
     /**
@@ -251,11 +253,11 @@ class ActiveRecord extends BaseActiveRecord
         $values = $this->getDirtyAttributes($attributes);
 
         $command = $this->getScenarioCommand('create');
-        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
-        $pk = static::primaryKey()[0];
+        $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
         if ($pk !== 'id') {
             $values[$pk] = $result['id'];
@@ -274,7 +276,7 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('delete');
-        $data = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
 
         $result = static::getDb()->createCommand()->perform($command, $data);
 
@@ -313,9 +315,9 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $command = $this->getScenarioCommand('update');
-        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
 
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $result            = static::getDb()->createCommand()->perform($command, $data);
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -332,7 +334,7 @@ class ActiveRecord extends BaseActiveRecord
      *
      * @param $action
      * @param array $options
-     * @param bool $bulk
+     * @param bool  $bulk
      *
      * @return array
      */
@@ -348,7 +350,7 @@ class ActiveRecord extends BaseActiveRecord
      * Creates the command name for the specified scenario name.
      *
      * @param string $default
-     * @param bool $bulk
+     * @param bool   $bulk
      *
      * @throws InvalidConfigException
      * @throws NotSupportedException
@@ -429,7 +431,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function optimisticLock()
     {
-        return null;
+        return;
     }
 
     /**
@@ -444,8 +446,9 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * {@inheritdoc}
+     *
      * @return ActiveQueryInterface|ActiveQuery the relational query object. If the relation does not exist
-     * and `$throwException` is false, null will be returned.
+     *                                          and `$throwException` is false, null will be returned.
      */
     public function getRelation($name, $throwException = true)
     {

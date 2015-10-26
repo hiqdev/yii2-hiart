@@ -47,19 +47,19 @@ class DebugAction extends Action
         }
         $message = $timings[$logId][1];
         if (($pos = mb_strpos($message, '#')) !== false) {
-            $url = mb_substr($message, 0, $pos);
+            $url  = mb_substr($message, 0, $pos);
             $body = mb_substr($message, $pos + 1);
         } else {
-            $url = $message;
+            $url  = $message;
             $body = null;
         }
         $method = mb_substr($url, 0, $pos = mb_strpos($url, ' '));
-        $url = mb_substr($url, $pos + 1);
+        $url    = mb_substr($url, $pos + 1);
 
         parse_str($body, $options);
 
         /* @var $db Connection */
-        $db = \Yii::$app->get($this->db);
+        $db   = \Yii::$app->get($this->db);
         $time = microtime(true);
         switch ($method) {
             case 'GET':
@@ -91,7 +91,7 @@ class DebugAction extends Action
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
-            'time' => sprintf('%.1f ms', $time * 1000),
+            'time'   => sprintf('%.1f ms', $time * 1000),
             'result' => $result,
         ];
     }
