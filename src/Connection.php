@@ -272,7 +272,7 @@ class Connection extends Component
         $body    = '';
         $options = [
             CURLOPT_URL       => $url,
-            CURLOPT_USERAGENT => 'Yii Framework ' . Yii::getVersion() . __CLASS__,
+            CURLOPT_USERAGENT => 'Yii Framework ' . Yii::getVersion() .  ' (HiArt)',
             //CURLOPT_ENCODING        => 'UTF-8',
             # CURLOPT_USERAGENT       => 'curl/0.00 (php 5.x; U; en)',
             CURLOPT_RETURNTRANSFER => false,
