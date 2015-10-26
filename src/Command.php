@@ -26,8 +26,6 @@ class Command extends Component
     public $db;
     /**
      * @var string|array the indexes to execute the query on. Defaults to null meaning all indexes
-     *
-     * @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search.html#search-multi-index
      */
     public $index;
     /**
@@ -118,6 +116,6 @@ class Command extends Component
      */
     public function perform($action, $options = [])
     {
-        return $this->db->put($action, $options);
+        return $this->db->post($action, $options);
     }
 }

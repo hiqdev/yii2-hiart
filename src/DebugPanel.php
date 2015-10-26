@@ -20,7 +20,7 @@ use yii\log\Logger;
 use yii\web\View;
 
 /**
- * Debugger panel that collects and displays HiActiveResource queries performed.
+ * Debugger panel that collects and displays HiArt queries performed.
  */
 class DebugPanel extends Panel
 {
@@ -40,7 +40,7 @@ class DebugPanel extends Panel
      */
     public function getName()
     {
-        return 'HiActiveResource';
+        return 'HiArt';
     }
 
     /**
@@ -59,7 +59,7 @@ class DebugPanel extends Panel
         $output    = <<<HTML
 <div class="yii-debug-toolbar-block">
     <a href="$url" title="Executed $queryCount queries which took $queryTime.">
-        ES <span class="label">$queryCount</span> <span class="label">$queryTime</span>
+        HiArt <span class="label">$queryCount</span> <span class="label">$queryTime</span>
     </a>
 </div>
 HTML;
@@ -116,7 +116,7 @@ HTML;
     <td style="width: 75%;"><div><b>$url_encoded</b><br/><p>$body_encoded</p>$traceString</div></td>
     <td style="width: 15%;">$runLink</td>
 </tr>
-<tr style="display: none;" class="elastic-wrapper" data-id="$i">
+<tr style="display: none;" class="hiart-wrapper" data-id="$i">
     <td class="time"></td><td colspan="3" class="result"></td>
 </tr>
 HTML;
@@ -157,7 +157,7 @@ $('.hiart-link').on('click', function (event) {
     event.preventDefault();
 
     var id = $(this).data('id');
-    var result = $('.elastic-wrapper[data-id=' + id +']');
+    var result = $('.hiart-wrapper[data-id=' + id +']');
     result.find('.result').html('Sending request...');
     result.show();
     $.ajax({
@@ -189,7 +189,7 @@ JS
             , View::POS_READY);
 
         return <<<HTML
-<h1>HiResource Queries</h1>
+<h1>HiArt Queries</h1>
 
 <table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
 <thead>

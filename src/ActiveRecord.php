@@ -65,10 +65,7 @@ class ActiveRecord extends BaseActiveRecord
      * Gets a record by its primary key.
      *
      * @param mixed $primaryKey the primaryKey value
-     * @param array $options options given in this parameter are passed to elasticsearch
-     *                          as request URI parameters.
-     *                          Please refer to the [elasticsearch documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html)
-     *                          for more details on these options.
+     * @param array $options options given in this parameter are passed to API.
      *
      * @return null|static The record instance or null if it was not found.
      */
@@ -94,14 +91,12 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * This method defines the attribute that uniquely identifies a record.
      *
-     * The primaryKey for elasticsearch documents is the `_id` field by default. This field is not part of the
+     * The primaryKey for HiArt objects is the `id` field by default. This field is not part of the
      * ActiveRecord attributes so you should never add `_id` to the list of [[attributes()|attributes]].
      *
-     * You may override this method to define the primary key name when you have defined
-     * [path mapping](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-id-field.html)
-     * for the `_id` field so that it is part of the `_source` and thus part of the [[attributes()|attributes]].
+     * You may override this method to define the primary key name.
      *
-     * Note that elasticsearch only supports _one_ attribute to be the primary key. However to match the signature
+     * Note that HiArt only supports _one_ attribute to be the primary key. However to match the signature
      * of the [[\yii\db\ActiveRecordInterface|ActiveRecordInterface]] this methods returns an array instead of a
      * single string.
      *
@@ -176,10 +171,8 @@ class ActiveRecord extends BaseActiveRecord
      *
      * This method must be overridden by child classes to define available attributes.
      *
-     * Attributes are names of fields of the corresponding elasticsearch document.
-     * The primaryKey for elasticsearch documents is the `_id` field by default which is not part of the attributes.
-     * You may define [path mapping](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-id-field.html)
-     * for the `_id` field so that it is part of the `_source` fields and thus becomes part of the attributes.
+     * Attributes are names of fields of the corresponding API object.
+     * The primaryKey for HiArt documents is the `id` field by default which is not part of the attributes.
      *
      * @throws \yii\base\InvalidConfigException if not overridden in a child class.
      *
@@ -187,7 +180,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function attributes()
     {
-        throw new InvalidConfigException('The attributes() method of Hiresource ActiveRecord has to be implemented by child classes.');
+        throw new InvalidConfigException('The attributes() method of HiArt ActiveRecord has to be implemented by child classes.');
     }
 
     /**
@@ -432,10 +425,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * This method has no effect in Elasticsearch ActiveRecord.
-     *
-     * Elasticsearch ActiveRecord uses [native Optimistic locking](http://www.elastic.co/guide/en/elasticsearch/guide/current/optimistic-concurrency-control.html).
-     * See [[update()]] for more details.
+     * This method has no effect in HiArt ActiveRecord.
      */
     public function optimisticLock()
     {
@@ -445,11 +435,11 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * Destroys the relationship in current model.
      *
-     * This method is not supported by elasticsearch.
+     * This method is not supported by HiArt.
      */
     public function unlinkAll($name, $delete = false)
     {
-        throw new NotSupportedException('unlinkAll() is not supported by elasticsearch, use unlink() instead.');
+        throw new NotSupportedException('unlinkAll() is not supported by HiArt, use unlink() instead.');
     }
 
     /**
