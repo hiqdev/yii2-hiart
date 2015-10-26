@@ -3,6 +3,8 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - b097fdf 2015-10-26  x QueryBuilder::buildLimit() - added conversion of `-1` limit to `ALL` (d.naumenko.a@gmail.com)
+    - 9d72ad6 2015-10-26  - Removed ActiveRecord::arrayAttributes method (d.naumenko.a@gmail.com)
 - Added recursive joining
     - 7bf29fe 2015-10-23  + ActiveQuery added recusion population of joined relation (d.naumenko.a@gmail.com)
 - Changed default limit to ALL

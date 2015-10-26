@@ -18,6 +18,21 @@ use yii\base\InvalidParamException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
+/**
+ * Connection class.
+ *
+ * Example configuration:
+ * ```php
+ * 'components' => [
+ *     'hiart' => [
+ *         'class' => 'hiqdev\hiart\Connection',
+ *         'config' => [
+ *             'api_url' => 'https://api.site.com/',
+ *         ],
+ *     ],
+ * ],
+ * ```
+ */
 class Connection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';

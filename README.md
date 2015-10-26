@@ -1,5 +1,5 @@
 Tools to use API as ActiveRecord for Yii2
------------------------------------------
+=========================================
 
 Use your API as ActiveRecord
 
@@ -25,9 +25,42 @@ or add
 
 to the require section of your composer.json.
 
+## Configuration
+
+To use this extension, configure hiart component in your application config:
+
+```php
+    'components' => [
+        'hiart' => [
+            'class' => 'hiqdev\hiart\Connection',
+            'config' => [
+                'api_url' => 'https://api.site.com/',
+            ],
+        ],
+    ],
+```
+
+## Usage
+
+Define your Model
+
+```php
+class MyModel extends \hiqdev\hiart\ActiveRecord
+{
+    public function attributes()
+    {
+        return ['id', 'name', 'else'];
+    }
+}
+```
+
 ## License
 
 This project is released under the terms of the BSD-3-Clause [license](https://github.com/hiqdev/yii2-hiart/blob/master/LICENSE).
 Read more [here](http://choosealicense.com/licenses/bsd-3-clause).
 
 Copyright © 2015, HiQDev (http://hiqdev.com/)
+
+## Acknowledgments
+
+- This project is based on [Yii2 Elasticsearch](https://github.com/yiisoft/yii2-elasticsearch).
