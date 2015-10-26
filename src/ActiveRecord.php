@@ -191,19 +191,6 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * A list of attributes that should be treated as array valued when retrieved through [[ActiveQuery::fields]].
-     *
-     * If not listed by this method, attributes retrieved through [[ActiveQuery::fields]] will converted to a scalar value
-     * when the result array contains only one value.
-     *
-     * @return string[] list of attribute names. Must be a subset of [[attributes()]].
-     */
-    public function arrayAttributes()
-    {
-        return [];
-    }
-
-    /**
      * @return string the name of the index this record is stored in.
      */
     public static function index()
@@ -215,26 +202,6 @@ class ActiveRecord extends BaseActiveRecord
     public static function joinIndex()
     {
         return static::index();
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param ActiveRecord $record the record to be populated. In most cases this will be an instance
-     * created by [[instantiate()]] beforehand.
-     * @param array $row attribute values (name => value)
-     */
-    public static function populateRecord($record, $row)
-    {
-        $arrayAttributes = array_flip($record->arrayAttributes());
-        foreach ($row as $key => $value) {
-            if (is_array($value) && !isset($arrayAttributes[$key]) && count($value) == 1) {
-                $row[$key] = reset($value);
-            }
-        }
-        $attributes = $row;
-
-        parent::populateRecord($record, $attributes);
     }
 
     /**

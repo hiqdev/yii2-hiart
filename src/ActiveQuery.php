@@ -274,7 +274,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function populateJoinedRelations($model, array $row) {
         foreach ($row as $key => $value) {
-            if (!is_array($value) || $model->hasAttribute($key)) continue;
+            if (empty($this->join) || !is_array($value) || $model->hasAttribute($key)) continue;
             foreach ($this->join as $name) {
                 if ($model->isRelationPopulated($name)) continue 2;
                 $records = [];
