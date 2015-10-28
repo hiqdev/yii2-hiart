@@ -40,7 +40,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Constructor.
      *
      * @param array $modelClass the model class associated with this query
-     * @param array $config     configurations to be applied to the newly created query object
+     * @param array $config configurations to be applied to the newly created query object
      */
     public function __construct($modelClass, $config = [])
     {
@@ -102,7 +102,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
         if ($this->index === null) {
             $this->index = $modelClass::index();
-            $this->type  = $modelClass::type();
+            $this->type = $modelClass::type();
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
@@ -127,7 +127,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     public function joinWith($with)
     {
-        $this->joinWith[] = [(array) $with, true];
+        $this->joinWith[] = [(array)$with, true];
 
         return $this;
     }
@@ -194,9 +194,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * Executes query and returns all results as an array.
      *
-     * @param Connection $db      the DB connection used to create the DB command.
+     * @param Connection $db the DB connection used to create the DB command.
      *                            If null, the DB connection returned by [[modelClass]] will be used.
-     * @param array      $options Options that will be passed to search command
+     * @param array $options Options that will be passed to search command
      *
      * @return array the query results. If the query results in nothing, an empty array will be returned.
      */
@@ -244,7 +244,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $class = $this->modelClass;
             if ($this->indexBy === null) {
                 foreach ($rows as $row) {
-                    $model      = $class::instantiate($row);
+                    $model = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
                     $this->populateJoinedRelations($model, $row);
@@ -252,7 +252,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 }
             } else {
                 foreach ($rows as $row) {
-                    $model      = $class::instantiate($row);
+                    $model = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
                     if (is_string($this->indexBy)) {
@@ -272,7 +272,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Populates joined relations from [[join]] array.
      *
      * @param ActiveRecord $model
-     * @param array        $row
+     * @param array $row
      */
     public function populateJoinedRelations($model, array $row)
     {
@@ -284,20 +284,20 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 if ($model->isRelationPopulated($name)) {
                     continue 2;
                 }
-                $records       = [];
-                $relation      = $model->getRelation($name);
+                $records = [];
+                $relation = $model->getRelation($name);
                 $relationClass = $relation->modelClass;
 
                 if ($relation->multiple) {
                     foreach ($value as $item) {
-                        $relationModel      = $relationClass::instantiate($item);
+                        $relationModel = $relationClass::instantiate($item);
                         $relationModelClass = get_class($relationModel);
                         $relationModelClass::populateRecord($relationModel, $item);
                         $relation->populateJoinedRelations($relationModel, $item);
                         $records[] = $relationModel;
                     }
                 } else {
-                    $relationModel      = $relationClass::instantiate($value);
+                    $relationModel = $relationClass::instantiate($value);
                     $relationModelClass = get_class($relationModel);
                     $relationModelClass::populateRecord($relationModel, $value);
                     $relation->populateJoinedRelations($relationModel, $value);
@@ -342,20 +342,21 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 //                $model = $models[0];
 //            }
             return $result;
-        } else {
-            /* @var $class ActiveRecord */
-            $class = $this->modelClass;
-            $model = $class::instantiate($result);
-            $class::populateRecord($model, $result);
-            if (!empty($this->with)) {
-                $models = [$model];
-                $this->findWith($this->with, $models);
-                $model = $models[0];
-            }
-            $model->afterFind();
-
-            return $model;
         }
+
+        /* @var $class ActiveRecord */
+        $class = $this->modelClass;
+        $model = $class::instantiate($result);
+        $class::populateRecord($model, $result);
+        $this->populateJoinedRelations($model, $result);
+        if (!empty($this->with)) {
+            $models = [$model];
+            $this->findWith($this->with, $models);
+            $model = $models[0];
+        }
+        $model->afterFind();
+
+        return $model;
     }
 
     /**
@@ -385,10 +386,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function column($field, $db = null)
     {
         if ($field === '_id') {
-            $command                        = $this->createCommand($db);
-            $command->queryParts['fields']  = [];
+            $command = $this->createCommand($db);
+            $command->queryParts['fields'] = [];
             $command->queryParts['_source'] = false;
-            $result                         = $command->search();
+            $result = $command->search();
             if (empty($result['hits']['hits'])) {
                 return [];
             }
