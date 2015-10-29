@@ -327,9 +327,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     {
         //        $result = $this->createCommand($db)->get();
 
-        if (($result = parent::one($db)) === false) {
+        $result = $this->createCommand($db)->search(ArrayHelper::merge(['limit' => 1], $this->options));
+        if (empty($result)) {
             return;
         }
+        $result = reset($result);
+
         if ($this->asArray) {
             // TODO implement with()
 //            /* @var $modelClass ActiveRecord */
