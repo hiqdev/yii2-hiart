@@ -42,7 +42,7 @@ class QueryBuilder extends \yii\base\Object
      */
     public function build($query)
     {
-        $options = $parts = [];
+        $parts = [];
         $query->prepare();
 
         $this->buildSelect($query->select, $parts);
@@ -55,7 +55,6 @@ class QueryBuilder extends \yii\base\Object
             'queryParts' => $parts,
             'index'      => $query->index,
             'type'       => $query->type,
-            'options'    => $options,
         ];
     }
 

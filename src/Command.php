@@ -13,6 +13,7 @@ namespace hiqdev\hiart;
 
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\helpers\Json;
 
 /**
@@ -36,7 +37,6 @@ class Command extends Component
      * @var array list of arrays or json strings that become parts of a query
      */
     public $queryParts;
-    public $options = [];
 
     /**
      * Sends a request to the _search API and returns the result.
@@ -49,14 +49,11 @@ class Command extends Component
      */
     public function search($options = [])
     {
-        $query = $this->queryParts;
-
+        $url     = $this->index . Inflector::id2camel(ArrayHelper::remove($options, 'scenario', 'search'));
+        $query   = $this->queryParts;
         $options = array_merge($query, $options);
-        $url     = $this->index . ArrayHelper::remove($options, 'scenario', 'Search');
 
-        $result = $this->db->post($url, $options);
-
-        return $result;
+        return $this->db->post($url, $options);
     }
 
     public function getList($options = [])

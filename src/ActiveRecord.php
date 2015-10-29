@@ -38,22 +38,34 @@ class ActiveRecord extends BaseActiveRecord
      *
      * @return ActiveQuery the newly created [[ActiveQuery]] instance.
      */
-    public static function find()
+    public static function find($options = [])
     {
-        return \Yii::createObject(ActiveQuery::className(), [get_called_class()]);
+        $config = [
+            'class'   => ActiveQuery::className(),
+            'options' => $options,
+        ];
+        return \Yii::createObject($config, [get_called_class()]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function findOne($condition)
+    public static function findOne($condition, $options = [])
     {
-        $query = static::find();
+        $query = static::find($options);
         if (is_array($condition)) {
             return $query->andWhere($condition)->one();
         } else {
             return static::get($condition);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function findAll($condition, $options = [])
+    {
+        return static::find($options)->andWhere($condition)->all();
     }
 
     public function isScenarioDefault()
