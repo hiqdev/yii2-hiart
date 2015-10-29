@@ -3,6 +3,8 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Added passing options to Command through find/One/All()
+- Added population of joined relations
 - Fixed minor issues
 - Changed default limit to ALL
 - Added recursive joining

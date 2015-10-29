@@ -3,6 +3,10 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Added passing options to Command through find/One/All()
+    - 93159e2 2015-10-29 + find/One/All options for passing scenario to Command (sol@hiqdev.com)
+- Added population of joined relations
+    - 58d290c 2015-10-28  * ActiveQuery::one() - fixed to populate joined relations (d.naumenko.a@gmail.com)
 - Fixed minor issues
     - 3d51603 2015-10-26 php-cs-fixed (sol@hiqdev.com)
     - 7218232 2015-10-26 improved README (sol@hiqdev.com)
