@@ -389,7 +389,7 @@ class ActiveRecord extends BaseActiveRecord
                 } elseif (is_array($command)) {
                     $result = $command;
                 } else {
-                    $result = ucfirst($command);
+                    $result = Inflector::id2camel($command);
                 }
             } else {
                 $result = Inflector::id2camel($this->scenario);
@@ -399,7 +399,7 @@ class ActiveRecord extends BaseActiveRecord
         if (is_array($result)) {
             return implode('', $result);
         } else {
-            return static::modelName() . ($bulk ? 's' : '') . $result;
+            return static::type() . ($bulk ? 's' : '') . $result;
         }
     }
 
@@ -410,9 +410,9 @@ class ActiveRecord extends BaseActiveRecord
      *
      * ```
      * [
-     *      'update-name'                => 'set-name',
-     *      'update-related-name'        => [Action::formName(), 'SetName'],
-     *      'update-self-case-sensetive' => [null, 'SomeSENSETIVE']
+     *      'update-name'                => 'set-name', /// ModuleSetName
+     *      'update-related-name'        => [Action::formName(), 'SetName'], /// ActionSetName
+     *      'update-self-case-sensetive' => [null, 'SomeSENSETIVE'] /// ModuleSomeSENSETIVE
      * ]
      * ~~
      *
