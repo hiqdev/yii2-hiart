@@ -11,6 +11,7 @@
 
 namespace hiqdev\hiart;
 
+use Closure;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -39,35 +40,37 @@ class Connection extends Component
 
     public $config = [];
 
-    /**
-     * Tmporary auth config.
-     *
-     * @var array
-     */
-    public $auth = [];
-
     public $connectionTimeout = null;
 
     public $dataTimeout = null;
 
     public static $curl = null;
 
-    private function _getAuth()
+    /**
+     * Authorization config.
+     *
+     * @var array
+     */
+    protected $_auth;
+
+    public function setAuth($auth)
     {
-        $res = [];
-        if (Yii::$app->user->identity) {
-            $res['access_token'] = Yii::$app->user->identity->getAccessToken();
-        } else {
-            Yii::$app->user->loginRequired();
+        $this->_auth = $auth;
+    }
+
+    public function getAuth()
+    {
+        if ($this->_auth instanceof Closure) {
+            $this->_auth = call_user_func($this->_auth, $this);
         }
 
-        return $res;
+        return $this->_auth;
     }
 
     public function init()
     {
         if (!isset($this->config['api_url'])) {
-            throw new InvalidConfigException('HiActiveResource needs api_url configuration');
+            throw new InvalidConfigException('HiArt needs api_url configuration');
         }
     }
 
@@ -245,9 +248,9 @@ class Connection extends Component
      *
      * @return array
      */
-    private function createUrl($path, $options = [])
+    private function createUrl($path, array $options = [])
     {
-        $options = ArrayHelper::merge($options, $this->_getAuth());
+        $options = array_merge($this->getAuth(), $options);
         if (!is_string($path)) {
             $url = urldecode(reset($path));
             if (!empty($options)) {
@@ -278,9 +281,6 @@ class Connection extends Component
      */
     protected function httpRequest($method, $url, $requestBody = null, $raw = false)
     {
-        $this->auth = [
-            'access_token' => Yii::$app->user->identity->getAccessToken(),
-        ];
         $method = strtoupper($method);
         // response body and headers
         $headers = [];
