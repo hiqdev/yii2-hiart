@@ -3,15 +3,19 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
-- Added passing options to Command through find/One/All()
-    - 93159e2 2015-10-29 + find/One/All options for passing scenario to Command (sol@hiqdev.com)
-- Added population of joined relations
-    - 58d290c 2015-10-28  * ActiveQuery::one() - fixed to populate joined relations (d.naumenko.a@gmail.com)
+- Changed authorization in Connection class, made with configuration callback
+    - 93fdf34 2015-11-03 improved authorizing (sol@hiqdev.com)
 - Fixed minor issues
+    - f855d47 2015-10-29  * ActiveQuery::one() - fixed to use Query options (andreyklochok@gmail.com)
+    - c197d5b 2015-10-29  * ActiveRecord::getScenarioCommand() - changed command generation logic, updated PHP (d.naumenko.a@gmail.com)
     - 3d51603 2015-10-26 php-cs-fixed (sol@hiqdev.com)
     - 7218232 2015-10-26 improved README (sol@hiqdev.com)
     - 7e95cbe 2015-10-26  * Command::perform - changed request type from PUT to POST (d.naumenko.a@gmail.com)
     - 9d72ad6 2015-10-26  - Removed ActiveRecord::arrayAttributes method (d.naumenko.a@gmail.com)
+- Added passing options to Command through find/One/All()
+    - 93159e2 2015-10-29 + find/One/All options for passing scenario to Command (sol@hiqdev.com)
+- Added population of joined relations
+    - 58d290c 2015-10-28  * ActiveQuery::one() - fixed to populate joined relations (d.naumenko.a@gmail.com)
 - Changed default limit to ALL
     - b097fdf 2015-10-26  x QueryBuilder::buildLimit() - added conversion of `-1` limit to `ALL` (d.naumenko.a@gmail.com)
     - 2eb1a29 2015-10-22  + Implemented relations population using `with`, `joinWith`  * Changed default limit to ALL :!: (d.naumenko.a@gmail.com)

@@ -3,9 +3,10 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Changed authorization in Connection class, made with configuration callback
+- Fixed minor issues
 - Added passing options to Command through find/One/All()
 - Added population of joined relations
-- Fixed minor issues
 - Changed default limit to ALL
 - Added recursive joining
 - Added lt/gt to QueryBuilder
