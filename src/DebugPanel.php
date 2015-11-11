@@ -31,7 +31,7 @@ class DebugPanel extends Panel
         $this->actions['hiresource-query'] = [
             'class' => 'hiqdev\\hiart\\DebugAction',
             'panel' => $this,
-            'db'    => $this->db,
+            'db' => $this->db,
         ];
     }
 
@@ -48,15 +48,15 @@ class DebugPanel extends Panel
      */
     public function getSummary()
     {
-        $timings    = $this->calculateTimings();
+        $timings = $this->calculateTimings();
         $queryCount = count($timings);
-        $queryTime  = 0;
+        $queryTime = 0;
         foreach ($timings as $timing) {
             $queryTime += $timing[3];
         }
         $queryTime = number_format($queryTime * 1000) . ' ms';
-        $url       = $this->getUrl();
-        $output    = <<<HTML
+        $url = $this->getUrl();
+        $output = <<<HTML
 <div class="yii-debug-toolbar-block">
     <a href="$url" title="Executed $queryCount queries which took $queryTime.">
         HiArt <span class="label">$queryCount</span> <span class="label">$queryTime</span>
@@ -72,33 +72,35 @@ HTML;
      */
     public function getDetail()
     {
+        $apiUrl = null;
         $timings = $this->calculateTimings();
         ArrayHelper::multisort($timings, 3, SORT_DESC);
         $rows = [];
-        $i    = 0;
+        $i = 0;
         // Try to get API URL
         try {
             $hiresource = \Yii::$app->get('hiresource');
-            $apiUrl     = (StringHelper::endsWith($hiresource->config['api_url'], '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
+            $apiUrl = (StringHelper::endsWith($hiresource->config['api_url'],
+                '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
         } catch (\yii\base\InvalidConfigException $e) {
             // Pass
         }
         foreach ($timings as $logId => $timing) {
             $duration = sprintf('%.1f ms', $timing[3] * 1000);
-            $message  = $timing[1];
-            $traces   = $timing[4];
+            $message = $timing[1];
+            $traces = $timing[4];
             if (($pos = mb_strpos($message, '#')) !== false) {
-                $url  = mb_substr($message, 0, $pos);
+                $url = mb_substr($message, 0, $pos);
                 $body = mb_substr($message, $pos + 1);
             } else {
-                $url  = $message;
+                $url = $message;
                 $body = null;
             }
             $traceString = '';
             if (!empty($traces)) {
                 $traceString .= Html::ul($traces, [
                     'class' => 'trace',
-                    'item'  => function ($trace) {
+                    'item' => function ($trace) {
                         return "<li>{$trace['file']}({$trace['line']})</li>";
                     },
                 ]);
@@ -106,15 +108,16 @@ HTML;
             $ajaxUrl = Url::to(['hiresource-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
                     'class' => 'hiart-link',
-                    'data'  => ['id' => $i],
+                    'data' => ['id' => $i],
                 ]) . '<br/>';
-            $url_encoded  = Html::encode((isset($apiUrl)) ? str_replace(' ',  ' ' . $apiUrl, $url) : $url);
+            $newTabLink = Html::a('to new tab', $apiUrl . preg_replace('/^[A-Z]+\s+/', '', $url) . '&' . $body, ['target' => '_blank']) . '<br/>';
+            $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ', ' ' . $apiUrl, $url) : $url);
             $body_encoded = Html::encode($body);
-            $rows[]       = <<<HTML
+            $rows[] = <<<HTML
 <tr>
     <td style="width: 10%;">$duration</td>
     <td style="width: 75%;"><div><b>$url_encoded</b><br/><p>$body_encoded</p>$traceString</div></td>
-    <td style="width: 15%;">$runLink</td>
+    <td style="width: 15%;">$runLink$newTabLink</td>
 </tr>
 <tr style="display: none;" class="hiart-wrapper" data-id="$i">
     <td class="time"></td><td colspan="3" class="result"></td>
@@ -131,7 +134,7 @@ HTML;
 .null { color: magenta; }
 .key { color: red; }
 CSS
-);
+        );
 
         \Yii::$app->view->registerJs(<<<JS
 function syntaxHighlight(json) {
@@ -214,11 +217,11 @@ HTML;
             return $this->_timings;
         }
         $messages = $this->data['messages'];
-        $timings  = [];
-        $stack    = [];
+        $timings = [];
+        $stack = [];
         foreach ($messages as $i => $log) {
             list($token, $level, $category, $timestamp) = $log;
-            $log[5]                                     = $i;
+            $log[5] = $i;
             if ($level === Logger::LEVEL_PROFILE_BEGIN) {
                 $stack[] = $log;
             } elseif ($level === Logger::LEVEL_PROFILE_END) {
@@ -230,7 +233,7 @@ HTML;
 
         $now = microtime(true);
         while (($last = array_pop($stack)) !== null) {
-            $delta             = $now - $last[3];
+            $delta = $now - $last[3];
             $timings[$last[5]] = [count($stack), $last[0], $last[2], $delta, $last[4]];
         }
         ksort($timings);
@@ -243,8 +246,9 @@ HTML;
      */
     public function save()
     {
-        $target   = $this->module->logTarget;
-        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, ['hiqdev\hiart\Connection::httpRequest']);
+        $target = $this->module->logTarget;
+        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE,
+            ['hiqdev\hiart\Connection::httpRequest']);
 
         return ['messages' => $messages];
     }
