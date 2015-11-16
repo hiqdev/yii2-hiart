@@ -48,6 +48,7 @@ class QueryBuilder extends \yii\base\Object
         $this->buildSelect($query->select, $parts);
         $this->buildLimit($query->limit, $parts);
         $this->buildPage($query->offset, $query->limit, $parts);
+        $this->buildOrderBy($query->orderBy, $parts);
 
         $parts = ArrayHelper::merge($parts, $this->buildCondition($query->where));
 
