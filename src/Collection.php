@@ -62,7 +62,7 @@ class Collection extends Component
     public $loadFormatter;
 
     /**
-     * @var \yii\base\Model the template model instance. May be set manually by [[setModel()]] or
+     * @var ActiveRecord the template model instance. May be set manually by [[setModel()]] or
      *                      automatically on [[set()]] call
      *
      * @see setModel()
@@ -224,7 +224,7 @@ class Collection extends Component
             } elseif ($data['selection']) {
                 $res = [];
                 foreach ($data['selection'] as $id) {
-                    $res[$id] = compact('id');
+                    $res[$id] = [reset($this->model->primaryKey()) => $id];
                 }
                 $data = $res;
             }
