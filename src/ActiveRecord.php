@@ -466,4 +466,24 @@ class ActiveRecord extends BaseActiveRecord
     {
         return parent::getRelation($name, $throwException);
     }
+
+    /**
+     * {@inheritdoc}
+     * @return ActiveQuery the relational query object.
+     */
+    public function hasOne($class, $link)
+    {
+        return parent::hasOne($class, $link);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return ActiveQuery the relational query object.
+     */
+    public function hasMany($class, $link)
+    {
+        return parent::hasMany($class, $link);
+    }
+
+
 }

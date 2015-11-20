@@ -13,4 +13,9 @@ namespace hiqdev\hiart;
 
 class ActiveDataProvider extends \yii\data\ActiveDataProvider
 {
+    /**
+     * @var ActiveQuery the query that is used to fetch data models and [[totalCount]]
+     * if it is not explicitly set.
+     */
+    public $query;
 }
