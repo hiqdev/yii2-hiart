@@ -23,6 +23,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class Collection manages the collection of the models.
+ *
+ * @var Model[] $models the array of models in the collection
  */
 class Collection extends Component
 {
@@ -38,7 +40,7 @@ class Collection extends Component
     /**
      * @var array of models
      */
-    public $models = [];
+    protected $models = [];
 
     /**
      * @var string the name of the form. Sets automatically on [[set()]]
@@ -132,6 +134,13 @@ class Collection extends Component
         }
 
         return $ids;
+    }
+
+    /**
+     * @return Model[] models
+     */
+    public function getModels() {
+        return $this->models;
     }
 
     /**
