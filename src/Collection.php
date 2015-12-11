@@ -129,8 +129,9 @@ class Collection extends Component
     public function getIds()
     {
         $ids = [];
+        $pk = reset($this->first->primaryKey());
         foreach ($this->models as $model) {
-            $ids[] = $model->id;
+            $ids[] = $model->$pk;
         }
 
         return $ids;
