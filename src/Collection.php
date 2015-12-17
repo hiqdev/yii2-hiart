@@ -199,7 +199,9 @@ class Collection extends Component
      *          ]
      *      ]
      * }
-     *
+     * 3) foreach ($selection as $id) {
+     *      $res[$id] = [reset($model->primaryKey()) => $id];
+     *    }
      * @param array|callable $data - the data to be proceeded.
      *                             If is callable - gets arguments:
      *                             - model
