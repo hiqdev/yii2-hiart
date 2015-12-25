@@ -426,7 +426,6 @@ class Collection extends Component
     public function collectData($attributes = null, $options = [])
     {
         $data       = [];
-        $attributes = (array) $attributes;
         foreach ($this->models as $model) {
             /* @var $model ActiveRecord */
             $key = $model->getPrimaryKey();
