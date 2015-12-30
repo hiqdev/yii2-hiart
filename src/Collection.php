@@ -24,7 +24,7 @@ use yii\helpers\ArrayHelper;
 /**
  * Class Collection manages the collection of the models.
  *
- * @var Model[] $models the array of models in the collection
+ * @var Model[] the array of models in the collection
  */
 class Collection extends Component
 {
@@ -140,7 +140,8 @@ class Collection extends Component
     /**
      * @return Model[] models
      */
-    public function getModels() {
+    public function getModels()
+    {
         return $this->models;
     }
 

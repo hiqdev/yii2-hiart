@@ -62,7 +62,7 @@ class QueryBuilder extends \yii\base\Object
     public function buildLimit($limit, &$parts)
     {
         if (!empty($limit)) {
-            if ($limit == -1) {
+            if ($limit === -1) {
                 $limit = 'ALL';
             }
             $parts['limit'] = $limit;

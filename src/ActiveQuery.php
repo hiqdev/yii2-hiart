@@ -132,7 +132,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     public function joinWith($with)
     {
-        $this->joinWith[] = [(array)$with, true];
+        $this->joinWith[] = [(array) $with, true];
 
         return $this;
     }

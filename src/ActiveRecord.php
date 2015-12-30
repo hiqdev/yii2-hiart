@@ -484,6 +484,4 @@ class ActiveRecord extends BaseActiveRecord
     {
         return parent::hasMany($class, $link);
     }
-
-
 }
