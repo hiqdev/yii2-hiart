@@ -46,6 +46,10 @@
     "require": {
         "yiisoft/yii2": "~2.0"
     },
+    "require-dev": {
+        "minii/db": "*@dev",
+        "minii/helpers": "*@dev"
+    },
     "autoload": {
         "psr-4": {
             "hiqdev\\hiart\\": "src"
