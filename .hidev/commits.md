@@ -3,24 +3,28 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Added tests and CI
+    - e80518e 2015-12-30 php-cs-fixed (sol@hiqdev.com)
+    - fb9b595 2015-12-30 added initial CommandTest (sol@hiqdev.com)
     - ccdc3c3 2015-12-30 doing tests and ci (sol@hiqdev.com)
+- Changed Collection::models visibility to protected
+    - dd8cbf2 2015-12-01 BC Breaking: Collection::models visibility changed from public to protected (d.naumenko.a@gmail.com)
+- Fixed different issues
     - 6d05685 2015-12-25 Collection::collectData - removed forced typecasting $attributes to array (d.naumenko.a@gmail.com)
     - e410ea1 2015-12-17 Add usage to load method Collection class (andreyklochok@gmail.com)
     - a561e2b 2015-12-11 Collection::getIds() - changed static pk `id` to dynamic, got from model (d.naumenko.a@gmail.com)
-    - dd8cbf2 2015-12-01 BC Breaking: Collection::models visibility changed from public to protected (d.naumenko.a@gmail.com)
     - df76b0f 2015-11-20 Updated PHPDocs to improve type hinting (d.naumenko.a@gmail.com)
     - c72dff9 2015-11-17 Collection - fixed PHPdoc, enhanced load() to use primaryKey from the model (d.naumenko.a@gmail.com)
     - e1b4ddb 2015-11-16 QueryBuilder - restored accidentally removed orderBy building (d.naumenko.a@gmail.com)
     - 3ec60a2 2015-11-11 DebugPanel - added link to open query in new tab (d.naumenko.a@gmail.com)
-- Changed authorization in Connection class, made with configuration callback
-    - 93fdf34 2015-11-03 improved authorizing (sol@hiqdev.com)
-- Fixed minor issues
     - f855d47 2015-10-29  * ActiveQuery::one() - fixed to use Query options (andreyklochok@gmail.com)
     - c197d5b 2015-10-29  * ActiveRecord::getScenarioCommand() - changed command generation logic, updated PHP (d.naumenko.a@gmail.com)
     - 3d51603 2015-10-26 php-cs-fixed (sol@hiqdev.com)
     - 7218232 2015-10-26 improved README (sol@hiqdev.com)
     - 7e95cbe 2015-10-26  * Command::perform - changed request type from PUT to POST (d.naumenko.a@gmail.com)
     - 9d72ad6 2015-10-26  - Removed ActiveRecord::arrayAttributes method (d.naumenko.a@gmail.com)
+- Changed authorization in Connection class, made with configuration callback
+    - 93fdf34 2015-11-03 improved authorizing (sol@hiqdev.com)
 - Added passing options to Command through find/One/All()
     - 93159e2 2015-10-29 + find/One/All options for passing scenario to Command (sol@hiqdev.com)
 - Added population of joined relations
