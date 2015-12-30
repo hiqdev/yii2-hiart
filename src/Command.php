@@ -36,7 +36,7 @@ class Command extends Component
     /**
      * @var array list of arrays or json strings that become parts of a query
      */
-    public $queryParts;
+    public $queryParts = [];
 
     /**
      * Sends a request to the _search API and returns the result.
@@ -108,7 +108,6 @@ class Command extends Component
     /**
      * @param $action
      * @param array $options
-     *
      * @return mixed
      */
     public function perform($action, $options = [])

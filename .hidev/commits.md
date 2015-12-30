@@ -3,6 +3,7 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - ccdc3c3 2015-12-30 doing tests and ci (sol@hiqdev.com)
     - 6d05685 2015-12-25 Collection::collectData - removed forced typecasting $attributes to array (d.naumenko.a@gmail.com)
     - e410ea1 2015-12-17 Add usage to load method Collection class (andreyklochok@gmail.com)
     - a561e2b 2015-12-11 Collection::getIds() - changed static pk `id` to dynamic, got from model (d.naumenko.a@gmail.com)
