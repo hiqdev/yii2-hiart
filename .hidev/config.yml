@@ -1,13 +1,13 @@
 package:
+    type:           yii2-extension
     name:           yii2-hiart
     namespace:      hiqdev\hiart
-    label:          HiArt
+    headline:       HiArt
     title:          Tools to use API as ActiveRecord for Yii2
-    type:           yii2-extension
     keywords:       api, ActiveRecord, extension, yii2
     description:    Use your API as ActiveRecord
     year:           2015
 
 require:
-    hiqdev/hidev-config:        "*"
-    hiqdev/hidev-config-php:    "*"
+    hiqdev/hidev-php:    "*"
+    hiqdev/hidev-vendor: "*"

@@ -3,6 +3,14 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - 6d05685 2015-12-25 Collection::collectData - removed forced typecasting $attributes to array (d.naumenko.a@gmail.com)
+    - e410ea1 2015-12-17 Add usage to load method Collection class (andreyklochok@gmail.com)
+    - a561e2b 2015-12-11 Collection::getIds() - changed static pk `id` to dynamic, got from model (d.naumenko.a@gmail.com)
+    - dd8cbf2 2015-12-01 BC Breaking: Collection::models visibility changed from public to protected (d.naumenko.a@gmail.com)
+    - df76b0f 2015-11-20 Updated PHPDocs to improve type hinting (d.naumenko.a@gmail.com)
+    - c72dff9 2015-11-17 Collection - fixed PHPdoc, enhanced load() to use primaryKey from the model (d.naumenko.a@gmail.com)
+    - e1b4ddb 2015-11-16 QueryBuilder - restored accidentally removed orderBy building (d.naumenko.a@gmail.com)
+    - 3ec60a2 2015-11-11 DebugPanel - added link to open query in new tab (d.naumenko.a@gmail.com)
 - Changed authorization in Connection class, made with configuration callback
     - 93fdf34 2015-11-03 improved authorizing (sol@hiqdev.com)
 - Fixed minor issues
@@ -26,8 +34,8 @@ hiqdev/yii2-hiart commits history
     - 86796b5 2015-10-08 QueryBuilder - added lt, gt condition handling (d.naumenko.a@gmail.com)
 - Fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
     - d286a03 2015-09-21 fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
-- Removed gl_key, gl_value
-    - e60f2da 2015-09-14 ActiveRecord - removed gl_key, gl_value (d.naumenko.a@gmail.com)
+- Removed `gl_key`, `gl_value`
+    - e60f2da 2015-09-14 ActiveRecord - removed `gl_key`, `gl_value` (d.naumenko.a@gmail.com)
 - Added second argument to ActiveQuery::all that will be passed to Command::search
     - 8f703e7 2015-09-01 ActiveQuery::all - added second argument that will be passed to Command::search (d.naumenko.a@gmail.com)
 - Fixed 'raw' processing
@@ -49,7 +57,7 @@ hiqdev/yii2-hiart commits history
     - f63b354 2015-08-26 rehideved (sol@hiqdev.com)
 - Added basics
     - e534bea 2015-08-25 Added Connection (d.naumenko.a@gmail.com)
-    - 93c054e 2015-08-25 Added ErrorResponseException, HiResException~>HiArtException, added global checking of error responses, other minor (d.naumenko.a@gmail.com)
+    - 93c054e 2015-08-25 Added ErrorResponseException, HiResException -> HiArtException, added global checking of error responses, other minor (d.naumenko.a@gmail.com)
     - 3d87c1a 2015-08-19 Fixed QueryBuiled in condition - force type casting to array (d.naumenko.a@gmail.com)
     - ae4b098 2015-08-06 * Collection: + count and populate from selection (sol@hiqdev.com)
     - 104c0fb 2015-08-02 Collection::set now can accept single item (d.naumenko.a@gmail.com)
@@ -66,7 +74,7 @@ hiqdev/yii2-hiart commits history
     - cec1ad7 2015-05-24 renamed hiart <- hiar in files (sol@hiqdev.com)
     - 9f25b4a 2015-05-24 RENAMED to hiart (sol@hiqdev.com)
     - 672c3ca 2015-05-22 Fixed inCond (d.naumenko.a@gmail.com)
-    - 7ffd179 2015-05-19 Collection added EVENT_BEFORE/AFTER_LOAD (d.naumenko.a@gmail.com)
+    - 7ffd179 2015-05-19 Collection added `EVENT_BEFORE/AFTER_LOAD` (d.naumenko.a@gmail.com)
     - d3db42c 2015-05-15 Collection will not save, if empty (d.naumenko.a@gmail.com)
     - ff7903c 2015-05-12 PHPdoc enhancements (d.naumenko.a@gmail.com)
     - ee60010 2015-05-12 PHPdoc updated (d.naumenko.a@gmail.com)

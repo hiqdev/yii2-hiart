@@ -11,7 +11,7 @@ hiqdev/yii2-hiart changelog
 - Added recursive joining
 - Added lt/gt to QueryBuilder
 - Fixed translation, redone Re::l to Yii::t (sol@hiqdev.com)
-- Removed gl_key, gl_value
+- Removed `gl_key`, `gl_value`
 - Added second argument to ActiveQuery::all that will be passed to Command::search
 - Fixed 'raw' processing
 - Fixed PHP warnings
