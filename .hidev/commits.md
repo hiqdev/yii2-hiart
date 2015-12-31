@@ -3,6 +3,7 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - 3f1a702 2015-12-31 redone get/post/head/delete with makeRequest (sol@hiqdev.com)
 - Added tests and CI
     - e80518e 2015-12-30 php-cs-fixed (sol@hiqdev.com)
     - fb9b595 2015-12-30 added initial CommandTest (sol@hiqdev.com)
