@@ -138,9 +138,7 @@ class Connection extends Component
      */
     public function get($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options), $raw);
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('GET', $url, $options, $body, $raw);
     }
 
     /**
@@ -154,9 +152,7 @@ class Connection extends Component
      */
     public function head($url, $options = [], $body = null)
     {
-        $result = $this->httpRequest('HEAD', $this->createUrl($url), http_build_query($options));
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('HEAD', $url, $options, $body, $raw);
     }
 
     /**
@@ -171,61 +167,48 @@ class Connection extends Component
      */
     public function post($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options), $raw);
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('POST', $url, $options, $body, $raw);
     }
 
     /**
      * Performs PUT HTTP request.
-     *
      * @param string $url     URL
      * @param array  $options URL options
      * @param string $body    request body
      * @param bool   $raw     if response body contains JSON and should be decoded
-     *
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
-     *
      * @return mixed response
      */
     public function put($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('PUT', $this->createUrl($url), http_build_query($options), $raw);
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('PUT', $url, $options, $body, $raw);
     }
 
     /**
      * Performs DELETE HTTP request.
-     *
      * @param string $url     URL
      * @param array  $options URL options
      * @param string $body    request body
      * @param bool   $raw     if response body contains JSON and should be decoded
-     *
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
-     *
      * @return mixed response
      */
     public function delete($url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest('DELETE', $this->createUrl($url), http_build_query($options), $raw);
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('DELETE', $url, $options, $body, $raw);
     }
 
     /**
+     * XXX To be removed in favour of post().
      * @param $url
      * @param array $options
      * @return mixed
      */
     public function perform($url, $options = [])
     {
-        $result = $this->httpRequest('POST', $this->createUrl($url), http_build_query($options));
-
-        return $this->checkResponse($result, $url, $options);
+        return $this->makeRequest('DELETE', $url, $options);
     }
 
     /**
