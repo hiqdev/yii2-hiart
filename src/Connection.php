@@ -84,7 +84,6 @@ class Connection extends Component
 
     /**
      * Closes the connection when this component is being serialized.
-     *
      * @return array
      */
     public function __sleep()
@@ -129,15 +128,12 @@ class Connection extends Component
 
     /**
      * Performs GET HTTP request.
-     *
      * @param string $url     URL
      * @param array  $options URL options
      * @param string $body    request body
      * @param bool   $raw     if response body contains JSON and should be decoded
-     *
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
-     *
      * @return mixed response
      */
     public function get($url, $options = [], $body = null, $raw = false)
@@ -149,14 +145,11 @@ class Connection extends Component
 
     /**
      * Performs HEAD HTTP request.
-     *
      * @param string $url     URL
      * @param array  $options URL options
      * @param string $body    request body
-     *
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
-     *
      * @return mixed response
      */
     public function head($url, $options = [], $body = null)
@@ -168,15 +161,12 @@ class Connection extends Component
 
     /**
      * Performs POST HTTP request.
-     *
      * @param string $url     URL
      * @param array  $options URL options
      * @param string $body    request body
      * @param bool   $raw     if response body contains JSON and should be decoded
-     *
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
-     *
      * @return mixed response
      */
     public function post($url, $options = [], $body = null, $raw = false)
@@ -229,7 +219,6 @@ class Connection extends Component
     /**
      * @param $url
      * @param array $options
-     *
      * @return mixed
      */
     public function perform($url, $options = [])
@@ -240,11 +229,25 @@ class Connection extends Component
     }
 
     /**
+     * Make request and check for error.
+     * @param string $url     URL
+     * @param array  $options URL options
+     * @param string $body    request body
+     * @param bool   $raw     if response body contains JSON and should be decoded
+     * @throws HiArtException
+     * @throws \yii\base\InvalidConfigException
+     * @return mixed response
+     */
+    public function makeRequest($method, $url, $options = [], $body = null, $raw = false)
+    {
+        $result = $this->httpRequest($method, $this->createUrl($url), http_build_query($options), $raw);
+
+        return $this->checkResponse($result, $url, $options);
+    }
+    /**
      * Creates URL.
-     *
-     * @param mixed $path    path
+     * @param mixed $path path
      * @param array $options URL options
-     *
      * @return array
      */
     private function createUrl($path, array $options = [])
@@ -267,15 +270,12 @@ class Connection extends Component
 
     /**
      * Performs HTTP request.
-     *
-     * @param string $method      method name
-     * @param string $url         URL
+     * @param string $method method name
+     * @param string $url URL
      * @param string $requestBody request body
-     * @param bool   $raw         if response body contains JSON and should be decoded
-     *
+     * @param bool $raw if response body contains JSON and should be decoded
      * @throws ErrorResponseException
      * @throws HiArtException
-     *
      * @return mixed if request failed
      */
     protected function httpRequest($method, $url, $requestBody = null, $raw = false)
@@ -407,9 +407,7 @@ class Connection extends Component
 
     /**
      * Try to decode error information if it is valid json, return it if not.
-     *
      * @param $body
-     *
      * @return mixed
      */
     protected function decodeErrorBody($body)
@@ -433,12 +431,11 @@ class Connection extends Component
     public $errorChecker;
 
     /**
+     * Checks response with errorChecker callback and raises exception if error.
      * @param array  $response response data from API
      * @param string $url      request URL
      * @param array  $options  request data
-     *
      * @throws ErrorResponseException
-     *
      * @return array
      */
     protected function checkResponse($response, $url, $options)
