@@ -27,7 +27,7 @@ use yii\helpers\Json;
  *     'hiart' => [
  *         'class' => 'hiqdev\hiart\Connection',
  *         'config' => [
- *             'api_url' => 'https://api.site.com/',
+ *             'base_uri' => 'https://api.site.com/',
  *         ],
  *     ],
  * ],
@@ -37,6 +37,9 @@ class Connection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
 
+    /**
+     * @var array Config
+     */
     public $config = [];
 
     public $connectionTimeout = null;
@@ -44,6 +47,8 @@ class Connection extends Component
     public $dataTimeout = null;
 
     public static $curl = null;
+
+    protected static $guzzle = null;
 
     /**
      * Authorization config.
@@ -223,10 +228,12 @@ class Connection extends Component
      */
     public function makeRequest($method, $url, $options = [], $body = null, $raw = false)
     {
-        $result = $this->httpRequest($method, $this->createUrl($url), http_build_query($options), $raw);
+        #$result = $this->curlRequest($method, $this->createUrl($url), http_build_query($options), $raw);
+        $result = $this->guzzleRequest($method, $this->createUrl($url), $options, $raw);
 
         return $this->checkResponse($result, $url, $options);
     }
+
     /**
      * Creates URL.
      * @param mixed $path path
@@ -251,6 +258,32 @@ class Connection extends Component
         return [$this->config['api_url'], $url];
     }
 
+    protected function guzzleRequest($method, $url, $body = null, $raw = false)
+    {
+        $method  = strtoupper($method);
+        $profile = $method . ' ' . $url[1] . '#' . (is_array($body) ? http_build_query($body) : $body);
+        $options = [(is_array($body) ? 'form_params' : 'body') => $body];
+        Yii::beginProfile($profile, __METHOD__);
+        $response = $this->getGuzzle()->request($method, $url[1], $options);
+        Yii::endProfile($profile, __METHOD__);
+
+        $res = $response->getBody()->getContents();
+        if (!$raw && in_array('application/json', $response->getHeader('Content-Type'))) {
+            $res = Json::decode($res);
+        }
+
+        return $res;
+    }
+
+    public function getGuzzle()
+    {
+        if (static::$guzzle === null) {
+            static::$guzzle = new \GuzzleHttp\Client($this->config);
+        }
+
+        return static::$guzzle;
+    }
+
     /**
      * Performs HTTP request.
      * @param string $method method name
@@ -261,7 +294,7 @@ class Connection extends Component
      * @throws HiArtException
      * @return mixed if request failed
      */
-    protected function httpRequest($method, $url, $requestBody = null, $raw = false)
+    protected function curlRequest($method, $url, $requestBody = null, $raw = false)
     {
         $method = strtoupper($method);
         // response body and headers
