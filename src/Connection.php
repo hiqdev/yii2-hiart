@@ -48,6 +48,9 @@ class Connection extends Component
 
     public static $curl = null;
 
+    /**
+     * @var \GuzzleHttp\Client
+     */
     protected static $guzzle = null;
 
     /**
@@ -258,6 +261,15 @@ class Connection extends Component
         return [$this->config['api_url'], $url];
     }
 
+    /**
+     * Sends the request using guzzle, returns array or raw response content, if $raw is true
+     *
+     * @param string $method POST, GET, etc
+     * @param string $url the URL for request
+     * @param array|string $body the request body. When array - will be sent as POST params, otherwise - as RAW body.
+     * @param bool $raw Whether to decode data, when response is JSON.
+     * @return string|array
+     */
     protected function guzzleRequest($method, $url, $body = null, $raw = false)
     {
         $method  = strtoupper($method);
@@ -275,6 +287,11 @@ class Connection extends Component
         return $res;
     }
 
+    /**
+     * Returns the GuzzleHttp client
+     *
+     * @return \GuzzleHttp\Client
+     */
     public function getGuzzle()
     {
         if (static::$guzzle === null) {
