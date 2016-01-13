@@ -474,7 +474,7 @@ class Connection extends Component
     protected function checkResponse($response, $url, $options)
     {
         if(!$this->errorChecker instanceof \Closure)
-            throw new InvalidCallException('The errorChecker should be set first');
+            throw new InvalidConfigException('The errorChecker should be set first');
         $error = call_user_func($this->errorChecker, $response);
         if ($error) {
             throw new ErrorResponseException($error, [
