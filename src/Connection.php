@@ -76,6 +76,10 @@ class Connection extends Component
 
     public function init()
     {
+        if (!$this->errorChecker instanceof \Closure) {
+            throw new InvalidConfigException('The errorChecker must be set');
+        }
+
         if (!isset($this->config['api_url'])) {
             throw new InvalidConfigException('HiArt needs api_url configuration');
         }
