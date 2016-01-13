@@ -74,6 +74,10 @@ class Connection extends Component
         return $this->_auth;
     }
 
+    /**
+     * {@inheritdoc}
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         if (!$this->errorChecker instanceof \Closure) {
@@ -463,7 +467,9 @@ class Connection extends Component
     }
 
     /**
-     * Callback to test if API response has error.
+     * @var \Closure Callback to test if API response has error
+     * The function signature: `function ($response)`
+     * Must return `null`, if the response does not contain an error.
      */
     public $errorChecker;
 
@@ -478,7 +484,7 @@ class Connection extends Component
     protected function checkResponse($response, $url, $options)
     {
         $error = call_user_func($this->errorChecker, $response);
-        if ($error) {
+        if ($error !== null) {
             throw new ErrorResponseException($error, [
                 'requestUrl' => $url,
                 'request'    => $options,
