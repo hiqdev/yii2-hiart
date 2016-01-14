@@ -18,6 +18,6 @@ class HiArtException extends \yii\db\Exception
      */
     public function getName()
     {
-        return 'HiArt active record exception';
+        return 'Data transport error';
     }
 }
