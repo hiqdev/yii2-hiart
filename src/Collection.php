@@ -37,8 +37,15 @@ class Collection extends Component
     const EVENT_AFTER_LOAD      = 'afterLoad';
     const EVENT_BEFORE_DELETE   = 'beforeDelete';
     const EVENT_AFTER_DELETE    = 'afterDelete';
+
     /**
-     * @var array of models
+     * @var boolean Whether to check, that all [[$models]] are instance of the same class
+     * @see isConsistent
+     */
+    public $checkConsistency = true;
+
+    /**
+     * @var Model[] array of models
      */
     protected $models = [];
 
@@ -296,7 +303,7 @@ class Collection extends Component
         $this->model    = $first->className();
 
         $this->models = $models;
-        if (!$this->isConsistent()) {
+        if ($this->checkConsistency && !$this->isConsistent()) {
             throw new InvalidValueException('Models are not objects of same class or not follow same operation');
         }
 
