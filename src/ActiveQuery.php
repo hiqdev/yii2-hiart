@@ -329,7 +329,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         $result = $this->createCommand($db)->search(ArrayHelper::merge(['limit' => 1], $this->options));
         if (empty($result)) {
-            return;
+            return null;
         }
         $result = reset($result);
 
