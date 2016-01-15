@@ -352,7 +352,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function perform($action, $options = [], $bulk = false)
     {
-        $action = ($bulk === true) ? static::index() . $action : static::modelName() . $action;
+        $action = ($bulk === true ? static::index() : static::type()) . $action;
         $result = static::getDb()->createCommand()->perform($action, $options);
 
         return $result;
