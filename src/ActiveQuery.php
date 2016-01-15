@@ -411,6 +411,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return parent::column($field, $db);
     }
 
+    /**
+     * @deprecated Do not use, will be dropped soon.
+     */
     public function getList($as_array = true, $db = null, $options = [])
     {
         $rawResult = $this->createCommand($db)->getList($options);
