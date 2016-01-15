@@ -427,7 +427,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             }
             $result = $models;
         }
-        $result = $result ?: [];
+        empty($result) && $result = [];
 
 //        return $this->createCommand($db)->getList($options);
         return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) {
