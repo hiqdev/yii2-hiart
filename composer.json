@@ -44,7 +44,8 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "~2.0"
+        "yiisoft/yii2": "~2.0",
+        "guzzlehttp/guzzle": "6.*"
     },
     "require-dev": {
         "minii/db": "*@dev",
