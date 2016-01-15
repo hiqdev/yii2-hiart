@@ -6,7 +6,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -270,7 +270,7 @@ class Connection extends Component
     }
 
     /**
-     * Sends the request using guzzle, returns array or raw response content, if $raw is true
+     * Sends the request using guzzle, returns array or raw response content, if $raw is true.
      *
      * @param string $method POST, GET, etc
      * @param string $url the URL for request
@@ -288,7 +288,7 @@ class Connection extends Component
         Yii::endProfile($profile, __METHOD__);
 
         $res = $response->getBody()->getContents();
-        if (!$raw && in_array('application/json', $response->getHeader('Content-Type'))) {
+        if (!$raw && in_array('application/json', $response->getHeader('Content-Type'), true)) {
             $res = Json::decode($res);
         }
 
@@ -296,7 +296,7 @@ class Connection extends Component
     }
 
     /**
-     * Returns the GuzzleHttp client
+     * Returns the GuzzleHttp client.
      *
      * @return \GuzzleHttp\Client
      */

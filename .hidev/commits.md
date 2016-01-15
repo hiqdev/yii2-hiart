@@ -3,6 +3,18 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - f434ae4 2016-01-15 fixed CI (sol@hiqdev.com)
+- Changed: started redoing with Guzzle
+    - 32c32d8 2016-01-15 ActiveQuery::getList() marked as deprecated (d.naumenko.a@gmail.com)
+    - 55d33d9 2016-01-15 Require guzzle, minor code enhancemants (bscheshir.work@gmail.com)
+    - 4d29513 2016-01-15 ActiveRecord::perform() - fixed action name generation for non-bulk requests (d.naumenko.a@gmail.com)
+    - b69881a 2016-01-14 HiArtException - changed user-friendly message (d.naumenko.a@gmail.com)
+    - f9cb92b 2016-01-14 Added Collection::checkConsistency property (d.naumenko.a@gmail.com)
+    - 3b7614f 2016-01-13 PHPDoc improved (d.naumenko.a@gmail.com)
+    - 1d1d191 2016-01-13 Merge branch 'bscheshirwork-master' (d.naumenko.a@gmail.com)
+    - 19aea44 2016-01-13 The errorChecker should be set first (bscheshir.work@gmail.com)
+    - 747d1a7 2016-01-11 PHPDocs improved (d.naumenko.a@gmail.com)
+    - cb1f5be 2016-01-11 STARTED REDOING with Guzzle (sol@hiqdev.com)
     - 3f1a702 2015-12-31 redone get/post/head/delete with makeRequest (sol@hiqdev.com)
 - Added tests and CI
     - e80518e 2015-12-30 php-cs-fixed (sol@hiqdev.com)
