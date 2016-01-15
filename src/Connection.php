@@ -253,7 +253,7 @@ class Connection extends Component
      */
     private function createUrl($path, array $options = [])
     {
-        $options = array_merge($this->getAuth(), $options);
+        $options = array_merge($this->getAuth() ?: [], $options);
         if (!is_string($path)) {
             $url = urldecode(reset($path));
             if (!empty($options)) {
