@@ -329,7 +329,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         $result = $this->createCommand($db)->search(ArrayHelper::merge(['limit' => 1], $this->options));
         if (empty($result)) {
-            return;
+            return null;
         }
         $result = reset($result);
 
@@ -427,7 +427,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             }
             $result = $models;
         }
-        $result = $result ?: [];
+        empty($result) && $result = [];
 
 //        return $this->createCommand($db)->getList($options);
         return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) {
