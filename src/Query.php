@@ -21,13 +21,7 @@ class Query extends Component implements QueryInterface
     use QueryTrait;
 
     public $index;
-
     public $type;
-
-    public $where;
-    public $_limit;
-    public $offset;
-    public $orderBy;
     public $select;
     public $join;
 
@@ -134,7 +128,7 @@ class Query extends Component implements QueryInterface
             }
         }
 
-        return;
+        return null;
     }
 
     public function column($field, $db = null)
@@ -254,21 +248,5 @@ class Query extends Component implements QueryInterface
         $this->timeout = $timeout;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLimit()
-    {
-        return $this->_limit;
-    }
-
-    /**
-     * @param mixed $limit
-     */
-    public function setLimit($limit)
-    {
-        $this->_limit = $limit;
     }
 }

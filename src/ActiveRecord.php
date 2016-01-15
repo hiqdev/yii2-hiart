@@ -84,7 +84,7 @@ class ActiveRecord extends BaseActiveRecord
     public static function get($primaryKey = null, $options = [])
     {
         if ($primaryKey === null) {
-            return;
+            return null;
         }
         $command = static::getDb()->createCommand();
         $result  = $command->get(static::type(), $primaryKey, $options);
@@ -97,7 +97,7 @@ class ActiveRecord extends BaseActiveRecord
             return $model;
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -443,7 +443,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public function optimisticLock()
     {
-        return;
+        return null;
     }
 
     /**
