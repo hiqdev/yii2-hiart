@@ -5,13 +5,13 @@
 
 # IDE & OS files
 .*.swp
-.idea
-nbproject
+.DS_Store
 .buildpath
+.idea
 .project
 .settings
 Thumbs.db
-.DS_Store
+nbproject
 
 # php-cs-fixer cache
 .php_cs.cache
