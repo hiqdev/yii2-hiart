@@ -3,6 +3,7 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Fixed CI
 - Changed: started redoing with Guzzle
 - Added tests and CI
 - Changed Collection::models visibility to protected

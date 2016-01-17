@@ -3,6 +3,8 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Fixed CI
+    - 9ad8bc4 2016-01-17 improved .travis.yml (sol@hiqdev.com)
     - f434ae4 2016-01-15 fixed CI (sol@hiqdev.com)
 - Changed: started redoing with Guzzle
     - 32c32d8 2016-01-15 ActiveQuery::getList() marked as deprecated (d.naumenko.a@gmail.com)
