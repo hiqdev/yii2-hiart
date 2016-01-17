@@ -13,10 +13,12 @@ cache:
         - $HOME/.composer/cache
 before_install:
     - 'composer self-update'
+    - 'composer --version'
+    - 'wget http://hiqdev.com/hidev/hidev.phar -O hidev.phar && chmod a+x hidev.phar'
+    - './hidev.phar --version'
+    - './hidev.phar travis/before_install'
 sudo: false
 install:
-    - 'wget http://hiqdev.com/hidev/hidev.phar && chmod a+x hidev.phar'
-    - 'travis_retry composer install --no-interaction'
     - './hidev.phar travis/install'
 script:
     - './hidev.phar travis/script'
