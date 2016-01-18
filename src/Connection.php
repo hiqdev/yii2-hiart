@@ -296,6 +296,7 @@ class Connection extends Component
     {
         if (static::$guzzle === null) {
             static::$guzzle = new \GuzzleHttp\Client($this->config);
+            static::$guzzle->setUserAgent('hiart/0.x');
         }
 
         return static::$guzzle;
