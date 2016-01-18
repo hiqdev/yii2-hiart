@@ -3,6 +3,8 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Changed url, query and body processing in Connection
+- Added user agent
 - Fixed CI
 - Changed: started redoing with Guzzle
 - Added tests and CI

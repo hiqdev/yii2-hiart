@@ -3,6 +3,11 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Changed url, query and body processing in Connection
+    - 24dd86f 2016-01-18 fixed tests (sol@hiqdev.com)
+    - 122c1d3 2016-01-18 removed old curl request, improved url, query and body passing (sol@hiqdev.com)
+- Added user agent
+    - 5b2c014 2016-01-18 added user agent (sol@hiqdev.com)
 - Fixed CI
     - 9ad8bc4 2016-01-17 improved .travis.yml (sol@hiqdev.com)
     - f434ae4 2016-01-15 fixed CI (sol@hiqdev.com)
