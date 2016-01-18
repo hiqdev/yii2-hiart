@@ -302,7 +302,6 @@ class Connection extends Component
         return static::$guzzle;
     }
 
-
     /**
      * Try to decode error information if it is valid json, return it if not.
      * @param $body
