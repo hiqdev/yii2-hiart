@@ -321,7 +321,7 @@ class Connection extends Component
     }
 
     /**
-     * Setter for errorChecker
+     * Setter for errorChecker.
      * @param Closure $value
      * @return void
      */

@@ -11,10 +11,9 @@
 
 namespace hiqdev\hiart\tests\unit;
 
-use hiqdev\hiart\Connection;
-use hiqdev\hiart\ErrorResponseException;
-use hiqdev\hiart\tests\Mock;
 use GuzzleHttp\Psr7\Response;
+use hiqdev\hiart\Connection;
+use hiqdev\hiart\tests\Mock;
 use Yii;
 
 /**
@@ -50,7 +49,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
             ],
             'errorChecker' => function ($res) {
                 return null;
-            }
+            },
         ]);
     }
 

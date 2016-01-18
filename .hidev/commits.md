@@ -3,6 +3,9 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - 6a97149 2016-01-18 + ConnectionTest.php (sol@hiqdev.com)
+    - 715a25d 2016-01-18 renamed makeGuzzleRequest -> handleRequest (sol@hiqdev.com)
+    - 94a1e11 2016-01-18 refactored $handler and $_errorChecker (sol@hiqdev.com)
 - Changed url, query and body processing in Connection
     - 24dd86f 2016-01-18 fixed tests (sol@hiqdev.com)
     - 122c1d3 2016-01-18 removed old curl request, improved url, query and body passing (sol@hiqdev.com)
