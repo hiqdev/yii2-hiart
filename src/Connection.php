@@ -281,14 +281,14 @@ class Connection extends Component
     protected function guzzleRequest($method, $url, $body = null, $raw = false)
     {
         $method  = strtoupper($method);
-        $profile = $method . ' ' . $url[1] . '#' . (is_array($body) ? http_build_query($body) : $body);
+        $profile = $method . ' ' . $url[0] . '/' .$url[1] . '?' . (is_array($body) ? http_build_query($body) : $body);
         $options = [(is_array($body) ? 'form_params' : 'body') => $body];
         Yii::beginProfile($profile, __METHOD__);
-        $response = $this->getGuzzle()->request($method, $url[1], $options);
+        $response = $this->getGuzzle()->request($method, $url[0] . '/' . $url[1], $options);
         Yii::endProfile($profile, __METHOD__);
 
         $res = $response->getBody()->getContents();
-        if (!$raw && in_array('application/json', $response->getHeader('Content-Type'), true)) {
+        if (!$raw && preg_grep('|application/json|i', $response->getHeader('Content-Type'))) {
             $res = Json::decode($res);
         }
 
