@@ -248,7 +248,7 @@ HTML;
     {
         $target = $this->module->logTarget;
         $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE,
-            ['hiqdev\hiart\Connection::guzzleRequest']);
+            ['hiqdev\hiart\Connection::makeGuzzleRequest']);
 
         return ['messages' => $messages];
     }

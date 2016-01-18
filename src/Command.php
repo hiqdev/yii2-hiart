@@ -40,11 +40,8 @@ class Command extends Component
 
     /**
      * Sends a request to the _search API and returns the result.
-     *
      * @param array $options
-     *
      * @throws ErrorResponseException
-     *
      * @return mixed
      */
     public function search($options = [])
@@ -107,11 +104,11 @@ class Command extends Component
 
     /**
      * @param $action
-     * @param array $options
+     * @param mixed $body request parameters
      * @return mixed
      */
-    public function perform($action, $options = [])
+    public function perform($action, $body = [])
     {
-        return $this->db->post($action, $options);
+        return $this->db->post($action, [], $body);
     }
 }
