@@ -12,6 +12,7 @@
 namespace hiqdev\hiart;
 
 use Closure;
+use GuzzleHttp\Client as Handler;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -42,23 +43,22 @@ class Connection extends Component
      */
     public $config = [];
 
-    public $connectionTimeout = null;
-
-    public $dataTimeout = null;
-
-    public static $curl = null;
+    /**
+     * @var Handler
+     */
+    protected static $_handler = null;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var array authorization config
      */
-    protected static $guzzle = null;
+    protected $_auth = [];
 
     /**
-     * Authorization config.
-     *
-     * @var array
+     * @var Closure Callback to test if API response has error
+     * The function signature: `function ($response)`
+     * Must return `null`, if the response does not contain an error.
      */
-    protected $_auth;
+    protected $_errorChecker;
 
     public function setAuth($auth)
     {
@@ -80,22 +80,9 @@ class Connection extends Component
      */
     public function init()
     {
-        if (!$this->errorChecker instanceof \Closure) {
-            throw new InvalidConfigException('The errorChecker must be set');
+        if (!$this->config['base_uri']) {
+            throw new InvalidConfigException('The `base_uri` config option must be set');
         }
-
-        if (!isset($this->config['api_url'])) {
-            throw new InvalidConfigException('HiArt needs api_url configuration');
-        }
-    }
-
-    public function getHandler()
-    {
-        if (!self::$curl) {
-            self::$curl = static::$curl = curl_init();
-        }
-
-        return self::$curl;
     }
 
     /**
@@ -239,7 +226,7 @@ class Connection extends Component
      */
     public function makeRequest($method, $url, $query = [], $body = null, $raw = false)
     {
-        $result = $this->makeGuzzleRequest($method, $this->prepareUrl($url, $query), $body, $raw);
+        $result = $this->handleRequest($method, $this->prepareUrl($url, $query), $body, $raw);
 
         return $this->checkResponse($result, $url, $query);
     }
@@ -262,21 +249,22 @@ class Connection extends Component
     }
 
     /**
-     * Sends the request using guzzle, returns array or raw response content, if $raw is true.
+     * Handles the request with handler.
+     * Returns array or raw response content, if $raw is true.
      *
      * @param string $method POST, GET, etc
      * @param string $url the URL for request, not including proto and site
      * @param array|string $body the request body. When array - will be sent as POST params, otherwise - as RAW body.
-     * @param bool $raw Whether to decode data, when response is JSON.
-     * @return string|array
+     * @param bool $raw Whether to decode data, when response is decodeable (JSON).
+     * @return array|string
      */
-    protected function makeGuzzleRequest($method, $url, $body = null, $raw = false)
+    protected function handleRequest($method, $url, $body = null, $raw = false)
     {
         $method  = strtoupper($method);
         $profile = $method . ' ' . $url . '#' . (is_array($body) ? http_build_query($body) : $body);
         $options = [(is_array($body) ? 'form_params' : 'body') => $body];
         Yii::beginProfile($profile, __METHOD__);
-        $response = $this->getGuzzle()->request($method, $url, $options);
+        $response = $this->getHandler()->request($method, $url, $options);
         Yii::endProfile($profile, __METHOD__);
 
         $res = $response->getBody()->getContents();
@@ -288,18 +276,28 @@ class Connection extends Component
     }
 
     /**
-     * Returns the GuzzleHttp client.
-     *
-     * @return \GuzzleHttp\Client
+     * Returns the request handler (Guzzle client for the moment).
+     * Creates and setups handler if not set.
+     * @return Handler
      */
-    public function getGuzzle()
+    public function getHandler()
     {
-        if (static::$guzzle === null) {
-            static::$guzzle = new \GuzzleHttp\Client($this->config);
-            static::$guzzle->setUserAgent('hiart/0.x');
+        if (static::$_handler === null) {
+            static::$_handler = new Handler($this->config);
+            static::$_handler->setUserAgent('hiart/0.x');
         }
 
-        return static::$guzzle;
+        return static::$_handler;
+    }
+
+    /**
+     * Set handler manually.
+     * @param Handler $value
+     * @return void
+     */
+    public function setHandler($value)
+    {
+        static::$_handler = $value;
     }
 
     /**
@@ -323,11 +321,14 @@ class Connection extends Component
     }
 
     /**
-     * @var \Closure Callback to test if API response has error
-     * The function signature: `function ($response)`
-     * Must return `null`, if the response does not contain an error.
+     * Setter for errorChecker
+     * @param Closure $value
+     * @return void
      */
-    public $errorChecker;
+    public function setErrorChecker(Closure $value)
+    {
+        $this->_errorChecker = $value;
+    }
 
     /**
      * Checks response with errorChecker callback and raises exception if error.
@@ -339,13 +340,15 @@ class Connection extends Component
      */
     protected function checkResponse($response, $url, $options)
     {
-        $error = call_user_func($this->errorChecker, $response);
-        if ($error !== null) {
-            throw new ErrorResponseException($error, [
-                'requestUrl' => $url,
-                'request'    => $options,
-                'response'   => $response,
-            ]);
+        if (isset($this->_errorChecker)) {
+            $error = call_user_func($this->_errorChecker, $response);
+            if ($error !== null) {
+                throw new ErrorResponseException($error, [
+                    'requestUrl' => $url,
+                    'request'    => $options,
+                    'response'   => $response,
+                ]);
+            }
         }
 
         return $response;
