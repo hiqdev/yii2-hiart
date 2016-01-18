@@ -63,6 +63,6 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->result, $result);
         $this->assertSame('post', $this->mock->name);
         $this->assertSame($this->action, $this->mock->args[0]);
-        $this->assertSame($this->options, $this->mock->args[1]);
+        $this->assertSame($this->options, $this->mock->args[2]);
     }
 }
