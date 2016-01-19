@@ -39,7 +39,7 @@ To use this extension, configure hiart component in your application config:
         'hiart' => [
             'class' => 'hiqdev\hiart\Connection',
             'config' => [
-                'api_url' => 'https://api.site.com/',
+                'base_uri' => 'https://api.site.com/',
             ],
         ],
     ],
