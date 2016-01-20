@@ -17,4 +17,14 @@ namespace hiqdev\hiart;
  */
 class ErrorResponseException extends HiArtException
 {
+    /**
+     * @var array The API response
+     */
+    public $response;
+
+    public function __construct($message, array $errorInfo = [], $code = 0, \Exception $previous = null)
+    {
+        parent::__construct($message, $errorInfo, $code, $previous);
+        $this->response = $this->errorInfo['response'];
+    }
 }
