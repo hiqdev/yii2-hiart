@@ -24,7 +24,7 @@ use yii\helpers\ArrayHelper;
 /**
  * Class Collection manages the collection of the models.
  *
- * @var Model[] the array of models in the collection
+ * @var ActiveRecord[] $models the array of models in the collection
  */
 class Collection extends Component
 {
@@ -45,7 +45,7 @@ class Collection extends Component
     public $checkConsistency = true;
 
     /**
-     * @var Model[] array of models
+     * @var ActiveRecord[] array of models
      */
     protected $models = [];
 
@@ -72,7 +72,7 @@ class Collection extends Component
 
     /**
      * @var ActiveRecord the template model instance. May be set manually by [[setModel()]] or
-     *                      automatically on [[set()]] call
+     * automatically on [[set()]] call
      *
      * @see setModel()
      * @see set()
@@ -101,10 +101,10 @@ class Collection extends Component
     /**
      * Sets the model of the collection.
      *
-     * @param Model|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
-     *                           using given options array
+     * @param ActiveRecord|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
+     * using given options array
      *
-     * @return object|Model
+     * @return object|ActiveRecord
      */
     public function setModel($model)
     {
@@ -115,8 +115,7 @@ class Collection extends Component
         }
         $this->updateFormName();
 
-        $test = $this->getScenario();
-        if (empty($test) && $model->scenario !== $model::SCENARIO_DEFAULT) {
+        if (empty($this->getScenario()) && $model->scenario !== $model::SCENARIO_DEFAULT) {
             $this->setScenario($model->scenario);
         }
 
@@ -126,7 +125,7 @@ class Collection extends Component
     /**
      * Returns the [[model]].
      *
-     * @return Model
+     * @return ActiveRecord
      */
     public function getModel()
     {
@@ -145,7 +144,7 @@ class Collection extends Component
     }
 
     /**
-     * @return Model[] models
+     * @return ActiveRecord[] models
      */
     public function getModels()
     {
@@ -281,13 +280,13 @@ class Collection extends Component
     /**
      * Sets the array of AR models to the collection.
      *
-     * @param array|Model $models - array of AR Models or a single model
+     * @param array|ActiveRecord $models - array of AR Models or a single model
      *
      * @return $this
      */
     public function set($models)
     {
-        if ($models instanceof Model) {
+        if ($models instanceof ActiveRecord) {
             $models = [$models];
         }
 
