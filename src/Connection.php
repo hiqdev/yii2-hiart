@@ -322,10 +322,10 @@ class Connection extends Component
 
     /**
      * Setter for errorChecker.
-     * @param Closure $value
+     * @param Closure|array $value
      * @return void
      */
-    public function setErrorChecker(Closure $value)
+    public function setErrorChecker($value)
     {
         $this->_errorChecker = $value;
     }
