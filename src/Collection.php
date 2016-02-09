@@ -113,9 +113,11 @@ class Collection extends Component
         } else {
             $this->model = Yii::createObject($model);
         }
+
+        $model = $this->model;
         $this->updateFormName();
 
-        if (empty($this->getScenario()) && $model->scenario !== $model::SCENARIO_DEFAULT) {
+        if (empty($this->getScenario())) {
             $this->setScenario($model->scenario);
         }
 
