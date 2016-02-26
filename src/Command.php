@@ -53,15 +53,6 @@ class Command extends Component
         return $this->db->post($url, $options);
     }
 
-    public function getList($options = [])
-    {
-        $options = array_merge($this->queryParts, $options);
-        $command = $this->index . 'GetList';
-        $result  = $this->db->post($command, $options);
-
-        return $result;
-    }
-
     public function insert($action, $data, $id = null, $options = [])
     {
         $options = array_merge($data, $options);

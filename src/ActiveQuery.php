@@ -410,33 +410,4 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         return parent::column($field, $db);
     }
-
-    /**
-     * @deprecated Do not use, will be dropped soon.
-     */
-    public function getList($as_array = true, $db = null, $options = [])
-    {
-        $rawResult = $this->createCommand($db)->getList($options);
-        foreach ($rawResult as $k => $v) {
-            $result[] = ['gl_key' => $k, 'gl_value' => $v];
-        }
-        if (!empty($result) && !$this->asArray) {
-            $models = $this->createModels($result);
-            if (!empty($this->with)) {
-                $this->findWith($this->with, $models);
-            }
-            foreach ($models as $model) {
-                $model->afterFind();
-            }
-            $result = $models;
-        }
-        if (empty($result)) {
-            $result = [];
-        }
-
-//        return $this->createCommand($db)->getList($options);
-        return $as_array ? ArrayHelper::map($result, 'gl_key', function ($o) {
-            return Yii::t('app', $o->gl_value);
-        }) : $result;
-    }
 }
