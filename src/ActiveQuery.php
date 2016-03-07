@@ -285,6 +285,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 continue;
             }
             foreach ($this->join as $name) {
+                if ($name !== $key) {
+                    continue;
+                }
                 if ($model->isRelationPopulated($name)) {
                     continue 2;
                 }
