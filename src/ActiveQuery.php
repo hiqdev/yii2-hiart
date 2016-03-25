@@ -11,7 +11,6 @@
 
 namespace hiqdev\hiart;
 
-use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;

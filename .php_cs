@@ -29,6 +29,7 @@ return Symfony\CS\Config\Config::create()
         '-phpdoc_params',                        /// All items of the @param, @throws, @return, @var, and @type phpdoc tags must be aligned vertically.
         '-phpdoc_scalar',                        /// Scalar types should always be written in the same form. "int", not "integer"; "bool", not "boolean".
         '-phpdoc_separation',                    /// Annotations of a different type are separated by a single blank line.
+        '-phpdoc_to_comment',                    /// Docblocks should only be used on structural elements
         'header_comment',                        /// Add, replace or remove header comment.
         'concat_with_spaces',                    /// Concatenation should be used with at least one whitespace around.
         'ereg_to_preg',                          /// Replace deprecated ereg regular expression functions with preg. Warning! This could change code behavior.
