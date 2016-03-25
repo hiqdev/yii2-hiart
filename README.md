@@ -6,8 +6,8 @@ HiArt
 [![Latest Stable Version](https://poser.pugx.org/hiqdev/yii2-hiart/v/stable)](https://packagist.org/packages/hiqdev/yii2-hiart)
 [![Total Downloads](https://poser.pugx.org/hiqdev/yii2-hiart/downloads)](https://packagist.org/packages/hiqdev/yii2-hiart)
 [![Build Status](https://img.shields.io/travis/hiqdev/yii2-hiart.svg)](https://travis-ci.org/hiqdev/yii2-hiart)
-[![Code Coverage](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/?branch=master)
+[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/hiqdev/yii2-hiart.svg)](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/hiqdev/yii2-hiart.svg)](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/)
 [![Dependency Status](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master/badge.svg)](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master)
 
 Use your API as ActiveRecord

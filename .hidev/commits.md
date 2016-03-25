@@ -3,6 +3,15 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+    - a51bbb7 2016-03-25 phpcsfixed (sol@hiqdev.com)
+    - ceed267 2016-03-25 + disable/enableAuth for connection (sol@hiqdev.com)
+    - 780aa3e 2016-03-17 Fixed DebugPanel CSS classes because of yii2-debug extenstion update (d.naumenko.a@gmail.com)
+    - 1b7a4ac 2016-03-07 ActiveQuery::populateJoinedRelations() fixed processing of multilevel relations (d.naumenko.a@gmail.com)
+    - 4cf1bce 2016-02-26 Dropped `getList()` method in `Command`, `ActiveQuery` (d.naumenko.a@gmail.com)
+    - b75495c 2016-02-09 Collection::setModel - fixed working with scenario (d.naumenko.a@gmail.com)
+    - ebbdcac 2016-02-01 Connection::setErrorChecker now allows to set a callable function using array syntax (d.naumenko.a@gmail.com)
+    - fa26180 2016-01-29 Collection: PHPDocs impreved - changed Model to ActiveRecord (d.naumenko.a@gmail.com)
+    - 485f9c7 2016-01-20 ErrorResponseException - added $response propery, __construct modified (d.naumenko.a@gmail.com)
     - 6a97149 2016-01-18 + ConnectionTest.php (sol@hiqdev.com)
     - 715a25d 2016-01-18 renamed makeGuzzleRequest -> handleRequest (sol@hiqdev.com)
     - 94a1e11 2016-01-18 refactored $handler and $_errorChecker (sol@hiqdev.com)
