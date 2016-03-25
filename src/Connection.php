@@ -54,6 +54,11 @@ class Connection extends Component
     protected $_auth = [];
 
     /**
+     * @var bool is auth disabled
+     */
+    protected $_disabledAuth = false;
+
+    /**
      * @var Closure Callback to test if API response has error
      * The function signature: `function ($response)`
      * Must return `null`, if the response does not contain an error.
@@ -65,13 +70,30 @@ class Connection extends Component
         $this->_auth = $auth;
     }
 
+    /**
+     * Returns auth settings.
+     * @return array
+     */
     public function getAuth()
     {
+        if ($this->_disabledAuth) {
+            return [];
+        }
         if ($this->_auth instanceof Closure) {
             $this->_auth = call_user_func($this->_auth, $this);
         }
 
         return $this->_auth;
+    }
+
+    public function disableAuth()
+    {
+        $this->_disabledAuth = true;
+    }
+
+    public function enableAuth()
+    {
+        $this->_disabledAuth = false;
     }
 
     /**
