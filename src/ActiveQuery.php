@@ -210,13 +210,18 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             return parent::all($db);
         }
 
-        $result = $this->createCommand($db)->search($this->options);
+        $rows = $this->createCommand($db)->search($this->options);
 
-        if (empty($result)) {
+        return $this->populate($rows);
+    }
+
+    public function populate($rows)
+    {
+        if (empty($rows)) {
             return [];
         }
 
-        $models = $this->createModels($result);
+        $models = $this->createModels($rows);
         if (!empty($this->with)) {
             $this->findWith($this->with, $models);
         }
