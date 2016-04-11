@@ -112,7 +112,13 @@ HTML;
                     'class' => 'hiart-link',
                     'data' => ['id' => $i],
                 ]) . '<br/>';
-            $newTabLink = Html::a('to new tab', $apiUrl . preg_replace('/^[A-Z]+\s+/', '', $url) . '&' . $body, ['target' => '_blank']) . '<br/>';
+            $path = preg_replace('/^[A-Z]+\s+/', '', $url);
+            if (strpos($path, '?') !== false) {
+                $newTabUrl = $apiUrl . rtrim($path, '&') . '&' . $body;
+            } else {
+                $newTabUrl = $apiUrl . $path . '?' . $body;
+            }
+            $newTabLink = Html::a('to new tab', $newTabUrl, ['target' => '_blank']) . '<br/>';
             $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ', ' ' . $apiUrl, $url) : $url);
             $body_encoded = Html::encode($body);
             $rows[] = <<<HTML
