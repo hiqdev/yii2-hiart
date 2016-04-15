@@ -305,7 +305,14 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                         $relationModelClass = get_class($relationModel);
                         $relationModelClass::populateRecord($relationModel, $item);
                         $relation->populateJoinedRelations($relationModel, $item);
-                        $records[] = $relationModel;
+                        if ($relation->indexBy !== null) {
+                            $index = is_string($relation->indexBy)
+                                ? $relationModel[$relation->indexBy]
+                                : call_user_func($relation->indexBy, $relationModel);
+                            $records[$index] = $relationModel;
+                        } else {
+                            $records[] = $relationModel;
+                        }
                     }
                 } else {
                     $relationModel = $relationClass::instantiate($value);
