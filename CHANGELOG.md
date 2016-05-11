@@ -1,7 +1,7 @@
 hiqdev/yii2-hiart changelog
 ---------------------------
 
-## 0.0.2 Under development
+## 0.0.2 2016-05-11
 
 - Fixed not renamed `hiresoruce` to `hiart`
 - Fixed `to new tab` link when POST request has no variables in query string

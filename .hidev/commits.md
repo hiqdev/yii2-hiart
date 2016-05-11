@@ -1,7 +1,7 @@
 hiqdev/yii2-hiart commits history
 ---------------------------------
 
-## 0.0.2 Under development
+## 0.0.2 2016-05-11
 
 - Fixed not renamed `hiresoruce` to `hiart`
     - 1b91d73 2016-05-11 Updated changelog (d.naumenko.a@gmail.com)
