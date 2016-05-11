@@ -56,15 +56,15 @@
             "hiqdev\\hiart\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "hiqdev\\hiart\\tests\\": "tests"
+        }
+    },
     "repositories": [
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
         }
-    ],
-    "autoload-dev": {
-        "psr-4": {
-            "hiqdev\\hiart\\tests\\": "tests"
-        }
-    }
+    ]
 }

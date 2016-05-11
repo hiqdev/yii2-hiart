@@ -1,6 +1,10 @@
 hiqdev/yii2-hiart changelog
 ---------------------------
 
+## 0.0.4 2016-05-11
+
+- Fixed tests
+
 ## 0.0.3 2016-05-11
 
 - Added asset-packagist.org repository to composer.json

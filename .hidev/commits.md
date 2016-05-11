@@ -1,6 +1,11 @@
 hiqdev/yii2-hiart commits history
 ---------------------------------
 
+## 0.0.4 2016-05-11
+
+- Fixed tests
+    - 4296c47 2016-05-11 fixed tests (sol@hiqdev.com)
+
 ## 0.0.3 2016-05-11
 
 - Added asset-packagist.org repository to composer.json
