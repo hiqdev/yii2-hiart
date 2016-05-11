@@ -3,18 +3,25 @@ hiqdev/yii2-hiart commits history
 
 ## 0.0.2 Under development
 
+- Fixed not renamed `hiresoruce` to `hiart`
+    - a32ac04 2016-05-11 Renamed all mentions of `hiresource` to `hiart` (d.naumenko.a@gmail.com)
+- Fixed `to new tab` link when POST request has no variables in query string
+    - a131b13 2016-04-11 DebugPanel - fixed `to new tab` link when POST request has no variables in query string (d.naumenko.a@gmail.com)
+- Added relations population via `->joinWith()`
+    - 1b7a4ac 2016-03-07 ActiveQuery::populateJoinedRelations() fixed processing of multilevel relations (d.naumenko.a@gmail.com)
+    - 314ac7c 2016-04-08 ActiveQuery - added pupulate method (d.naumenko.a@gmail.com)
+    - da48238 2016-04-15 Improve populateRelation method (andreyklochok@gmail.com)
+- Added `Connection::disableAuth()`, `::enableAuth()` in order to manage auth conditions per connection
     - 3554aaa 2016-03-25 rehideved (sol@hiqdev.com)
     - a51bbb7 2016-03-25 phpcsfixed (sol@hiqdev.com)
     - ceed267 2016-03-25 + disable/enableAuth for connection (sol@hiqdev.com)
+- Updated CSS classes after yii2-debug extension update
     - 780aa3e 2016-03-17 Fixed DebugPanel CSS classes because of yii2-debug extenstion update (d.naumenko.a@gmail.com)
-    - 1b7a4ac 2016-03-07 ActiveQuery::populateJoinedRelations() fixed processing of multilevel relations (d.naumenko.a@gmail.com)
+- Deleted `Command::getList()`, `ActiveQuery::getList()`
     - 4cf1bce 2016-02-26 Dropped `getList()` method in `Command`, `ActiveQuery` (d.naumenko.a@gmail.com)
     - b75495c 2016-02-09 Collection::setModel - fixed working with scenario (d.naumenko.a@gmail.com)
+- Chhanged `Connection::setErrorChecker()` to support a callable function using array syntax
     - ebbdcac 2016-02-01 Connection::setErrorChecker now allows to set a callable function using array syntax (d.naumenko.a@gmail.com)
-    - fa26180 2016-01-29 Collection: PHPDocs impreved - changed Model to ActiveRecord (d.naumenko.a@gmail.com)
-    - 485f9c7 2016-01-20 ErrorResponseException - added $response propery, __construct modified (d.naumenko.a@gmail.com)
-    - 6a97149 2016-01-18 + ConnectionTest.php (sol@hiqdev.com)
-    - 715a25d 2016-01-18 renamed makeGuzzleRequest -> handleRequest (sol@hiqdev.com)
     - 94a1e11 2016-01-18 refactored $handler and `$_errorChecker` (sol@hiqdev.com)
 - Changed url, query and body processing in Connection
     - 24dd86f 2016-01-18 fixed tests (sol@hiqdev.com)
@@ -25,6 +32,7 @@ hiqdev/yii2-hiart commits history
     - 9ad8bc4 2016-01-17 improved .travis.yml (sol@hiqdev.com)
     - f434ae4 2016-01-15 fixed CI (sol@hiqdev.com)
 - Changed: started redoing with Guzzle
+    - 715a25d 2016-01-18 renamed makeGuzzleRequest -> handleRequest (sol@hiqdev.com)
     - 32c32d8 2016-01-15 ActiveQuery::getList() marked as deprecated (d.naumenko.a@gmail.com)
     - 55d33d9 2016-01-15 Require guzzle, minor code enhancemants (bscheshir.work@gmail.com)
     - 4d29513 2016-01-15 ActiveRecord::perform() - fixed action name generation for non-bulk requests (d.naumenko.a@gmail.com)
@@ -37,12 +45,15 @@ hiqdev/yii2-hiart commits history
     - cb1f5be 2016-01-11 STARTED REDOING with Guzzle (sol@hiqdev.com)
     - 3f1a702 2015-12-31 redone get/post/head/delete with makeRequest (sol@hiqdev.com)
 - Added tests and CI
+    - 6a97149 2016-01-18 + ConnectionTest.php (sol@hiqdev.com)
     - e80518e 2015-12-30 php-cs-fixed (sol@hiqdev.com)
     - fb9b595 2015-12-30 added initial CommandTest (sol@hiqdev.com)
     - ccdc3c3 2015-12-30 doing tests and ci (sol@hiqdev.com)
 - Changed Collection::models visibility to protected
     - dd8cbf2 2015-12-01 BC Breaking: Collection::models visibility changed from public to protected (d.naumenko.a@gmail.com)
 - Fixed different issues
+    - fa26180 2016-01-29 Collection: PHPDocs impreved - changed Model to ActiveRecord (d.naumenko.a@gmail.com)
+    - 485f9c7 2016-01-20 ErrorResponseException - added $response propery, __construct modified (d.naumenko.a@gmail.com)
     - 6d05685 2015-12-25 Collection::collectData - removed forced typecasting $attributes to array (d.naumenko.a@gmail.com)
     - e410ea1 2015-12-17 Add usage to load method Collection class (andreyklochok@gmail.com)
     - a561e2b 2015-12-11 Collection::getIds() - changed static pk `id` to dynamic, got from model (d.naumenko.a@gmail.com)

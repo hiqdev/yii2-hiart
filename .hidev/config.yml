@@ -7,6 +7,3 @@ package:
     namespace:      hiqdev\hiart
     description:    Use your API as ActiveRecord
 
-require:
-    hiqdev/hidev-php:    "*"
-    hiqdev/hidev-vendor: "*"

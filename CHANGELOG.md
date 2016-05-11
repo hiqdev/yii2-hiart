@@ -3,6 +3,13 @@ hiqdev/yii2-hiart changelog
 
 ## 0.0.2 Under development
 
+- Fixed not renamed `hiresoruce` to `hiart`
+- Fixed `to new tab` link when POST request has no variables in query string
+- Added relations population via `->joinWith()`
+- Added `Connection::disableAuth()`, `::enableAuth()` in order to manage auth conditions per connection
+- Updated CSS classes after yii2-debug extension update
+- Deleted `Command::getList()`, `ActiveQuery::getList()`
+- Chhanged `Connection::setErrorChecker()` to support a callable function using array syntax
 - Changed url, query and body processing in Connection
 - Added user agent
 - Fixed CI
