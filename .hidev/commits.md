@@ -4,6 +4,7 @@ hiqdev/yii2-hiart commits history
 ## 0.0.2 Under development
 
 - Fixed not renamed `hiresoruce` to `hiart`
+    - 1b91d73 2016-05-11 Updated changelog (d.naumenko.a@gmail.com)
     - a32ac04 2016-05-11 Renamed all mentions of `hiresource` to `hiart` (d.naumenko.a@gmail.com)
 - Fixed `to new tab` link when POST request has no variables in query string
     - a131b13 2016-04-11 DebugPanel - fixed `to new tab` link when POST request has no variables in query string (d.naumenko.a@gmail.com)
