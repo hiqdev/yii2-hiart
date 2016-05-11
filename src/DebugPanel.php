@@ -24,11 +24,11 @@ use yii\web\View;
  */
 class DebugPanel extends Panel
 {
-    public $db = 'hiresource';
+    public $db = 'hiart';
 
     public function init()
     {
-        $this->actions['hiresource-query'] = [
+        $this->actions['hiart-query'] = [
             'class' => 'hiqdev\\hiart\\DebugAction',
             'panel' => $this,
             'db' => $this->db,
@@ -81,9 +81,9 @@ HTML;
         $i = 0;
         // Try to get API URL
         try {
-            $hiresource = \Yii::$app->get('hiresource');
-            $apiUrl = (StringHelper::endsWith($hiresource->config['api_url'],
-                '/')) ? $hiresource->config['api_url'] : $hiresource->config['api_url'] . '/';
+            $component = \Yii::$app->get('hiart');
+            $apiUrl = (StringHelper::endsWith($component->config['api_url'],
+                '/')) ? $component->config['api_url'] : $component->config['api_url'] . '/';
         } catch (\yii\base\InvalidConfigException $e) {
             // Pass
         }
@@ -107,7 +107,7 @@ HTML;
                     },
                 ]);
             }
-            $ajaxUrl = Url::to(['hiresource-query', 'logId' => $logId, 'tag' => $this->tag]);
+            $ajaxUrl = Url::to(['hiart-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
                     'class' => 'hiart-link',
                     'data' => ['id' => $i],

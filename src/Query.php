@@ -40,7 +40,7 @@ class Query extends Component implements QueryInterface
     public function createCommand($db = null)
     {
         if ($db === null) {
-            $db = Yii::$app->get('hiresource');
+            $db = Yii::$app->get('hiart');
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);

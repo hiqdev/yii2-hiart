@@ -23,14 +23,14 @@ class ActiveRecord extends BaseActiveRecord
 {
     /**
      * Returns the database connection used by this AR class.
-     * By default, the "hiresoruce" application component is used as the database connection.
+     * By default, the "hiart" application component is used as the database connection.
      * You may override this method if you want to use a different database connection.
      *
      * @return Connection the database connection used by this AR class.
      */
     public static function getDb()
     {
-        return \Yii::$app->get('hiresource');
+        return \Yii::$app->get('hiart');
     }
 
     /**
@@ -342,7 +342,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Custom method for HiResource.
+     * Custom method for HiArt.
      *
      * @param $action
      * @param array $options

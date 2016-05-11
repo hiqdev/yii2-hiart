@@ -123,7 +123,7 @@ class Connection extends Component
      */
     public function getDriverName()
     {
-        return 'hiresource';
+        return 'hiart';
     }
 
     /**
