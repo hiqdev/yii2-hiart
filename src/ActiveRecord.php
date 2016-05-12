@@ -166,7 +166,6 @@ class ActiveRecord extends BaseActiveRecord
     {
         $primaryValue = $this->primaryValue();
 
-        $result = null;
         if ($primaryValue instanceof \Closure) {
             return call_user_func($primaryValue, [$this]);
         } elseif (is_array($primaryValue)) {
@@ -281,6 +280,9 @@ class ActiveRecord extends BaseActiveRecord
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($options = [])
     {
         if (!$this->beforeDelete()) {
@@ -295,11 +297,7 @@ class ActiveRecord extends BaseActiveRecord
         $this->setOldAttributes(null);
         $this->afterDelete();
 
-        if ($result === false) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return $result === false ? false : true;
     }
 
     public function update($runValidation = true, $attributeNames = null, $options = [])
@@ -338,7 +336,7 @@ class ActiveRecord extends BaseActiveRecord
 
         $this->afterSave(false, $changedAttributes);
 
-        return $result;
+        return $result === false ? false : true;
     }
 
     /**
