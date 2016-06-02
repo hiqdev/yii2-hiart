@@ -16,7 +16,7 @@ use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 
 /**
- * QueryBuilder builds an HiActiveResource query based on the specification given as a [[Query]] object.
+ * QueryBuilder builds an HiArt query based on the specification given as a [[Query]] object.
  */
 class QueryBuilder extends \yii\base\Object
 {
@@ -100,14 +100,16 @@ class QueryBuilder extends \yii\base\Object
             'eq'      => 'buildEqCondition',
             'in'      => 'buildInCondition',
             'like'    => 'buildLikeCondition',
-            'gt'      => 'buildGreaterThenCondition',
-            'lt'      => 'buildLessThanCondition',
+            'gt'      => 'buildCompareCondition',
+            'ge'      => 'buildCompareCondition',
+            'lt'      => 'buildCompareCondition',
+            'le'      => 'buildCompareCondition',
         ];
         if (empty($condition)) {
             return [];
         }
         if (!is_array($condition)) {
-            throw new NotSupportedException('String conditions in where() are not supported by HiActiveResource.');
+            throw new NotSupportedException('String conditions in where() are not supported by HiArt.');
         }
 
         if (isset($condition[0])) { // operator format: operator, operand 1, operand 2, ...
@@ -145,22 +147,13 @@ class QueryBuilder extends \yii\base\Object
         return [$operands[0] . '_like' => $operands[1]];
     }
 
-    private function buildGreaterThenCondition($operator, $operands)
+    private function buildCompareCondition($operator, $operands)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires three operands.");
         }
 
-        return [$operands[0] . '_gt' => $operands[1]];
-    }
-
-    private function buildLessThanCondition($operator, $operands)
-    {
-        if (!isset($operands[0], $operands[1])) {
-            throw new InvalidParamException("Operator '$operator' requires three operands.");
-        }
-
-        return [$operands[0] . '_lt' => $operands[1]];
+        return [$operands[0] . '_' . $operator => $operands[1]];
     }
 
     private function buildAndCondition($operator, $operands)
@@ -180,7 +173,7 @@ class QueryBuilder extends \yii\base\Object
 
     private function buildBetweenCondition($operator, $operands)
     {
-        throw new NotSupportedException('Between condition is not supported by HiActiveResource.');
+        throw new NotSupportedException('Between condition is not supported by HiArt.');
     }
 
     private function buildInCondition($operator, $operands)
@@ -218,6 +211,6 @@ class QueryBuilder extends \yii\base\Object
 
     protected function buildCompositeInCondition($operator, $columns, $values)
     {
-        throw new NotSupportedException('composite in is not supported by HiActiveResource.');
+        throw new NotSupportedException('composite in is not supported by HiArt.');
     }
 }
