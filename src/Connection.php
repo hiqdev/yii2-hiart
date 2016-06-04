@@ -105,6 +105,10 @@ class Connection extends Component
         if (!$this->config['base_uri']) {
             throw new InvalidConfigException('The `base_uri` config option must be set');
         }
+
+        if (!isset($this->config['headers']['User-Agent'])) {
+            $this->config['headers']['User-Agent'] = 'HiArt/0.x';
+        }
     }
 
     /**
@@ -306,7 +310,6 @@ class Connection extends Component
     {
         if (static::$_handler === null) {
             static::$_handler = new Handler($this->config);
-            static::$_handler->setUserAgent('hiart/0.x');
         }
 
         return static::$_handler;
