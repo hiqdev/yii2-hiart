@@ -353,7 +353,7 @@ class Connection extends Component
     }
 
     /**
-     * Checks response with errorChecker callback and raises exception if error.
+     * Checks response with checkError method and raises exception if error.
      * @param array  $response response data from API
      * @param string $url      request URL
      * @param array  $options  request data
@@ -362,17 +362,29 @@ class Connection extends Component
      */
     protected function checkResponse($response, $url, $options)
     {
-        if (isset($this->_errorChecker)) {
-            $error = call_user_func($this->_errorChecker, $response);
-            if ($error !== null) {
-                throw new ErrorResponseException($error, [
-                    'requestUrl' => $url,
-                    'request'    => $options,
-                    'response'   => $response,
-                ]);
-            }
+        $error = $this->checkError($response);
+        if (isset($error)) {
+            throw new ErrorResponseException($error, [
+                'requestUrl' => $url,
+                'request'    => $options,
+                'response'   => $response,
+            ]);
         }
 
         return $response;
+    }
+
+    /**
+     * Checks response with errorChecker callback and returns not null if error.
+     * @param array  $response response data from API
+     * @return null|string
+     */
+    public function checkError($response)
+    {
+        if (isset($this->_errorChecker)) {
+            return call_user_func($this->_errorChecker, $response);
+        }
+
+        return null;
     }
 }
