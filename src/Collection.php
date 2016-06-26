@@ -269,15 +269,6 @@ class Collection extends Component
 
         return $this->set($models);
     }
-//
-//    public function perform ($options)
-//    {
-//        if (is_string($options)) {
-//            $options = ['scenario' => $options];
-//        }
-//
-//        return $this->load($this->first->perform($options['scenario'], $this->models, true));
-//    }
 
     /**
      * Sets the array of AR models to the collection.
