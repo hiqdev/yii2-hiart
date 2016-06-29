@@ -82,8 +82,8 @@ HTML;
         // Try to get API URL
         try {
             $component = \Yii::$app->get('hiart');
-            $apiUrl = (StringHelper::endsWith($component->config['api_url'],
-                '/')) ? $component->config['api_url'] : $component->config['api_url'] . '/';
+            $apiUrl = (StringHelper::endsWith($component->config['base_uri'],
+                '/')) ? $component->config['base_uri'] : $component->config['base_uri'] . '/';
         } catch (\yii\base\InvalidConfigException $e) {
             // Pass
         }
