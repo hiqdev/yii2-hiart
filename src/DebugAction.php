@@ -59,7 +59,7 @@ class DebugAction extends Action
         parse_str($body, $options);
 
         /* @var $db Connection */
-        $db   = \Yii::$app->get($this->db);
+        $db   = Yii::$app->get($this->db);
         $time = microtime(true);
         switch ($method) {
             case 'GET':

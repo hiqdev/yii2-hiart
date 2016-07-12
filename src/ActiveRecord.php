@@ -11,6 +11,7 @@
 
 namespace hiqdev\hiart;
 
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
@@ -30,7 +31,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function getDb()
     {
-        return \Yii::$app->get('hiart');
+        return Yii::$app->get('hiart');
     }
 
     /**
@@ -41,10 +42,10 @@ class ActiveRecord extends BaseActiveRecord
     public static function find($options = [])
     {
         $config = [
-            'class'   => ActiveQuery::className(),
+            'class'   => ActiveQuery::class,
             'options' => $options,
         ];
-        return \Yii::createObject($config, [get_called_class()]);
+        return Yii::createObject($config, [get_called_class()]);
     }
 
     /**

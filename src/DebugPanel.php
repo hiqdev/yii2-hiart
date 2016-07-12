@@ -11,6 +11,7 @@
 
 namespace hiqdev\hiart;
 
+use Yii;
 use yii\debug\Panel;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -81,7 +82,7 @@ HTML;
         $i = 0;
         // Try to get API URL
         try {
-            $component = \Yii::$app->get('hiart');
+            $component = Yii::$app->get('hiart');
             $apiUrl = (StringHelper::endsWith($component->config['base_uri'],
                 '/')) ? $component->config['base_uri'] : $component->config['base_uri'] . '/';
         } catch (\yii\base\InvalidConfigException $e) {
@@ -135,7 +136,7 @@ HTML;
         }
         $rows = implode("\n", $rows);
 
-        \Yii::$app->view->registerCss(<<<CSS
+        Yii::$app->view->registerCss(<<<CSS
 .string { color: green; }
 .number { color: darkorange; }
 .boolean { color: blue; }
@@ -144,7 +145,7 @@ HTML;
 CSS
         );
 
-        \Yii::$app->view->registerJs(<<<JS
+        Yii::$app->view->registerJs(<<<JS
 function syntaxHighlight(json) {
     json = json.replace(/&/g, '&').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
