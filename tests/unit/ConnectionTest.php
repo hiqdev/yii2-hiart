@@ -42,7 +42,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $response     = new Response(200, [], $this->result);
         $this->mock   = new Mock($response);
         $this->object = Yii::createObject([
-            'class'   => Connection::className(),
+            'class'   => Connection::class,
             'handler' => $this->mock,
             'config'  => [
                 'base_uri' => $this->site,

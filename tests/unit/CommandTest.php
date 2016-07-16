@@ -38,7 +38,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     {
         $this->mock = new Mock($this->result);
         $this->object = Yii::createObject([
-            'class' => Command::className(),
+            'class' => Command::class,
             'index' => 'test',
             'db'    => $this->mock,
         ]);
