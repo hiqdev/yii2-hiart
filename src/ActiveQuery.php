@@ -184,8 +184,16 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return $this;
     }
 
+    /**
+     * @param array|string $columns
+     * @return $this
+     */
     public function addSelect($columns)
     {
+        if (!is_array($columns)) {
+            $columns = (array) $columns;
+        }
+
         if ($this->select === null) {
             $this->select = $columns;
         } else {
