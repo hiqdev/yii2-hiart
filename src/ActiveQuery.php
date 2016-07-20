@@ -271,6 +271,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                     $model = $class::instantiate($row);
                     $modelClass = get_class($model);
                     $modelClass::populateRecord($model, $row);
+                    $this->populateJoinedRelations($model, $row);
                     if (is_string($this->indexBy)) {
                         $key = $model->{$this->indexBy};
                     } else {
