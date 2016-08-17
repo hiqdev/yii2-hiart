@@ -326,6 +326,22 @@ class Connection extends Component
     }
 
     /**
+     * @return boolean
+     */
+    public function isDisabledAuth()
+    {
+        return $this->_disabledAuth;
+    }
+
+    /**
+     * @param boolean $disabledAuth
+     */
+    public function setDisabledAuth($disabledAuth)
+    {
+        $this->_disabledAuth = $disabledAuth;
+    }
+
+    /**
      * Try to decode error information if it is valid json, return it if not.
      * @param $body
      * @return mixed
