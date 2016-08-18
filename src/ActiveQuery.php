@@ -127,6 +127,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->buildJoinWith();
             $this->joinWith = null;
         }
+
+        return $this;
     }
 
     public function joinWith($with)
