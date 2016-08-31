@@ -50,7 +50,7 @@ class Query extends Component implements QueryInterface
 
     public function join($type)
     {
-        $this->join[] = $type;
+        $this->join[] = (array)$type;
 
         return $this;
     }

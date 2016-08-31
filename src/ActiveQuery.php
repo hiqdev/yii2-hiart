@@ -133,7 +133,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     public function joinWith($with)
     {
-        $this->joinWith[] = [(array) $with, true];
+        $this->joinWith[] = (array) $with;
 
         return $this;
     }
@@ -141,29 +141,23 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     private function buildJoinWith()
     {
         $join = $this->join;
-
         $this->join = [];
 
-        foreach ($this->joinWith as $config) {
-            list($with, $eagerLoading) = $config;
+        $model = new $this->modelClass;
+
+        foreach ($this->joinWith as $with) {
+            $this->joinWithRelations($model, $with);
 
             foreach ($with as $name => $callback) {
                 if (is_int($name)) {
-                    $this->join($callback);
-                    unset($with[$name]);
+                    $this->join([$callback]);
                 } else {
-                    throw new NotSupportedException('joinWith() using query modification is not supported, use with() instead.');
+                    $this->join([$name => $callback]);
                 }
+
+                unset($with[$name]);
             }
         }
-
-        // remove duplicated joins added by joinWithRelations that may be added
-        // e.g. when joining a relation and a via relation at the same time
-        $uniqueJoins = [];
-        foreach ($this->join as $j) {
-            $uniqueJoins[serialize($j)] = $j;
-        }
-        $this->join = array_values($uniqueJoins);
 
         if (!empty($join)) {
             // append explicit join to joinWith()
@@ -171,10 +165,56 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->join = empty($this->join) ? $join : array_merge($this->join, $join);
         }
 
-        if (empty($this->select)) {
+        if (empty($this->select) || true) {
             $this->addSelect(['*' => '*']);
             foreach ($this->joinWith as $join) {
-                $this->addSelect(reset($join));
+                $key = array_shift(array_keys($join));
+                $closure = array_shift($join);
+
+                $this->addSelect(is_int($key) ? $closure : $key);
+            }
+        }
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param $with
+     */
+    protected function joinWithRelations($model, $with)
+    {
+        foreach ($with as $name => $callback) {
+            if (is_int($name)) {
+                $name = $callback;
+                $callback = null;
+            }
+
+            $primaryModel = $model;
+            $parent = $this;
+
+            if (!isset($relations[$name])) {
+                $relations[$name] = $relation = $primaryModel->getRelation($name);
+                if ($callback !== null) {
+                    call_user_func($callback, $relation);
+                }
+                if (!empty($relation->joinWith)) {
+                    $relation->buildJoinWith();
+                }
+                $this->joinWithRelation($parent, $relation);
+            }
+        }
+    }
+
+    /**
+     * Joins a parent query with a child query.
+     * The current query object will be modified accordingly.
+     * @param ActiveQuery $parent
+     * @param ActiveQuery $child
+     */
+    private function joinWithRelation($parent, $child)
+    {
+        if (!empty($child->join)) {
+            foreach ($child->join as $join) {
+                $this->join[] = $join;
             }
         }
     }
@@ -299,7 +339,14 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             if (empty($this->join) || !is_array($value) || $model->hasAttribute($key)) {
                 continue;
             }
-            foreach ($this->join as $name) {
+            foreach ($this->join as $join) {
+                $name = array_shift(array_keys($join));
+                $closure = array_shift($join);
+
+                if (is_int($name)) {
+                    $name = $closure;
+                    $closure = null;
+                }
                 if ($name !== $key) {
                     continue;
                 }
@@ -309,6 +356,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 $records = [];
                 $relation = $model->getRelation($name);
                 $relationClass = $relation->modelClass;
+                if ($closure !== null) {
+                    call_user_func($closure, $relation);
+                }
+                $relation->prepare();
 
                 if ($relation->multiple) {
                     foreach ($value as $item) {
