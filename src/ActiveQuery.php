@@ -14,6 +14,7 @@ namespace hiqdev\hiart;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
+use yii\db\ActiveRecordInterface;
 use yii\db\ActiveRelationTrait;
 use yii\helpers\ArrayHelper;
 
@@ -275,6 +276,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         if (!empty($this->with)) {
             $this->findWith($this->with, $models);
         }
+
         foreach ($models as $model) {
             $model->afterFind();
         }
@@ -363,30 +365,45 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
                 if ($relation->multiple) {
                     foreach ($value as $item) {
-                        $relationModel = $relationClass::instantiate($item);
-                        $relationModelClass = get_class($relationModel);
-                        $relationModelClass::populateRecord($relationModel, $item);
-                        $relation->populateJoinedRelations($relationModel, $item);
+                        $relatedModel = $relationClass::instantiate($item);
+                        $relatedModelClass = get_class($relatedModel);
+                        $relatedModelClass::populateRecord($relatedModel, $item);
+                        $relation->populateJoinedRelations($relatedModel, $item);
+                        $relation->addInverseRelation($relatedModel, $model);
                         if ($relation->indexBy !== null) {
                             $index = is_string($relation->indexBy)
-                                ? $relationModel[$relation->indexBy]
-                                : call_user_func($relation->indexBy, $relationModel);
-                            $records[$index] = $relationModel;
+                                ? $relatedModel[$relation->indexBy]
+                                : call_user_func($relation->indexBy, $relatedModel);
+                            $records[$index] = $relatedModel;
                         } else {
-                            $records[] = $relationModel;
+                            $records[] = $relatedModel;
                         }
                     }
                 } else {
-                    $relationModel = $relationClass::instantiate($value);
-                    $relationModelClass = get_class($relationModel);
-                    $relationModelClass::populateRecord($relationModel, $value);
-                    $relation->populateJoinedRelations($relationModel, $value);
-                    $records = $relationModel;
+                    $relatedModel = $relationClass::instantiate($value);
+                    $relatedModelClass = get_class($relatedModel);
+                    $relatedModelClass::populateRecord($relatedModel, $value);
+                    $relation->populateJoinedRelations($relatedModel, $value);
+                    $relation->addInverseRelation($relatedModel, $model);
+                    $records = $relatedModel;
                 }
 
                 $model->populateRelation($name, $records);
             }
         }
+    }
+
+    /**
+     * @param $relatedModel
+     */
+    private function addInverseRelation($relatedModel)
+    {
+        if ($this->inverseOf === null) {
+            return;
+        }
+
+        $inverseRelation = $relatedModel->getRelation($this->inverseOf);
+        $relatedModel->populateRelation($this->inverseOf, $inverseRelation->multiple ? [$this->primaryModel] : $this->primaryModel);
     }
 
     /**
