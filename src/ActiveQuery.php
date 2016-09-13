@@ -116,7 +116,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return static
      */
     public function prepare()
     {
