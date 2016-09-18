@@ -1,15 +1,22 @@
-hiqdev/yii2-hiart changelog
----------------------------
+hiqdev/yii2-hiart
+-----------------
 
-## 0.0.4 2016-05-11
+## [Under development]
+
+- Added inversed relations
+- Added nested joinWith
+- Changed `api_url` to `base_uri` (as in guzzle)
+- Fixed code styling alot
+
+## [0.0.4] - 2016-05-11
 
 - Fixed tests
 
-## 0.0.3 2016-05-11
+## [0.0.3] - 2016-05-11
 
 - Added asset-packagist.org repository to composer.json
 
-## 0.0.2 2016-05-11
+## [0.0.2] - 2016-05-11
 
 - Fixed not renamed `hiresoruce` to `hiart`
 - Fixed `to new tab` link when POST request has no variables in query string
@@ -37,7 +44,7 @@ hiqdev/yii2-hiart changelog
 - Fixed 'raw' processing
 - Fixed PHP warnings
 
-## 0.0.1 2015-08-26
+## [0.0.1] - 2015-08-26
 
 - Added Connection::errorChecker callback to test if API response was error
 - Fixed PHP warnings
@@ -45,5 +52,4 @@ hiqdev/yii2-hiart changelog
 - Added basics
 - Changed: renamed to hiart
 
-## Development started 2015-04-17
-
+## [Development started] - 2015-04-17
