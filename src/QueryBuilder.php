@@ -98,6 +98,7 @@ class QueryBuilder extends \yii\base\Object
             'and'     => 'buildAndCondition',
             'between' => 'buildBetweenCondition',
             'eq'      => 'buildEqCondition',
+            'ne'      => 'buildNotEqCondition',
             'in'      => 'buildInCondition',
             'like'    => 'buildLikeCondition',
             'gt'      => 'buildCompareCondition',
@@ -207,6 +208,13 @@ class QueryBuilder extends \yii\base\Object
         $key = array_shift($operands);
 
         return [$key => reset($operands)];
+    }
+
+    private function buildNotEqCondition($operator, $operands)
+    {
+        $key = array_shift($operands);
+
+        return [$key . '_' . $operator => reset($operands)];
     }
 
     protected function buildCompositeInCondition($operator, $columns, $values)
