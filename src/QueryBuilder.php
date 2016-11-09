@@ -100,6 +100,7 @@ class QueryBuilder extends \yii\base\Object
             'eq'      => 'buildEqCondition',
             'ne'      => 'buildNotEqCondition',
             'in'      => 'buildInCondition',
+            'ni'      => 'buildNotInCondition',
             'like'    => 'buildLikeCondition',
             'gt'      => 'buildCompareCondition',
             'ge'      => 'buildCompareCondition',
@@ -177,7 +178,7 @@ class QueryBuilder extends \yii\base\Object
         throw new NotSupportedException('Between condition is not supported by HiArt.');
     }
 
-    private function buildInCondition($operator, $operands)
+    private function buildInCondition($operator, $operands, $not = false)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires two operands.");
@@ -200,7 +201,17 @@ class QueryBuilder extends \yii\base\Object
             }
         }
 
-        return [$column . '_in' => $values];
+        if ($not) {
+            $key = $column . '_ni'; // not in
+        } else {
+            $key = $column . '_in';
+        }
+        return [$key => $values];
+    }
+
+    private function buildNotInCondition($operator, $operands)
+    {
+        return $this->buildInCondition($operator, $operands, true);
     }
 
     private function buildEqCondition($operator, $operands)
