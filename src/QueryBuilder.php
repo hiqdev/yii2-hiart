@@ -102,6 +102,7 @@ class QueryBuilder extends \yii\base\Object
             'in'      => 'buildInCondition',
             'ni'      => 'buildNotInCondition',
             'like'    => 'buildLikeCondition',
+            'ilike'   => 'buildIlikeCondition',
             'gt'      => 'buildCompareCondition',
             'ge'      => 'buildCompareCondition',
             'lt'      => 'buildCompareCondition',
@@ -147,6 +148,11 @@ class QueryBuilder extends \yii\base\Object
     private function buildLikeCondition($operator, $operands)
     {
         return [$operands[0] . '_like' => $operands[1]];
+    }
+
+    private function buildIlikeCondition($operator, $operands)
+    {
+        return [$operands[0] . '_ilike' => $operands[1]];
     }
 
     private function buildCompareCondition($operator, $operands)
