@@ -160,7 +160,7 @@ class Connection extends Component
      * @param string $url   URL
      * @param array  $query query options
      * @param string $body  request body
-     * @param bool   $raw   if response body contains JSON and should be decoded
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
@@ -174,14 +174,14 @@ class Connection extends Component
      * Performs HEAD HTTP request.
      * @param string $url   URL
      * @param array  $query query options
-     * @param string $body  request body
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
      */
     public function head($url, $query = [], $body = null)
     {
-        return $this->makeRequest('HEAD', $url, $query, $body, $raw);
+        return $this->makeRequest('HEAD', $url, $query, $body);
     }
 
     /**
@@ -189,7 +189,7 @@ class Connection extends Component
      * @param string $url   URL
      * @param array  $query query options
      * @param string $body  request body
-     * @param bool   $raw   if response body contains JSON and should be decoded
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
@@ -204,7 +204,7 @@ class Connection extends Component
      * @param string $url   URL
      * @param array  $query query options
      * @param string $body  request body
-     * @param bool   $raw   if response body contains JSON and should be decoded
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
@@ -219,7 +219,7 @@ class Connection extends Component
      * @param string $url   URL
      * @param array  $query query options
      * @param string $body  request body
-     * @param bool   $raw   if response body contains JSON and should be decoded
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
@@ -245,7 +245,7 @@ class Connection extends Component
      * @param string $url   URL
      * @param array  $query query options, (GET parameters)
      * @param string $body  request body, (POST parameters)
-     * @param bool   $raw   if response body contains JSON and should be decoded
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
@@ -281,7 +281,7 @@ class Connection extends Component
      * @param string $method POST, GET, etc
      * @param string $url the URL for request, not including proto and site
      * @param array|string $body the request body. When array - will be sent as POST params, otherwise - as RAW body.
-     * @param bool $raw Whether to decode data, when response is decodeable (JSON).
+     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @return array|string
      */
     protected function handleRequest($method, $url, $body = null, $raw = false)
