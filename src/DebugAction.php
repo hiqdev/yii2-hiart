@@ -63,7 +63,7 @@ class DebugAction extends Action
         $time = microtime(true);
         switch ($method) {
             case 'GET':
-                $result = $db->get($url, $options, $body, true);
+                $result = $db->get($url, $options, true);
                 break;
             case 'POST':
                 $result = $db->post($url, $options, $body, true);

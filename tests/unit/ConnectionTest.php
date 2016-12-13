@@ -59,18 +59,17 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $result = $this->object->get($this->url, [], $this->body, false);
+        $result = $this->object->get($this->url, [], false);
         $this->assertSame($this->result, $result);
         $this->assertSame('request',   $this->mock->name);
         $this->assertSame('GET',       $this->mock->args[0]);
         $this->assertSame($this->url,  $this->mock->args[1]);
-        $this->assertSame($this->body, $this->mock->args[2]['form_params']);
     }
 
     public function testErrorChecker()
     {
         $this->object->setErrorChecker(function ($res) { return $res; });
         $this->setExpectedException('hiqdev\hiart\ErrorResponseException', $this->result);
-        $this->object->get($this->url, [], $this->body, false);
+        $this->object->get($this->url, [], false);
     }
 }

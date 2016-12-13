@@ -159,15 +159,14 @@ class Connection extends Component
      * Performs GET HTTP request.
      * @param string $url   URL
      * @param array  $query query options
-     * @param string $body  request body
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
      * @return mixed response
      */
-    public function get($url, $query = [], $body = null, $raw = false)
+    public function get($url, $query = [], $raw = false)
     {
-        return $this->makeRequest('GET', $url, $query, $body, $raw);
+        return $this->makeRequest('GET', $url, $query, null, $raw);
     }
 
     /**
