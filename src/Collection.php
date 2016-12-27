@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -307,12 +306,12 @@ class Collection extends Component
      *
      * This method will call [[insert()]] or [[update()]].
      *
-     * @param bool  $runValidation whether to perform validation before saving the collection.
+     * @param bool  $runValidation whether to perform validation before saving the collection
      * @param array $attributes    list of attribute names that need to be saved. Defaults to null,
      *                             meaning all attributes that are loaded will be saved. If the scenario is specified, will use only
      *                             fields from the scenario
      * @param array $options       the array of options that will be passed to [[insert]] or [[update]] methods to override
-     *                             model parameters.
+     *                             model parameters
      *
      * @return bool whether the saving succeeds
      */
@@ -375,7 +374,7 @@ class Collection extends Component
         }
         if (!$this->beforeSave()) {
             return false;
-        };
+        }
 
         $data    = $this->collectData($attributes, $options);
         $command = $this->first->getScenarioCommand('update', true);

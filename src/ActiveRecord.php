@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -27,7 +26,7 @@ class ActiveRecord extends BaseActiveRecord
      * By default, the "hiart" application component is used as the database connection.
      * You may override this method if you want to use a different database connection.
      *
-     * @return Connection the database connection used by this AR class.
+     * @return Connection the database connection used by this AR class
      */
     public static function getDb()
     {
@@ -37,7 +36,7 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * {@inheritdoc}
      *
-     * @return ActiveQuery the newly created [[ActiveQuery]] instance.
+     * @return ActiveQuery the newly created [[ActiveQuery]] instance
      */
     public static function find($options = [])
     {
@@ -78,9 +77,9 @@ class ActiveRecord extends BaseActiveRecord
      * Gets a record by its primary key.
      *
      * @param mixed $primaryKey the primaryKey value
-     * @param array $options    options given in this parameter are passed to API.
+     * @param array $options    options given in this parameter are passed to API
      *
-     * @return null|static The record instance or null if it was not found.
+     * @return null|static the record instance or null if it was not found
      */
     public static function get($primaryKey = null, $options = [])
     {
@@ -186,9 +185,9 @@ class ActiveRecord extends BaseActiveRecord
      * Attributes are names of fields of the corresponding API object.
      * The primaryKey for HiArt documents is the `id` field by default which is not part of the attributes.
      *
-     * @throws \yii\base\InvalidConfigException if not overridden in a child class.
+     * @throws \yii\base\InvalidConfigException if not overridden in a child class
      *
-     * @return string[] list of attribute names.
+     * @return string[] list of attribute names
      */
     public function attributes()
     {
@@ -196,7 +195,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return string the name of the index this record is stored in.
+     * @return string the name of the index this record is stored in
      */
     public static function index()
     {
@@ -234,7 +233,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return string the name of the type of this record.
+     * @return string the name of the type of this record
      */
     public static function type()
     {
@@ -468,7 +467,7 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return ActiveQuery the relational query object.
+     * @return ActiveQuery the relational query object
      */
     public function hasOne($class, $link)
     {
@@ -477,7 +476,7 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return ActiveQuery the relational query object.
+     * @return ActiveQuery the relational query object
      */
     public function hasMany($class, $link)
     {

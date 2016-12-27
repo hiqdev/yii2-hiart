@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -136,7 +135,7 @@ HTML;
         }
         $rows = implode("\n", $rows);
 
-        Yii::$app->view->registerCss(<<<CSS
+        Yii::$app->view->registerCss(<<<'CSS'
 .string { color: green; }
 .number { color: darkorange; }
 .boolean { color: blue; }

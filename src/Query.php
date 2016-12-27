@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -50,7 +49,7 @@ class Query extends Component implements QueryInterface
 
     public function join($type)
     {
-        $this->join[] = (array)$type;
+        $this->join[] = (array) $type;
 
         return $this;
     }

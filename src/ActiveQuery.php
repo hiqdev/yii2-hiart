@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -11,10 +10,8 @@
 
 namespace hiqdev\hiart;
 
-use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
-use yii\db\ActiveRecordInterface;
 use yii\db\ActiveRelationTrait;
 use yii\helpers\ArrayHelper;
 
@@ -72,7 +69,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * @param Connection $db the DB connection used to create the DB command.
      *                       If null, the DB connection returned by [[modelClass]] will be used.
      *
-     * @return Command the created DB command instance.
+     * @return Command the created DB command instance
      */
     public function createCommand($db = null)
     {
@@ -148,7 +145,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $join = $this->join;
         $this->join = [];
 
-        $model = new $this->modelClass;
+        $model = new $this->modelClass();
 
         foreach ($this->joinWith as $with) {
             $this->joinWithRelations($model, $with);

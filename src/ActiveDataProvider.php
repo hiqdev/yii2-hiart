@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -15,7 +14,7 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
 {
     /**
      * @var ActiveQuery the query that is used to fetch data models and [[totalCount]]
-     * if it is not explicitly set.
+     * if it is not explicitly set
      */
     public $query;
 }

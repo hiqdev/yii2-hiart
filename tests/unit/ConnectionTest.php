@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -68,7 +67,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testErrorChecker()
     {
-        $this->object->setErrorChecker(function ($res) { return $res; });
+        $this->object->setErrorChecker(function ($res) {
+            return $res;
+        });
         $this->setExpectedException('hiqdev\hiart\ErrorResponseException', $this->result);
         $this->object->get($this->url, [], false);
     }

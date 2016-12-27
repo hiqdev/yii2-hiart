@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Tools to use API as ActiveRecord for Yii2
  *
  * @link      https://github.com/hiqdev/yii2-hiart
@@ -59,9 +58,9 @@ class Connection extends Component
     protected $_disabledAuth = false;
 
     /**
-     * @var Closure Callback to test if API response has error
+     * @var Closure callback to test if API response has error
      * The function signature: `function ($response)`
-     * Must return `null`, if the response does not contain an error.
+     * Must return `null`, if the response does not contain an error
      */
     protected $_errorChecker;
 
@@ -317,7 +316,6 @@ class Connection extends Component
     /**
      * Set handler manually.
      * @param Handler $value
-     * @return void
      */
     public function setHandler($value)
     {
@@ -363,7 +361,6 @@ class Connection extends Component
     /**
      * Setter for errorChecker.
      * @param Closure|array $value
-     * @return void
      */
     public function setErrorChecker($value)
     {
