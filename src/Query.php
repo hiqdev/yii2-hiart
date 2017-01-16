@@ -15,14 +15,29 @@ use yii\base\Component;
 use yii\db\QueryInterface;
 use yii\db\QueryTrait;
 
+/**
+ * Query represents API request in a way that is independent from concrete API.
+ * Holds request data:
+ * - select: fields to select
+ * - from: entity being queried, e.g. user
+ * - join: data how to join with other entities
+ * - parts: [key => value] combined data of request to be passed as GET or POST variables
+ * - other standard request options provided with QueryTrait: limit, offset, orderBy, ...
+ */
 class Query extends Component implements QueryInterface
 {
     use QueryTrait;
 
+    public $db;
+
+    public $select;
+    public $from;
+    public $join;
+    public $parts;
+
+    /// DEPRECATED
     public $index;
     public $type;
-    public $select;
-    public $join;
 
     /**
      * {@inheritdoc}
@@ -212,10 +227,9 @@ class Query extends Component implements QueryInterface
         return $this;
     }
 
-    public function from($index, $type = null)
+    public function from($from)
     {
-        $this->index = $index;
-        $this->type  = $type;
+        $this->from = $from;
 
         return $this;
     }
@@ -247,5 +261,20 @@ class Query extends Component implements QueryInterface
         $this->timeout = $timeout;
 
         return $this;
+    }
+
+    public function getParts()
+    {
+        return $this->parts;
+    }
+
+    public function setPart($name, $value)
+    {
+        $this->parts[$name] = $value;
+    }
+
+    public function addParts($values)
+    {
+        $this->parts = ArrayHelper::merge($this->parts, $values);
     }
 }

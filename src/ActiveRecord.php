@@ -35,15 +35,16 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * {@inheritdoc}
-     *
      * @return ActiveQuery the newly created [[ActiveQuery]] instance
      */
     public static function find($options = [])
     {
         $config = [
             'class'   => ActiveQuery::class,
+            'db'      => $this->getDb(),
             'options' => $options,
         ];
+
         return Yii::createObject($config, [get_called_class()]);
     }
 
@@ -262,11 +263,8 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $values = $this->getDirtyAttributes($attributes);
-
-        $command = $this->getScenarioCommand('create');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $data   = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->perform('create', $data);
 
         $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
@@ -289,10 +287,8 @@ class ActiveRecord extends BaseActiveRecord
             return false;
         }
 
-        $command = $this->getScenarioCommand('delete');
-        $data    = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
-
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $data   = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->perform('delete', $data);
 
         $this->setOldAttributes(null);
         $this->afterDelete();
@@ -316,18 +312,15 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $values = $this->getAttributes($attributes);
-//        $values = $this->attributes;
-
         if (empty($values)) {
             $this->afterSave(false, $values);
 
             return 0;
         }
 
-        $command = $this->getScenarioCommand('update');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->perform('update', $data);
 
-        $result            = static::getDb()->createCommand()->perform($command, $data);
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -339,16 +332,21 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
+    protected function perform($defaultScenario, $data, $bulk = false)
+    {
+        $command = $this->getScenarioCommand($defaultScenario, $bulk);
+
+        return static::getDb()->createCommand()->perform($command, $data);
+    }
+
     /**
-     * Custom method for HiArt.
-     *
+     * Creates and performs action statically.
      * @param $action
      * @param array $options
      * @param bool  $bulk
-     *
      * @return array
      */
-    public static function perform($action, $options = [], $bulk = false)
+    public static function performAction($action, $options = [], $bulk = false)
     {
         $action = ($bulk === true ? static::index() : static::type()) . $action;
         $result = static::getDb()->createCommand()->perform($action, $options);
@@ -357,7 +355,7 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Creates the command name for the specified scenario name.
+     * Creates command name from the current scenario name.
      *
      * @param string $default
      * @param bool   $bulk

@@ -16,7 +16,7 @@ use yii\helpers\Inflector;
 use yii\helpers\Json;
 
 /**
- * The Command class implements the API for accessing REST API.
+ * The Command class implements execution of query.
  */
 class Command extends Component
 {
@@ -24,46 +24,73 @@ class Command extends Component
      * @var Connection
      */
     public $db;
-    /**
-     * @var string|array the indexes to execute the query on. Defaults to null meaning all indexes
-     */
-    public $index;
-    /**
-     * @var string|array the types to execute the query on. Defaults to null meaning all types
-     */
-    public $type;
-    /**
-     * @var array list of arrays or json strings that become parts of a query
-     */
-    public $queryParts = [];
 
     /**
-     * Sends a request to the _search API and returns the result.
+     * @var Query Query object
+     */
+    public $query;
+
+    /**
+     * @var string request method e.g. POST
+     */
+    protected $method;
+
+    /**
+     * @var string request url, without site
+     */
+    protected $url;
+
+    /**
+     * @var array request query vars (GET parameters)
+     */
+    protected $queryVars;
+
+    /**
+     * @var string request body vars (POST parameters)
+     */
+    protected $body;
+
+    /**
+     * @var bool do not decode request
+     */
+    protected $raw = false;
+
+    /**
+     * Sends a request to retrieve data.
+     * In API this could be get, search or list request.
      * @param array $options
      * @throws ErrorResponseException
      * @return mixed
      */
     public function search($options = [])
     {
-        $url     = $this->index . Inflector::id2camel(ArrayHelper::remove($options, 'scenario', 'search'));
-        $query   = $this->queryParts;
-        $options = array_merge($query, $options);
-
-        return $this->db->post($url, $options);
+        return $this->makeRequest('search', $options);
     }
 
-    public function insert($action, $data, $id = null, $options = [])
+    /**
+     * Sends a request to create/insert data.
+     * @param mixed $from entity to create 
+     * @param mixed $data attributes of object to create
+     * @param mixed $options operation options
+     * @return mixed
+     */
+    public function create($from, $data, array $options = [])
     {
-        $options = array_merge($data, $options);
+        $this->query->from($from)->addParts($data);
 
-        if ($id !== null) {
-            return $this->db->put($action . 'Update', array_merge($options, ['id' => $id]));
-        } else {
-            return $this->db->post($action . 'Create', $options);
-        }
+        return $this->makeRequest('create', $options);
     }
 
-    public function get($modelName, $primaryKey, $options)
+    public function update($index, $data, $where, $options = [])
+    {
+        $options['id'] = $id;
+
+        return $this->db->put($index . 'Update', array_merge($data, $options));
+
+        return $this->makeRequest('update', $options);
+    }
+
+    public function get($modelName, $primaryKey, $options = [])
     {
         return $this->db->post($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
     }
@@ -80,25 +107,51 @@ class Command extends Component
         return $this->db->head([$index, $type, $id]);
     }
 
-    public function delete($index, $id, $options = [])
+    public function delete($from, $id, $options = [])
     {
-        return $this->db->delete($index . 'Delete', array_merge($options, ['id' => $id]));
-    }
+        $this->query->from($from)->where(['id' => $id]);
 
-    public function update($index, $id, $data, $options = [])
-    {
-        $options['id'] = $id;
-
-        return $this->db->put($index . 'Update', array_merge($data, $options));
+        return $this->makeRequest('delete', $options);
     }
 
     /**
-     * @param $action
+     * Performs str
+     * @param string $url URL
      * @param mixed $body request parameters
      * @return mixed
      */
-    public function perform($action, $body = [])
+    public function perform($url, $body = [])
     {
-        return $this->db->post($action, [], $body);
+        return $this->db->post($url, [], $body);
+        return $this->makeRequest($action, $options);
+    }
+
+    public function makeRequest($method, $action, array $options = [])
+    {
+        return $this->db->makeRequest(
+            $this->buildMethod($action, $options),
+            $this->buildUrl($action, $options),
+            $this->buildQuery($action, $options),
+            $this->buildBody($action, $options),
+            $this->buildRaw($action, $options)
+        );
+    }
+
+    public function buildUrl($action, array $options)
+    {
+        return $query->from . Inflector::id2camel($action);
+    }
+
+    public function getQueryVars($action, $options)
+    {
+    }
+
+    public function getBody($action, $options)
+    {
+    }
+
+    public function getRaw($action, $options)
+    {
+        return $this->raw;
     }
 }

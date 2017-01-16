@@ -43,9 +43,14 @@ class Connection extends Component
     public $config = [];
 
     /**
-     * @var Handler
+     * @var Handler request handler
      */
-    protected static $_handler = null;
+    protected static $_handler;
+
+    /**
+     * @var QueryBuilder the query builder for this connection
+     */
+    protected $_builder;
 
     /**
      * @var array authorization config
@@ -121,7 +126,6 @@ class Connection extends Component
 
     /**
      * Returns the name of the DB driver for the current [[dsn]].
-     *
      * @return string name of the DB driver
      */
     public function getDriverName()
@@ -131,25 +135,33 @@ class Connection extends Component
 
     /**
      * Creates a command for execution.
-     *
      * @param array $config the configuration for the Command class
-     *
      * @return Command the DB command
      */
     public function createCommand($config = [])
     {
         $config['db'] = $this;
-        $command      = new Command($config);
 
-        return $command;
+        return new Command($config);
+    }
+
+    /**
+     * @return QueryBuilder the query builder for this connection.
+     */
+    public function getQueryBuilder()
+    {
+        if ($this->_builder === null) {
+            $this->_builder = $this->createQueryBuilder();
+        }
+
+        return $this->_builder;
     }
 
     /**
      * Creates new query builder instance.
-     *
      * @return QueryBuilder
      */
-    public function getQueryBuilder()
+    public function createQueryBuilder()
     {
         return new QueryBuilder($this);
     }
@@ -157,7 +169,7 @@ class Connection extends Component
     /**
      * Performs GET HTTP request.
      * @param string $url   URL
-     * @param array  $query query options
+     * @param array  $query query options (GET parameters)
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
@@ -185,8 +197,8 @@ class Connection extends Component
     /**
      * Performs POST HTTP request.
      * @param string $url   URL
-     * @param array  $query query options
-     * @param string $body  request body
+     * @param array  $query query options (GET parameters)
+     * @param string $body  request body (POST parameters)
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
@@ -200,8 +212,8 @@ class Connection extends Component
     /**
      * Performs PUT HTTP request.
      * @param string $url   URL
-     * @param array  $query query options
-     * @param string $body  request body
+     * @param array  $query query options (GET parameters)
+     * @param string $body  request body (POST parameters)
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
@@ -215,8 +227,8 @@ class Connection extends Component
     /**
      * Performs DELETE HTTP request.
      * @param string $url   URL
-     * @param array  $query query options
-     * @param string $body  request body
+     * @param array  $query query options (GET parameters)
+     * @param string $body  request body (POST parameters)
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
@@ -241,8 +253,8 @@ class Connection extends Component
     /**
      * Make request and check for error.
      * @param string $url   URL
-     * @param array  $query query options, (GET parameters)
-     * @param string $body  request body, (POST parameters)
+     * @param array  $query query options (GET parameters)
+     * @param string $body  request body (POST parameters)
      * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
      * @throws HiArtException
      * @throws \yii\base\InvalidConfigException
@@ -256,7 +268,7 @@ class Connection extends Component
     }
 
     /**
-     * Creates URL.
+     * Creates URL by joining path part and query options.
      * @param mixed $path path
      * @param array $query query options
      * @return array

@@ -33,62 +33,63 @@ class QueryBuilder extends \yii\base\Object
     }
 
     /**
-     * @param ActiveQuery $query
-     *
+     * @param Query $query
      * @throws NotSupportedException
-     *
      * @return array
      */
     public function build($query)
     {
-        $parts = [];
         $query->prepare();
 
-        $this->buildSelect($query->select, $parts);
-        $this->buildLimit($query->limit, $parts);
-        $this->buildPage($query->offset, $query->limit, $parts);
-        $this->buildOrderBy($query->orderBy, $parts);
+        $this->buildSelect($query);
+        $this->buildLimit($query);
+        $this->buildPage($query);
+        $this->buildOrderBy($query);
+        $this->buildWhere($query);
 
-        $parts = ArrayHelper::merge($parts, $this->buildCondition($query->where));
-
-        return [
-            'queryParts' => $parts,
-            'index'      => $query->index,
-            'type'       => $query->type,
-        ];
+        return ['query' => $query];
     }
 
-    public function buildLimit($limit, &$parts)
+    public function buildLimit(Query $query)
     {
+        $limit = $query->limit;
         if (!empty($limit)) {
             if ($limit === -1) {
                 $limit = 'ALL';
             }
-            $parts['limit'] = $limit;
+            $query->setPart('limit', $limit);
         }
     }
 
-    public function buildPage($offset, $limit, &$parts)
+    public function buildPage(Query $query)
     {
-        if ($offset > 0) {
-            $parts['page'] = ceil($offset / $limit) + 1;
+        if ($query->offset > 0) {
+            $this->setPart('page', ceil($this->offset / $this->limit) + 1);
         }
     }
 
-    public function buildOrderBy($orderBy, &$parts)
+    public function buildOrderBy(Query $query)
     {
+        $orderBy = $query->orderBy;
         if (!empty($orderBy)) {
-            $parts['orderby'] = key($orderBy) . $this->_sort[reset($orderBy)];
+            $this->setPart('orderby', key($orderBy) . $this->_sort[reset($orderBy)]);
         }
     }
 
-    public function buildSelect($select, &$parts)
+    public function buildSelect(Query $query)
     {
-        if (!empty($select)) {
-            foreach ($select as $attribute) {
-                $parts['select'][$attribute] = $attribute;
+        if (!empty($query->select)) {
+            $select = [];
+            foreach ($query->select as $name) {
+                $select[$name] = $name;
             }
+            $this->setPart('select', $select);
         }
+    }
+
+    public function buildWhere(Query $query)
+    {
+        $query->addParts($this->buildCondition($query->where));
     }
 
     public function buildCondition($condition)

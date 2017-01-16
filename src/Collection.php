@@ -341,9 +341,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes, $options);
-        $command = $this->first->getScenarioCommand('create', true);
-
-        $results = $this->first->getDb()->createCommand()->perform($command, $data);
+        $results = $this->first->perform('create', $data, true);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             /* @var $model ActiveRecord */
@@ -377,8 +375,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes, $options);
-        $command = $this->first->getScenarioCommand('update', true);
-        $results = $this->first->getDb()->createCommand()->perform($command, $data);
+        $results = $this->first->perform('update', $data, true);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -398,16 +395,16 @@ class Collection extends Component
 
     public function delete()
     {
-        $result = false;
-        if ($this->beforeDelete()) {
-            $data    = $this->collectData();
-            $command = $this->first->getScenarioCommand('delete', true);
-
-            $results = $this->first->getDb()->createCommand()->perform($command, $data);
-            $this->afterDelete();
+        if (!$this->beforeDelete()) {
+            return false;
         }
 
-        return $result;
+        $data    = $this->collectData();
+        $results = $this->first->perform('delete', $data, true);
+
+        $this->afterDelete();
+
+        return $results;
     }
 
     /**
