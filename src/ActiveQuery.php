@@ -34,13 +34,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public $joinWith = [];
 
     /**
-     * @var array options for search
-     */
-    public $options = [];
-
-    /**
      * Constructor.
-     *
      * @param string $modelClass the model class associated with this query
      * @param array $config configurations to be applied to the newly created query object
      */
@@ -65,10 +59,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * Creates a DB command that can be used to execute this query.
-     *
      * @param Connection $db the DB connection used to create the DB command.
-     *                       If null, the DB connection returned by [[modelClass]] will be used.
-     *
+     * If null, the DB connection returned by [[modelClass]] will be used.
      * @return Command the created DB command instance
      */
     public function createCommand($db = null)
@@ -95,16 +87,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         /* @var $modelClass ActiveRecord */
         $modelClass = $this->modelClass;
+
         if ($db === null) {
             $db = $modelClass::getDb();
         }
-
-        if ($this->type === null) {
-            $this->type = $modelClass::type();
-        }
-        if ($this->index === null) {
-            $this->index = $modelClass::index();
-            $this->type = $modelClass::type();
+        if ($this->from === null) {
+            $this->from = $modelClass::from();
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
@@ -113,6 +101,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
+     * Prepares query for use. See NOTE.
      * @return static
      */
     public function prepare()

@@ -10,12 +10,14 @@
 
 namespace hiqdev\hiart;
 
+use GuzzleHttp\Psr7\ServerRequest;
+
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 
 /**
- * QueryBuilder builds an HiArt query based on the specification given as a [[Query]] object.
+ * QueryBuilder builds a PSR7 request based on the specification given as a [[Query]] object.
  */
 class QueryBuilder extends \yii\base\Object
 {
@@ -37,59 +39,93 @@ class QueryBuilder extends \yii\base\Object
      * @throws NotSupportedException
      * @return array
      */
-    public function build($query)
+    public function build(Query $query)
+    {
+        var_dump($query);die();
+        $this->prepare($query);
+
+        return ['request' => $this->buildRequest($query)];
+    }
+
+    /**
+     * Prepares query. This is function for you to redefine.
+     * @param Query $query 
+     */
+    public function prepare(Query $query)
     {
         $query->prepare();
-
-        $this->buildSelect($query);
-        $this->buildLimit($query);
-        $this->buildPage($query);
-        $this->buildOrderBy($query);
-        $this->buildWhere($query);
-
-        return ['query' => $query];
     }
 
-    public function buildLimit(Query $query)
+    public function buildRequest($query)
     {
-        $limit = $query->limit;
-        if (!empty($limit)) {
-            if ($limit === -1) {
-                $limit = 'ALL';
+        $request = new ServerRequest($this->buildMethod($query), $this->buildUri($query));
+
+        $headers = $this->buildHeaders($query);
+        if (!empty($headers)) {
+            foreach ($headers as $header => $value) {
+                $request = $request->withHeader($header, $value);
             }
-            $query->setPart('limit', $limit);
         }
-    }
 
-    public function buildPage(Query $query)
-    {
-        if ($query->offset > 0) {
-            $this->setPart('page', ceil($this->offset / $this->limit) + 1);
-        }
-    }
-
-    public function buildOrderBy(Query $query)
-    {
-        $orderBy = $query->orderBy;
-        if (!empty($orderBy)) {
-            $this->setPart('orderby', key($orderBy) . $this->_sort[reset($orderBy)]);
-        }
-    }
-
-    public function buildSelect(Query $query)
-    {
-        if (!empty($query->select)) {
-            $select = [];
-            foreach ($query->select as $name) {
-                $select[$name] = $name;
+        foreach (['ProtocolVersion', 'UploadedFiles', 'CookieParams', 'QueryParams', 'ParsedBody'] as $name) {
+            $value = $this->{'build' . $name}($query);
+            if (!empty($value)) {
+                $request = $request->{'with' . $name}($value);
             }
-            $this->setPart('select', $select);
         }
+
+        return $request;
     }
 
-    public function buildWhere(Query $query)
+    public function buildMethod(Query $query)
     {
-        $query->addParts($this->buildCondition($query->where));
+        static $defaultMethods = [
+            'get'       => 'GET',
+            'put'       => 'PUT',
+            'head'      => 'HEAD',
+            'post'      => 'GET',
+            'search'    => 'GET',
+            'insert'    => 'POST',
+            'update'    => 'PUT',
+            'delete'    => 'DELETE',
+        ];
+
+        return isset($defaultMethods[$query->action]) ? $defaultMethods[$query->action] : 'POST';
+    }
+
+    public function buildUri(Query $query)
+    {
+        return $query->from;
+    }
+
+    public function buildHeaders(Query $query)
+    {
+        return [];
+    }
+
+    public function buildProtocolVersion(Query $query)
+    {
+        return null;
+    }
+
+    public function buildUploadedFiles(Query $query)
+    {
+        return [];
+    }
+
+    public function buildCookieParams(Query $query)
+    {
+        return [];
+    }
+
+    public function buildQueryParams(Query $query)
+    {
+        return [];
+    }
+
+    public function buildParsedBody(Query $query)
+    {
+        return [];
     }
 
     public function buildCondition($condition)
@@ -169,7 +205,7 @@ class QueryBuilder extends \yii\base\Object
         $parts = [];
         foreach ($operands as $operand) {
             if (is_array($operand)) {
-                $parts = \yii\helpers\ArrayHelper::merge($this->buildCondition($operand), $parts);
+                $parts = ArrayHelper::merge($this->buildCondition($operand), $parts);
             }
         }
         if (!empty($parts)) {

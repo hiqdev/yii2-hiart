@@ -14,15 +14,22 @@ use Yii;
 use yii\base\Component;
 use yii\db\QueryInterface;
 use yii\db\QueryTrait;
+use yii\helpers\ArrayHelper;
 
 /**
  * Query represents API request in a way that is independent from concrete API.
- * Holds request data:
- * - select: fields to select
- * - from: entity being queried, e.g. user
- * - join: data how to join with other entities
- * - parts: [key => value] combined data of request to be passed as GET or POST variables
- * - other standard request options provided with QueryTrait: limit, offset, orderBy, ...
+ * Holds API request information:
+ * - data passed into query:
+ *      - action: action to be performed with this query, e.g. search, insert, update, delete
+ *      - options: other additional options
+ *      - select: fields to select
+ *      - from: entity being queried, e.g. user
+ *      - join: data how to join with other entities
+ *      - other standard request options provided with QueryTrait: limit, offset, orderBy, ...
+ * - data build with QueryBuilder:
+ *      - HTTP request data: method, url, raw
+ *          - in question: queryVars, body ????
+ *      - parts: [key => value] combined data of request to be passed as GET or POST variables
  */
 class Query extends Component implements QueryInterface
 {
@@ -30,10 +37,45 @@ class Query extends Component implements QueryInterface
 
     public $db;
 
+    /**
+     * @var string action that this query performs
+     */
+    public $action;
+
+    /**
+     * @var array options for search
+     */
+    public $options = [];
+
     public $select;
     public $from;
     public $join;
     public $parts;
+
+    /**
+     * @var string request method e.g. POST
+     */
+    public $method;
+
+    /**
+     * @var string request url, without site
+     */
+    public $url;
+
+    /**
+     * @var array request query vars (GET parameters)
+     */
+    public $queryVars;
+
+    /**
+     * @var string request body vars (POST parameters)
+     */
+    public $body;
+
+    /**
+     * @var bool do not decode request
+     */
+    public $raw = false;
 
     /// DEPRECATED
     public $index;
@@ -51,9 +93,10 @@ class Query extends Component implements QueryInterface
         }
     }
 
-    public function createCommand($db = null)
+    public function createCommand($db)
     {
         if ($db === null) {
+            throw new \Exception('no db given to Query::createCommand');
             $db = Yii::$app->get('hiart');
         }
 

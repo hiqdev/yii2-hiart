@@ -10,15 +10,12 @@
 
 namespace hiqdev\hiart;
 
-use yii\base\Component;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
-use yii\helpers\Json;
+use Psr\Http\Message\RequestInterface;
 
 /**
- * The Command class implements execution of query.
+ * The Command class implements execution of request.
  */
-class Command extends Component
+class Command extends \yii\base\Component
 {
     /**
      * @var Connection
@@ -26,132 +23,80 @@ class Command extends Component
     public $db;
 
     /**
-     * @var Query Query object
+     * @var RequestInterface request object
      */
-    public $query;
+    protected $_request;
+
+    public function setRequest(RequestInterface $request)
+    {
+        $this->_request = $request;
+
+        return $this;
+    }
 
     /**
-     * @var string request method e.g. POST
-     */
-    protected $method;
-
-    /**
-     * @var string request url, without site
-     */
-    protected $url;
-
-    /**
-     * @var array request query vars (GET parameters)
-     */
-    protected $queryVars;
-
-    /**
-     * @var string request body vars (POST parameters)
-     */
-    protected $body;
-
-    /**
-     * @var bool do not decode request
-     */
-    protected $raw = false;
-
-    /**
+     * XXX IN QUESTION
      * Sends a request to retrieve data.
      * In API this could be get, search or list request.
-     * @param array $options
      * @throws ErrorResponseException
      * @return mixed
      */
-    public function search($options = [])
+    public function search()
     {
-        return $this->makeRequest('search', $options);
+        return $this->execute();
     }
 
     /**
      * Sends a request to create/insert data.
-     * @param mixed $from entity to create 
-     * @param mixed $data attributes of object to create
-     * @param mixed $options operation options
+     * @param mixed $table entity to create
+     * @param mixed $columns attributes of object to create
      * @return mixed
      */
-    public function create($from, $data, array $options = [])
+    public function insert($table, $columns, array $options = [])
     {
-        $this->query->from($from)->addParts($data);
+        $request = $this->db->getQueryBuilder()->insert($table, $columns, $options);
 
-        return $this->makeRequest('create', $options);
+        return $this->setRequest($request);
     }
 
-    public function update($index, $data, $where, $options = [])
+    public function update($table, $columns, $condition = [], array $options = [])
     {
-        $options['id'] = $id;
+        $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $options);
 
-        return $this->db->put($index . 'Update', array_merge($data, $options));
-
-        return $this->makeRequest('update', $options);
+        return $this->setRequest($request);
     }
 
-    public function get($modelName, $primaryKey, $options = [])
+    public function delete($table, $condition, array $options = [])
     {
-        return $this->db->post($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
-    }
+        $request = $this->db->getQueryBuilder()->delete($table, $condition, $options);
 
-    public function mget($index, $type, $ids, $options = [])
-    {
-        $body = Json::encode(['ids' => array_values($ids)]);
-
-        return $this->db->post([$index, $type, '_mget'], $options, $body);
-    }
-
-    public function exists($index, $type, $id)
-    {
-        return $this->db->head([$index, $type, $id]);
-    }
-
-    public function delete($from, $id, $options = [])
-    {
-        $this->query->from($from)->where(['id' => $id]);
-
-        return $this->makeRequest('delete', $options);
+        return $this->setRequest($request);
     }
 
     /**
-     * Performs str
+     * Executes the request.
      * @param string $url URL
      * @param mixed $body request parameters
      * @return mixed
      */
-    public function perform($url, $body = [])
+    public function execute()
     {
-        return $this->db->post($url, [], $body);
-        return $this->makeRequest($action, $options);
+    var_dump($this->_request);
+    die();
+        return $this->db->send($this->_request);
     }
 
-    public function makeRequest($method, $action, array $options = [])
+    /**
+     * Creates and executes request with given data.
+     * @param string $action
+     * @param mixed $body request parameters
+     * @return mixed
+     */
+    public function perform($action, $body = [])
     {
-        return $this->db->makeRequest(
-            $this->buildMethod($action, $options),
-            $this->buildUrl($action, $options),
-            $this->buildQuery($action, $options),
-            $this->buildBody($action, $options),
-            $this->buildRaw($action, $options)
-        );
-    }
+        $request = $this->db->getQueryBuilder()->perform($action, $body);
+        $this->setRequest($request);
 
-    public function buildUrl($action, array $options)
-    {
-        return $query->from . Inflector::id2camel($action);
-    }
-
-    public function getQueryVars($action, $options)
-    {
-    }
-
-    public function getBody($action, $options)
-    {
-    }
-
-    public function getRaw($action, $options)
-    {
-        return $this->raw;
+        return $this->execute();
     }
 }

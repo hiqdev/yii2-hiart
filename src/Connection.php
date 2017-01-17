@@ -12,6 +12,8 @@ namespace hiqdev\hiart;
 
 use Closure;
 use GuzzleHttp\Client as Handler;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -239,16 +241,6 @@ class Connection extends Component
         return $this->makeRequest('DELETE', $url, $query, $body, $raw);
     }
 
-    /**
-     * XXX DEPRECATED in favour of post().
-     * @param $url
-     * @param array $query
-     * @return mixed
-     */
-    public function perform($url, $body = [])
-    {
-        return $this->makeRequest('DELETE', $url, [], $body);
-    }
 
     /**
      * Make request and check for error.
@@ -329,9 +321,20 @@ class Connection extends Component
      * Set handler manually.
      * @param Handler $value
      */
-    public function setHandler($value)
+    public function setHandler(Handler $value)
     {
         static::$_handler = $value;
+    }
+
+    /**
+     * Sends given request.
+     * @param RequestInterface $request
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function send(RequestInterface $request, array $options = [])
+    {
+        return $this->getHandler()->send($request, $options);
     }
 
     /**

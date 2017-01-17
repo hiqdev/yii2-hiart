@@ -41,7 +41,6 @@ class ActiveRecord extends BaseActiveRecord
     {
         $config = [
             'class'   => ActiveQuery::class,
-            'db'      => $this->getDb(),
             'options' => $options,
         ];
 
@@ -88,7 +87,7 @@ class ActiveRecord extends BaseActiveRecord
             return null;
         }
         $command = static::getDb()->createCommand();
-        $result  = $command->get(static::type(), $primaryKey, $options);
+        $result  = $command->get(static::from(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -220,12 +219,6 @@ class ActiveRecord extends BaseActiveRecord
      * For example, by creating a record based on the value of a column,
      * you may implement the so-called single-table inheritance mapping.
      *
-     * @param array $row row data to be populated into the record.
-     *                   This array consists of the following keys:
-     *                   - `_source`: refers to the attributes of the record.
-     *                   - `_type`: the type this record is stored in.
-     *                   - `_index`: the index this record is stored in.
-     *
      * @return static the newly created active record
      */
     public static function instantiate($row)
@@ -234,9 +227,9 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return string the name of the type of this record
+     * @return string the name of the entity of this record
      */
-    public static function type()
+    public static function from()
     {
         return Inflector::camel2id(StringHelper::basename(get_called_class()), '-');
     }
@@ -348,7 +341,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function performAction($action, $options = [], $bulk = false)
     {
-        $action = ($bulk === true ? static::index() : static::type()) . $action;
+        $action = ($bulk === true ? static::index() : static::from()) . $action;
         $result = static::getDb()->createCommand()->perform($action, $options);
 
         return $result;
@@ -356,13 +349,10 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * Creates command name from the current scenario name.
-     *
      * @param string $default
      * @param bool   $bulk
-     *
      * @throws InvalidConfigException
      * @throws NotSupportedException
-     *
      * @return string
      */
     public function getScenarioCommand($default = '', $bulk = false)
@@ -395,7 +385,7 @@ class ActiveRecord extends BaseActiveRecord
         if (is_array($result)) {
             return implode('', $result);
         } else {
-            return static::type() . ($bulk ? 's' : '') . $result;
+            return ($bulk ? 's' : '') . $result;
         }
     }
 
