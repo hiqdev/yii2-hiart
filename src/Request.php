@@ -35,6 +35,10 @@ class Request
         return $this->worker;
     }
 
+    public function getQuery()
+    {
+        return $this->query;
+    }
     public static function fromData(array $data)
     {
         $uri = $data['Uri'];

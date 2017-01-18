@@ -104,7 +104,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Prepares query for use. See NOTE.
      * @return static
      */
-    public function prepare()
+    public function prepare($builder)
     {
         // NOTE: because the same ActiveQuery may be used to build different SQL statements
         // (e.g. by ActiveDataProvider, one for count query, the other for row data query,
@@ -210,7 +210,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
     }
 
-    public function select($columns)
+    public function select($columns, $option = NULL)
     {
         $this->select = $columns;
 
@@ -467,27 +467,4 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function column($field, $db = null)
-    {
-        if ($field === '_id') {
-            $command = $this->createCommand($db);
-            $command->queryParts['fields'] = [];
-            $command->queryParts['_source'] = false;
-            $result = $command->search();
-            if (empty($result['hits']['hits'])) {
-                return [];
-            }
-            $column = [];
-            foreach ($result['hits']['hits'] as $row) {
-                $column[] = $row['_id'];
-            }
-
-            return $column;
-        }
-
-        return parent::column($field, $db);
-    }
 }

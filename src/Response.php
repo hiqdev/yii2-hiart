@@ -30,11 +30,12 @@ class Response
      */
     protected $data;
 
+    protected $isDecoded = false;
+
     public function __construct(ResponseInterface $worker, Request $request)
     {
         $this->worker = $worker;
         $this->request = $request;
-        $this->init();
     }
 
     public function getWorker()
@@ -49,15 +50,27 @@ class Response
 
     public function getData()
     {
+        if (!$this->isDecoded) {
+            $this->data = $this->decodeData();
+            $this->isDecoded = true;
+        }
+
         return $this->data;
     }
 
-    public function init()
+    public function decodeData()
     {
-        $this->data = $this->getBodyContents();
+        $data = $this->getBodyContents();
         if (!$this->isRaw() && $this->isJson()) {
-            $this->data = Json::decode($this->data);
+            $data = Json::decode($data);
         }
+
+        return $data;
+    }
+
+    public function getBodyContents()
+    {
+        return $this->worker->getBody()->getContents();
     }
 
     public function isRaw()
@@ -74,10 +87,4 @@ class Response
     {
         return $this->worker->getHeader($name);
     }
-
-    public function getBodyContents()
-    {
-        return $this->worker->getBody()->getContents();
-    }
-
 }

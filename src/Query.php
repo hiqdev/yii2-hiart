@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
  *      - body: insert or update data
  * - select query data
  *      - select: fields to select
+ *      - count: marks count query
  *      - from: entity being queried, e.g. user
  *      - join: data how to join with other entities
  * - other standard query options provided with QueryTrait:
@@ -44,6 +45,8 @@ class Query extends \yii\db\Query implements QueryInterface
      * @var array query options e.g. raw, batch
      */
     public $options = [];
+
+    public $count;
 
     public $body = [];
 
@@ -102,10 +105,9 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function count($q = '*', $db = null)
     {
-        $options          = [];
-        $options['count'] = 1;
+        $this->count = $q;
 
-        return $this->createCommand($db)->search($options);
+        return (int) $this->createCommand($db)->search();
     }
 
     public function exists($db = null)
@@ -137,6 +139,15 @@ class Query extends \yii\db\Query implements QueryInterface
     public function action($action)
     {
         $this->action = $action;
+
+        return $this;
+    }
+
+    public function addAction($action)
+    {
+        if (empty($this->action)) {
+            $this->action = $action;
+        }
 
         return $this;
     }

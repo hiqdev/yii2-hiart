@@ -35,7 +35,6 @@ class Command extends \yii\base\Component
     }
 
     /**
-     * XXX IN QUESTION
      * Sends a request to retrieve data.
      * In API this could be get, search or list request.
      * @throws ErrorResponseException
@@ -43,6 +42,8 @@ class Command extends \yii\base\Component
      */
     public function search()
     {
+        $this->request->getQuery()->addAction('search');
+
         return $this->execute();
     }
 
@@ -99,12 +100,8 @@ class Command extends \yii\base\Component
         Yii::beginProfile($profile, __METHOD__);
         $response = $this->db->send($this->request);
         Yii::endProfile($profile, __METHOD__);
-        var_dump($response->getRequest());
-        var_dump($response->getData());
-        var_dump($profile);
-        die();
 
-        return $res;
+        return $response->getData();
     }
 
 }
