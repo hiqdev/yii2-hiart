@@ -101,6 +101,7 @@ class Command extends \yii\base\Component
         Yii::endProfile($profile, __METHOD__);
         var_dump($response->getRequest());
         var_dump($response->getData());
+        var_dump($profile);
         die();
 
         return $res;

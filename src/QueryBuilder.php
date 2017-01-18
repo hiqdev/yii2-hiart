@@ -51,11 +51,8 @@ class QueryBuilder extends \yii\base\Object
         $this->prepare($query);
 
         $data = ['query' => $query];
-        foreach (['Auth', 'Method', 'Uri', 'Headers', 'ProtocolVersion', 'UploadedFiles', 'CookieParams', 'QueryParams', 'ParsedBody'] as $name) {
-            $value = $this->{'build' . $name}($query);
-            if (!empty($value)) {
-                $data[$name] = $value;
-            }
+        foreach (['Auth', 'Method', 'Uri', 'Headers', 'QueryParams', 'FormParams', 'Body'] as $name) {
+            $data[$name] = $this->{'build' . $name}($query);
         }
 
         return Request::fromData($data);
@@ -100,24 +97,19 @@ class QueryBuilder extends \yii\base\Object
         return null;
     }
 
-    public function buildUploadedFiles(Query $query)
-    {
-        return [];
-    }
-
-    public function buildCookieParams(Query $query)
-    {
-        return [];
-    }
-
     public function buildQueryParams(Query $query)
     {
         return [];
     }
 
-    public function buildParsedBody(Query $query)
+    public function buildFormParams(Query $query)
     {
         return [];
+    }
+
+    public function buildBody(Query $query)
+    {
+        return null;
     }
 
     public function insert($table, $columns, array $options = [])

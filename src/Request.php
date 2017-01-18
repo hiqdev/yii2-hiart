@@ -10,12 +10,12 @@
 
 namespace hiqdev\hiart;
 
-use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Request as Worker;
 
 class Request
 {
     /**
-     * @var ServerRequest
+     * @var Worker
      */
     protected $worker;
 
@@ -24,7 +24,7 @@ class Request
      */
     protected $query;
 
-    public function __construct(ServerRequest $worker, Query $query)
+    public function __construct(Worker $worker, Query $query)
     {
         $this->worker = $worker;
         $this->query = $query;
@@ -37,20 +37,28 @@ class Request
 
     public static function fromData(array $data)
     {
-        $request = new ServerRequest($data['Method'], $data['Uri']);
+        $uri = $data['Uri'];
 
-        if (!empty($data['Headers'])) {
-            foreach ($data['Headers'] as $header => $value) {
-                $request = $request->withHeader($header, $value);
-            }
+        $params = $data['QueryParams'];
+        if (is_array($params)) {
+            $params = http_build_query($params, '', '&');
+        }
+        if (!empty($params)) {
+            $uri .= '?' . $params;
         }
 
-        foreach (['ProtocolVersion', 'UploadedFiles', 'CookieParams', 'QueryParams', 'ParsedBody'] as $name) {
-            $value = $data[$name];
-            if (!empty($value)) {
-                $request = $request->{'with' . $name}($value);
-            }
+        $headers = $data['headers'];
+        $body = $data['Body'];
+
+        $formParams = $data['FormParams'];
+        if (is_array($formParams)) {
+            $body = http_build_query($formParams, '', '&');
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
+
+        $version = empty($data['ProtocolVersion']) ? '1.1' : $data['ProtocolVersion'];
+
+        $request = new Worker($data['Method'], $uri, $headers, $body, $version);
 
         return new static($request, $data['query']);
     }
@@ -59,9 +67,8 @@ class Request
     {
         /// TODO serialize request object for profile
         $request = $this->worker;
-        $body = array_merge($request->getParsedBody(), $request->getQueryParams());
 
-        return $request->getMethod() . ' ' . $request->getUri() . '#' . http_build_query($body);
+        return $request->getMethod() . ' ' . $request->getUri() . '#' . $request->getBody();
     }
 
     public function isRaw()
