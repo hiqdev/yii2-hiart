@@ -10,22 +10,15 @@
 
 namespace hiqdev\hiart;
 
-use GuzzleHttp\Psr7\ServerRequest;
-
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 
 /**
- * QueryBuilder builds a PSR7 request based on the specification given as a [[Query]] object.
+ * QueryBuilder builds a PSR7 request from the specification given as a [[Query]] object.
  */
 class QueryBuilder extends \yii\base\Object
 {
-    private $_sort = [
-        SORT_ASC  => '_asc',
-        SORT_DESC => '_desc',
-    ];
-
     public $db;
 
     public function __construct($connection, $config = [])
@@ -41,40 +34,39 @@ class QueryBuilder extends \yii\base\Object
      */
     public function build(Query $query)
     {
-        var_dump($query);die();
-        $this->prepare($query);
-
         return ['request' => $this->buildRequest($query)];
     }
 
     /**
      * Prepares query. This is function for you to redefine.
-     * @param Query $query 
+     * @param Query $query
      */
     public function prepare(Query $query)
     {
-        $query->prepare();
+        $query->prepare($this);
     }
 
     public function buildRequest($query)
     {
-        $request = new ServerRequest($this->buildMethod($query), $this->buildUri($query));
+        $this->prepare($query);
 
-        $headers = $this->buildHeaders($query);
-        if (!empty($headers)) {
-            foreach ($headers as $header => $value) {
-                $request = $request->withHeader($header, $value);
-            }
-        }
-
-        foreach (['ProtocolVersion', 'UploadedFiles', 'CookieParams', 'QueryParams', 'ParsedBody'] as $name) {
+        $data = ['query' => $query];
+        foreach (['Auth', 'Method', 'Uri', 'Headers', 'ProtocolVersion', 'UploadedFiles', 'CookieParams', 'QueryParams', 'ParsedBody'] as $name) {
             $value = $this->{'build' . $name}($query);
             if (!empty($value)) {
-                $request = $request->{'with' . $name}($value);
+                $data[$name] = $value;
             }
         }
 
-        return $request;
+        return Request::fromData($data);
+    }
+
+    /**
+     * This function is for you to provide your authentication.
+     * @param Query $query
+     */
+    public function buildAuth(Query $query)
+    {
     }
 
     public function buildMethod(Query $query)
@@ -128,6 +120,39 @@ class QueryBuilder extends \yii\base\Object
         return [];
     }
 
+    public function insert($table, $columns, array $options = [])
+    {
+        return $this->perform('insert', $table, $columns, $options);
+    }
+
+    public function update($table, $columns, $condition = [], array $options = [])
+    {
+        $query = $this->createQuery('update', $table, $options)->body($columns)->where($condition);
+
+        return $this->buildRequest($query);
+    }
+
+    public function delete($table, $condition = [], array $options = [])
+    {
+        $query = $this->createQuery('delete', $table, $options)->where($condition);
+
+        return $this->buildRequest($query);
+    }
+
+    public function perform($action, $table, $body, $options = [])
+    {
+        $query = $this->createQuery($action, $table, $options)->body($body);
+
+        return $this->buildRequest($query);
+    }
+
+    public function createQuery($action, $table, array $options = [])
+    {
+        $class = $this->db->queryClass;
+
+        return $class::instantiate($action, $table, $options);
+    }
+
     public function buildCondition($condition)
     {
         static $builders = [
@@ -166,7 +191,7 @@ class QueryBuilder extends \yii\base\Object
         }
     }
 
-    private function buildHashCondition($condition)
+    protected function buildHashCondition($condition)
     {
         $parts = [];
         foreach ($condition as $attribute => $value) {
@@ -181,17 +206,17 @@ class QueryBuilder extends \yii\base\Object
         return $parts;
     }
 
-    private function buildLikeCondition($operator, $operands)
+    protected function buildLikeCondition($operator, $operands)
     {
         return [$operands[0] . '_like' => $operands[1]];
     }
 
-    private function buildIlikeCondition($operator, $operands)
+    protected function buildIlikeCondition($operator, $operands)
     {
         return [$operands[0] . '_ilike' => $operands[1]];
     }
 
-    private function buildCompareCondition($operator, $operands)
+    protected function buildCompareCondition($operator, $operands)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires three operands.");
@@ -200,7 +225,7 @@ class QueryBuilder extends \yii\base\Object
         return [$operands[0] . '_' . $operator => $operands[1]];
     }
 
-    private function buildAndCondition($operator, $operands)
+    protected function buildAndCondition($operator, $operands)
     {
         $parts = [];
         foreach ($operands as $operand) {
@@ -215,12 +240,12 @@ class QueryBuilder extends \yii\base\Object
         }
     }
 
-    private function buildBetweenCondition($operator, $operands)
+    protected function buildBetweenCondition($operator, $operands)
     {
         throw new NotSupportedException('Between condition is not supported by HiArt.');
     }
 
-    private function buildInCondition($operator, $operands, $not = false)
+    protected function buildInCondition($operator, $operands, $not = false)
     {
         if (!isset($operands[0], $operands[1])) {
             throw new InvalidParamException("Operator '$operator' requires two operands.");
@@ -251,19 +276,19 @@ class QueryBuilder extends \yii\base\Object
         return [$key => $values];
     }
 
-    private function buildNotInCondition($operator, $operands)
+    protected function buildNotInCondition($operator, $operands)
     {
         return $this->buildInCondition($operator, $operands, true);
     }
 
-    private function buildEqCondition($operator, $operands)
+    protected function buildEqCondition($operator, $operands)
     {
         $key = array_shift($operands);
 
         return [$key => reset($operands)];
     }
 
-    private function buildNotEqCondition($operator, $operands)
+    protected function buildNotEqCondition($operator, $operands)
     {
         $key = array_shift($operands);
 

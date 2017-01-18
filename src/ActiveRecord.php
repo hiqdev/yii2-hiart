@@ -37,35 +37,11 @@ class ActiveRecord extends BaseActiveRecord
      * {@inheritdoc}
      * @return ActiveQuery the newly created [[ActiveQuery]] instance
      */
-    public static function find($options = [])
+    public static function find()
     {
-        $config = [
-            'class'   => ActiveQuery::class,
-            'options' => $options,
-        ];
+        $class = static::getDb()->activeQueryClass;
 
-        return Yii::createObject($config, [get_called_class()]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findOne($condition, $options = [])
-    {
-        $query = static::find($options);
-        if (is_array($condition)) {
-            return $query->andWhere($condition)->one();
-        } else {
-            return static::get($condition);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findAll($condition, $options = [])
-    {
-        return static::find($options)->andWhere($condition)->all();
+        return new $class(get_called_class());
     }
 
     public function isScenarioDefault()
@@ -257,7 +233,7 @@ class ActiveRecord extends BaseActiveRecord
 
         $values = $this->getDirtyAttributes($attributes);
         $data   = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->perform('create', $data);
+        $result = $this->perform('insert', $data);
 
         $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
@@ -325,37 +301,21 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
-    protected function perform($defaultScenario, $data, $bulk = false)
+    protected function perform($defaultScenario, $data, $batch = false)
     {
-        $command = $this->getScenarioCommand($defaultScenario, $bulk);
+        $command = $this->getScenarioCommand($defaultScenario);
 
-        return static::getDb()->createCommand()->perform($command, $data);
-    }
-
-    /**
-     * Creates and performs action statically.
-     * @param $action
-     * @param array $options
-     * @param bool  $bulk
-     * @return array
-     */
-    public static function performAction($action, $options = [], $bulk = false)
-    {
-        $action = ($bulk === true ? static::index() : static::from()) . $action;
-        $result = static::getDb()->createCommand()->perform($action, $options);
-
-        return $result;
+        return static::getDb()->createCommand()->perform($command, static::from(), $data, compact('batch'));
     }
 
     /**
      * Creates command name from the current scenario name.
-     * @param string $default
-     * @param bool   $bulk
+     * @param string $default default command name
      * @throws InvalidConfigException
      * @throws NotSupportedException
      * @return string
      */
-    public function getScenarioCommand($default = '', $bulk = false)
+    public function getScenarioCommand($default = '')
     {
         if ($this->isScenarioDefault()) {
             if ($default !== '') {
@@ -364,7 +324,7 @@ class ActiveRecord extends BaseActiveRecord
                 throw new InvalidConfigException('Scenario not specified');
             }
         } else {
-            $scenarioCommands = static::scenarioCommands($bulk);
+            $scenarioCommands = static::scenarioCommands();
             if ($command = $scenarioCommands[$this->scenario]) {
                 if ($command === false) {
                     throw new NotSupportedException('The scenario can not be saved');
@@ -382,11 +342,7 @@ class ActiveRecord extends BaseActiveRecord
             }
         }
 
-        if (is_array($result)) {
-            return implode('', $result);
-        } else {
-            return ($bulk ? 's' : '') . $result;
-        }
+        return is_array($result) ? implode('', $result) : $result;
     }
 
     /**

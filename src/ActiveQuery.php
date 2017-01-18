@@ -141,9 +141,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
             foreach ($with as $name => $callback) {
                 if (is_int($name)) {
-                    $this->join([$callback]);
+                    $this->innerJoin([$callback]);
                 } else {
-                    $this->join([$name => $callback]);
+                    $this->innerJoin([$name => $callback]);
                 }
 
                 unset($with[$name]);

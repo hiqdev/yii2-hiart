@@ -230,15 +230,15 @@ class Collection extends Component
             if (isset($data[$this->formName])) {
                 $data = $data[$this->formName];
 
-                $is_bulk = true;
+                $is_batch = true;
                 foreach ($data as $k => $v) {
                     if (!is_array($v)) {
-                        $is_bulk = false;
+                        $is_batch = false;
                         break;
                     }
                 }
 
-                if (!$is_bulk) {
+                if (!$is_batch) {
                     $data = [$data];
                 }
             } elseif ($data['selection']) {

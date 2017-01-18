@@ -10,7 +10,7 @@
 
 namespace hiqdev\hiart;
 
-use Psr\Http\Message\RequestInterface;
+use Yii;
 
 /**
  * The Command class implements execution of request.
@@ -23,13 +23,13 @@ class Command extends \yii\base\Component
     public $db;
 
     /**
-     * @var RequestInterface request object
+     * @var Request request object
      */
-    protected $_request;
+    protected $request;
 
-    public function setRequest(RequestInterface $request)
+    public function setRequest(Request $request)
     {
-        $this->_request = $request;
+        $this->request = $request;
 
         return $this;
     }
@@ -74,6 +74,20 @@ class Command extends \yii\base\Component
     }
 
     /**
+     * Creates and executes request with given data.
+     * @param string $action
+     * @param mixed $body request parameters
+     * @return mixed
+     */
+    public function perform($action, $table, $body = [], array $options = [])
+    {
+        $request = $this->db->getQueryBuilder()->perform($action, $table, $body, $options);
+        $this->setRequest($request);
+
+        return $this->execute();
+    }
+
+    /**
      * Executes the request.
      * @param string $url URL
      * @param mixed $body request parameters
@@ -81,22 +95,15 @@ class Command extends \yii\base\Component
      */
     public function execute()
     {
-    var_dump($this->_request);
-    die();
-        return $this->db->send($this->_request);
+        $profile = $this->request->getProfile();
+        Yii::beginProfile($profile, __METHOD__);
+        $response = $this->db->send($this->request);
+        Yii::endProfile($profile, __METHOD__);
+        var_dump($response->getRequest());
+        var_dump($response->getData());
+        die();
+
+        return $res;
     }
 
-    /**
-     * Creates and executes request with given data.
-     * @param string $action
-     * @param mixed $body request parameters
-     * @return mixed
-     */
-    public function perform($action, $body = [])
-    {
-        $request = $this->db->getQueryBuilder()->perform($action, $body);
-        $this->setRequest($request);
-
-        return $this->execute();
-    }
 }

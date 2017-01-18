@@ -12,8 +12,6 @@ namespace hiqdev\hiart;
 
 use Closure;
 use GuzzleHttp\Client as Handler;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -38,6 +36,10 @@ use yii\helpers\Json;
 class Connection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
+
+    public $queryClass = Query::class;
+
+    public $activeQueryClass = ActiveQuery::class;
 
     /**
      * @var array Config
@@ -328,13 +330,15 @@ class Connection extends Component
 
     /**
      * Sends given request.
-     * @param RequestInterface $request
+     * @param Request $request
      * @param array $options
-     * @return ResponseInterface
+     * @return Response
      */
-    public function send(RequestInterface $request, array $options = [])
+    public function send(Request $request, array $options = [])
     {
-        return $this->getHandler()->send($request, $options);
+        $worker = $this->getHandler()->send($request->getWorker(), $options);
+
+        return new Response($worker, $request);
     }
 
     /**

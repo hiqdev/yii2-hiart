@@ -13,128 +13,56 @@ namespace hiqdev\hiart;
 use Yii;
 use yii\base\Component;
 use yii\db\QueryInterface;
-use yii\db\QueryTrait;
 use yii\helpers\ArrayHelper;
 
 /**
- * Query represents API request in a way that is independent from concrete API.
- * Holds API request information:
- * - data passed into query:
+ * Query represents API query in a way that is independent from a concrete API.
+ * Holds API query information:
+ * - general query data
  *      - action: action to be performed with this query, e.g. search, insert, update, delete
- *      - options: other additional options
+ *      - options: other additional options, like
+ *          - raw: do not decode response
+ *          - batch: batch(bulk) request
+ *          - timeout, ...
+ * - insert/update query data
+ *      - body: insert or update data
+ * - select query data
  *      - select: fields to select
  *      - from: entity being queried, e.g. user
  *      - join: data how to join with other entities
- *      - other standard request options provided with QueryTrait: limit, offset, orderBy, ...
- * - data build with QueryBuilder:
- *      - HTTP request data: method, url, raw
- *          - in question: queryVars, body ????
- *      - parts: [key => value] combined data of request to be passed as GET or POST variables
+ * - other standard query options provided with QueryTrait:
+ *      - where, limit, offset, orderBy, indexBy
  */
-class Query extends Component implements QueryInterface
+class Query extends \yii\db\Query implements QueryInterface
 {
-    use QueryTrait;
-
-    public $db;
-
     /**
      * @var string action that this query performs
      */
     public $action;
 
     /**
-     * @var array options for search
+     * @var array query options e.g. raw, batch
      */
     public $options = [];
 
-    public $select;
-    public $from;
-    public $join;
-    public $parts;
+    public $body = [];
 
-    /**
-     * @var string request method e.g. POST
-     */
-    public $method;
-
-    /**
-     * @var string request url, without site
-     */
-    public $url;
-
-    /**
-     * @var array request query vars (GET parameters)
-     */
-    public $queryVars;
-
-    /**
-     * @var string request body vars (POST parameters)
-     */
-    public $body;
-
-    /**
-     * @var bool do not decode request
-     */
-    public $raw = false;
-
-    /// DEPRECATED
-    public $index;
-    public $type;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
+    public static function instantiate($action, $from, array $options = [])
     {
-        parent::init();
-        // setting the default limit according to api defaults
-        if ($this->limit === null) {
-            $this->limit = 'ALL';
-        }
+        $query = new static;
+
+        return $query->action($action)->from($from)->options($options);
     }
 
-    public function createCommand($db)
+    public function createCommand($db = null)
     {
         if ($db === null) {
             throw new \Exception('no db given to Query::createCommand');
-            $db = Yii::$app->get('hiart');
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
 
         return $db->createCommand($commandConfig);
-    }
-
-    public function join($type)
-    {
-        $this->join[] = (array) $type;
-
-        return $this;
-    }
-
-    public function all($db = null)
-    {
-        $result = $this->createCommand($db)->search();
-        if (empty($result['hits']['hits'])) {
-            return [];
-        }
-        $rows = $result['hits']['hits'];
-        if ($this->indexBy === null) {
-            return $rows;
-        }
-        $models = [];
-        foreach ($rows as $key => $row) {
-            if ($this->indexBy !== null) {
-                if (is_string($this->indexBy)) {
-                    $key = isset($row['fields'][$this->indexBy]) ? reset($row['fields'][$this->indexBy]) : $row['_source'][$this->indexBy];
-                } else {
-                    $key = call_user_func($this->indexBy, $row);
-                }
-            }
-            $models[$key] = $row;
-        }
-
-        return $models;
     }
 
     public function one($db = null)
@@ -172,44 +100,6 @@ class Query extends Component implements QueryInterface
         return $this->createCommand($db)->deleteByQuery($options);
     }
 
-    public function scalar($field, $db = null)
-    {
-        $record = self::one($db);
-        if ($record !== false) {
-            if ($field === '_id') {
-                return $record['_id'];
-            } elseif (isset($record['_source'][$field])) {
-                return $record['_source'][$field];
-            } elseif (isset($record['fields'][$field])) {
-                return count($record['fields'][$field]) === 1 ? reset($record['fields'][$field]) : $record['fields'][$field];
-            }
-        }
-
-        return null;
-    }
-
-    public function column($field, $db = null)
-    {
-        $command                        = $this->createCommand($db);
-        $command->queryParts['_source'] = [$field];
-        $result                         = $command->search();
-        if (empty($result['hits']['hits'])) {
-            return [];
-        }
-        $column = [];
-        foreach ($result['hits']['hits'] as $row) {
-            if (isset($row['fields'][$field])) {
-                $column[] = $row['fields'][$field];
-            } elseif (isset($row['_source'][$field])) {
-                $column[] = $row['_source'][$field];
-            } else {
-                $column[] = null;
-            }
-        }
-
-        return $column;
-    }
-
     public function count($q = '*', $db = null)
     {
         $options          = [];
@@ -244,35 +134,30 @@ class Query extends Component implements QueryInterface
         return $this;
     }
 
-    public function addAgg($name, $type, $options)
+    public function action($action)
     {
-        return $this->addAggregation($name, $type, $options);
-    }
-
-    public function addSuggester($name, $definition)
-    {
-        $this->suggest[$name] = $definition;
+        $this->action = $action;
 
         return $this;
     }
 
-    public function query($query)
+    public function options($options)
     {
-        $this->query = $query;
+        $this->options = $options;
 
         return $this;
     }
 
-    public function filter($filter)
+    public function body($body)
     {
-        $this->filter = $filter;
+        $this->body = $body;
 
         return $this;
     }
 
-    public function from($from)
+    public function innerJoin($table, $on = '', $params = [])
     {
-        $this->from = $from;
+        $this->join[] = (array) $table;
 
         return $this;
     }
@@ -297,27 +182,5 @@ class Query extends Component implements QueryInterface
         }
 
         return $this;
-    }
-
-    public function timeout($timeout)
-    {
-        $this->timeout = $timeout;
-
-        return $this;
-    }
-
-    public function getParts()
-    {
-        return $this->parts;
-    }
-
-    public function setPart($name, $value)
-    {
-        $this->parts[$name] = $value;
-    }
-
-    public function addParts($values)
-    {
-        $this->parts = ArrayHelper::merge($this->parts, $values);
     }
 }
