@@ -70,33 +70,37 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function one($db = null)
     {
-        $result = $this->limit(1)->createCommand($db)->search();
-        if (empty($result)) {
-            return false;
-        }
-        $record = reset($result);
+        return $this->limit(1)->addOption('batch', false)->search();
+    }
 
-        return $record;
+    public function all($db = null)
+    {
+        $rows = $this->searchAll();
+
+        if (!empty($rows) && $this->indexBy !== null) {
+            $result = [];
+            foreach ($rows as $row) {
+                if ($this->indexBy instanceof \Closure) {
+                    $key = call_user_func($this->indexBy, $row);
+                } else {
+                    $key = $row[$this->indexBy];
+                }
+                $result[$key] = $row;
+            }
+            $rows = $result;
+        }
+
+        return $rows;
+    }
+
+    public function searchAll($db = null)
+    {
+        return $this->addOption('batch', true)->search();
     }
 
     public function search($db = null)
     {
-        $result = $this->createCommand($db)->search();
-
-        if (!empty($result) && $this->indexBy !== null) {
-            $rows = [];
-            foreach ($result as $key => $row) {
-                if (is_string($this->indexBy)) {
-                    $key = isset($row['fields'][$this->indexBy]) ? $row['fields'][$this->indexBy] : $row['_source'][$this->indexBy];
-                } else {
-                    $key = call_user_func($this->indexBy, $row);
-                }
-                $rows[$key] = $row;
-            }
-            $result = $rows;
-        }
-
-        return $result;
+        return $this->createCommand($db)->search();
     }
 
     public function delete($db = null, $options = [])
@@ -108,12 +112,12 @@ class Query extends \yii\db\Query implements QueryInterface
     {
         $this->count = $q;
 
-        return (int) $this->createCommand($db)->search();
+        return (int) $this->search();
     }
 
     public function exists($db = null)
     {
-        return self::one($db) !== false;
+        return !empty(self::one($db));
     }
 
     public function action($action)
@@ -132,13 +136,18 @@ class Query extends \yii\db\Query implements QueryInterface
         return $this;
     }
 
-    public function addBatch($batch)
+    public function addOption($name, $value)
     {
-        if (!isset($this->options['batch'])) {
-            $this->options['batch'] = $batch;
+        if (!isset($this->options[$name])) {
+            $this->options[$name] = $value;
         }
 
         return $this;
+    }
+
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
     public function options($options)

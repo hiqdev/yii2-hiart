@@ -42,7 +42,7 @@ class Command extends \yii\base\Component
      */
     public function search()
     {
-        $this->request->getQuery()->addAction('search')->addBatch(true);
+        $this->request->getQuery()->addAction('search');
 
         return $this->execute();
     }

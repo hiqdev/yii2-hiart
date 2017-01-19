@@ -101,7 +101,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Prepares query for use. See NOTE.
      * @return static
      */
-    public function prepare($builder)
+    public function prepare($builder = null)
     {
         // NOTE: because the same ActiveQuery may be used to build different SQL statements
         // (e.g. by ActiveDataProvider, one for count query, the other for row data query,
@@ -234,6 +234,22 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
+     * Executes query and returns a single row of result.
+     *
+     * @param Connection $db the DB connection used to create the DB command.
+     * If null, the DB connection returned by [[modelClass]] will be used.
+     * @return ActiveRecord|array|null a single row of query result. Depending on the setting of [[asArray]],
+     * the query result may be either an array or an ActiveRecord object. Null will be returned
+     * if the query results in nothing.
+     */
+    public function one($db = null)
+    {
+        $row = parent::one($db);
+
+        return $this->asArray ? $row : reset($this->populate([$row]));
+    }
+
+    /**
      * Executes query and returns all results as an array.
      * @param Connection $db the DB connection used to create the DB command.
      * If null, the DB connection returned by [[modelClass]] will be used.
@@ -242,11 +258,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function all($db = null)
     {
         if ($this->asArray) {
-            // TODO implement with
             return parent::all($db);
         }
 
-        $rows = $this->createCommand($db)->search();
+        $rows = $this->searchAll();
 
         return $this->populate($rows);
     }
@@ -258,6 +273,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
 
         $models = $this->createModels($rows);
+
         if (!empty($this->with)) {
             $this->findWith($this->with, $models);
         }
@@ -272,42 +288,21 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     private function createModels($rows)
     {
         $models = [];
-        if ($this->asArray) {
-            if ($this->indexBy === null) {
-                return $rows;
-            }
-            foreach ($rows as $row) {
-                if (is_string($this->indexBy)) {
-                    $key = $row[$this->indexBy];
+        $class = $this->modelClass;
+        foreach ($rows as $row) {
+            $model = $class::instantiate($row);
+            $modelClass = get_class($model);
+            $modelClass::populateRecord($model, $row);
+            $this->populateJoinedRelations($model, $row);
+            if ($this->indexBy) {
+                if ($this->indexBy instanceof \Closure) {
+                    $key = call_user_func($this->indexBy, $model);
                 } else {
-                    $key = call_user_func($this->indexBy, $row);
+                    $key = $model->{$this->indexBy};
                 }
-                $models[$key] = $row;
-            }
-        } else {
-            /* @var $class ActiveRecord */
-            $class = $this->modelClass;
-            if ($this->indexBy === null) {
-                foreach ($rows as $row) {
-                    $model = $class::instantiate($row);
-                    $modelClass = get_class($model);
-                    $modelClass::populateRecord($model, $row);
-                    $this->populateJoinedRelations($model, $row);
-                    $models[] = $model;
-                }
+                $models[$key] = $model;
             } else {
-                foreach ($rows as $row) {
-                    $model = $class::instantiate($row);
-                    $modelClass = get_class($model);
-                    $modelClass::populateRecord($model, $row);
-                    $this->populateJoinedRelations($model, $row);
-                    if (is_string($this->indexBy)) {
-                        $key = $model->{$this->indexBy};
-                    } else {
-                        $key = call_user_func($this->indexBy, $model);
-                    }
-                    $models[$key] = $model;
-                }
+                $models[] = $model;
             }
         }
 
@@ -389,79 +384,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         $inverseRelation = $relatedModel->getRelation($this->inverseOf);
         $relatedModel->populateRelation($this->inverseOf, $inverseRelation->multiple ? [$this->primaryModel] : $this->primaryModel);
-    }
-
-    /**
-     * Executes query and returns a single row of result.
-     *
-     * @param Connection $db the DB connection used to create the DB command.
-     * If null, the DB connection returned by [[modelClass]] will be used.
-     * @return ActiveRecord|array|null a single row of query result. Depending on the setting of [[asArray]],
-     * the query result may be either an array or an ActiveRecord object. Null will be returned
-     * if the query results in nothing.
-     */
-    public function one($db = null)
-    {
-        $result = $this->limit(1)->search($db);
-        if (empty($result)) {
-            return null;
-        }
-        $result = reset($result);
-
-        if ($this->asArray) {
-            // TODO implement with()
-//            /* @var $modelClass ActiveRecord */
-//            $modelClass = $this->modelClass;
-//            $model = $result['_source'];
-//            $pk = $modelClass::primaryKey()[0];
-//            if ($pk === '_id') {
-//                $model['_id'] = $result['_id'];
-//            }
-//            $model['_score'] = $result['_score'];
-//            if (!empty($this->with)) {
-//                $models = [$model];
-//                $this->findWith($this->with, $models);
-//                $model = $models[0];
-//            }
-
-            return $result;
-        }
-
-        /* @var $class ActiveRecord */
-        $class = $this->modelClass;
-        $model = $class::instantiate($result);
-        $class::populateRecord($model, $result);
-        $this->populateJoinedRelations($model, $result);
-        if (!empty($this->with)) {
-            $models = [$model];
-            $this->findWith($this->with, $models);
-            $model = $models[0];
-        }
-        $model->afterFind();
-
-        return $model;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function OLD_search($db = null, $options = [])
-    {
-        $result = parent::search($db, $options);
-
-        // TODO implement with() for asArray
-        if (!empty($result) && !$this->asArray) {
-            $models = $this->createModels($result);
-            if (!empty($this->with)) {
-                $this->findWith($this->with, $models);
-            }
-            foreach ($models as $model) {
-                $model->afterFind();
-            }
-            $result = $models;
-        }
-
-        return $result;
     }
 
 }
