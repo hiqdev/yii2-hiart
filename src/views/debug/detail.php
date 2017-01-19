@@ -8,6 +8,7 @@ $this->registerCss(<<<CSS
     .boolean { color: blue; }
     .null { color: magenta; }
     .key { color: red; }
+    .white-space-normal { white-space: normal; }
 CSS
 );
 
@@ -57,7 +58,7 @@ $this->registerJs(<<<JS
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 result.find('.time').html('');
-                result.find('.result').html('<span style="color: #c00;">Error: ' + errorThrown + ' - ' + textStatus + '</span><br />' + jqXHR.responseText);
+                result.find('.result').html('<span style="color: #c00">Error: ' + errorThrown + ' - ' + textStatus + '</span><br />' + jqXHR.responseText);
             },
             dataType: 'json'
         });
@@ -69,22 +70,29 @@ JS
 
 <h1>HiArt Queries</h1>
 
-<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed">
     <thead>
         <tr>
-            <th style="width: 10%;">Time</th>
-            <th style="width: 75%;">Url / Query</th>
-            <th style="width: 15%;">Run Query on node</th>
+            <th style="width: 10%">Time</th>
+            <th style="width: 80%">Url / Query</th>
+            <th style="width: 10%">Run Query</th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($rows as $row) : ?>
+        <?php foreach ($timings as $timing) : ?>
             <tr>
-                <td style="width: 10%;"><?= $row['duration'] ?></td>
-                <td style="width: 75%;"><div><b><?= $row['urlEncoded'] ?></b><br/><p><?= $row['bodyEncoded'] ?></p><?= $row['traceString'] ?></div></td>
-                <td style="width: 15%;"><?= $row['runLink'] ?><?= $row['newTabLink'] ?></td>
+                <td style="width: 10%"><?= $timing->getDuration() ?></td>
+                <td style="width: 75%" class="white-space-normal">
+                    <b><?= $timing->getMethod() ?> <?= $timing->getUrlEncoded() ?></b><br/>
+                    <p><?= $timing->getBodyEncoded() ?></p>
+                    <?= $timing->getTrace() ?>
+                </div></td>
+                <td style="width: 15%" class="white-space-normal">
+                    <?= $timing->getRunLink() ?><br/>
+                    <?= $timing->getNewTabLink() ?>
+                </td>
             </tr>
-            <tr style="display: none;" class="hiart-wrapper" data-id="<?= $row['logId'] ?>">
+            <tr style="display: none" class="hiart-wrapper" data-id="<?= $timing->getLogId() ?>">
                 <td class="time"></td><td colspan="3" class="result"></td>
             </tr>
         <?php endforeach ?>

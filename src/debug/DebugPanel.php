@@ -13,10 +13,7 @@ namespace hiqdev\hiart\debug;
 use hiqdev\hiart\Command;
 use Yii;
 use yii\base\ViewContextInterface;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\helpers\StringHelper;
-use yii\helpers\Url;
+use yii\base\InvalidConfigException;
 use yii\log\Logger;
 
 /**
@@ -31,7 +28,7 @@ class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
         $this->actions['hiart-query'] = [
             'class' => DebugAction::class,
             'panel' => $this,
-            'db' => $this->db,
+            'db'    => $this->db,
         ];
     }
 
@@ -48,25 +45,17 @@ class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
      */
     public function getSummary()
     {
-        $timings = $this->calculateTimings();
-        $queryCount = count($timings);
-        $queryTime = 0;
+        $timings = $this->getTimings();
+        $total = 0;
         foreach ($timings as $timing) {
-            $queryTime += $timing[3];
+            $total += $timing[3];
         }
-        $queryTime = number_format($queryTime * 1000) . ' ms';
-        $url = $this->getUrl();
-        $output = <<<HTML
-<div class="yii-debug-toolbar__block">
-    <a href="$url" title="Executed $queryCount queries which took $queryTime.">
-        HiArt
-        <span class="yii-debug-toolbar__label">$queryCount</span>
-        <span class="yii-debug-toolbar__label">$queryTime</span>
-    </a>
-</div>
-HTML;
 
-        return $queryCount > 0 ? $output : '';
+        return $this->render('summary', [
+            'url'   => $this->getUrl(),
+            'count' => count($timings),
+            'total' => number_format($total * 1000) . ' ms',
+        ]);
     }
 
     /**
@@ -74,76 +63,33 @@ HTML;
      */
     public function getDetail()
     {
-        $apiUrl = null;
-        $timings = $this->calculateTimings();
-        ArrayHelper::multisort($timings, 3, SORT_DESC);
+        return $this->render('detail', [
+            'timings' => Timing::buildAll($this),
+        ]);
+    }
 
-        // Try to get API URL
+    public function getBaseUri($dbname)
+    {
         try {
-            $component = Yii::$app->get('hiart');
-            $apiUrl = (StringHelper::endsWith($component->config['base_uri'],
-                '/')) ? $component->config['base_uri'] : $component->config['base_uri'] . '/';
-        } catch (\yii\base\InvalidConfigException $e) {
-            // Pass
+            return Yii::$app->get($dbname)->getBaseUri();
+        } catch (InvalidConfigException $e) {
+            return null;
         }
-
-        $rows = [];
-        foreach ($timings as $logId => $timing) {
-            $message = $timing[1];
-            $traces = $timing[4];
-            if (($pos = mb_strpos($message, '#')) !== false) {
-                $url = mb_substr($message, 0, $pos);
-                $body = mb_substr($message, $pos + 1);
-            } else {
-                $url = $message;
-                $body = null;
-            }
-
-            $traceString = '';
-            if (!empty($traces)) {
-                $traceString .= Html::ul($traces, [
-                    'class' => 'trace',
-                    'item' => function ($trace) {
-                        return "<li>{$trace['file']}({$trace['line']})</li>";
-                    },
-                ]);
-            }
-
-            $ajaxUrl = Url::to(['hiart-query', 'logId' => $logId, 'tag' => $this->tag]);
-            $runLink = Html::a('run query', $ajaxUrl, [
-                'class' => 'hiart-link',
-                'data' => ['id' => $logId],
-            ]) . '<br/>';
-
-            $path = preg_replace('/^[A-Z]+\s+/', '', $url);
-            if (strpos($path, '?') !== false) {
-                $newTabUrl = $apiUrl . rtrim($path, '&') . '&' . $body;
-            } else {
-                $newTabUrl = $apiUrl . $path . '?' . $body;
-            }
-
-            $rows[] = [
-                'logId'         => $logId,
-                'duration'      => sprintf('%.1f ms', $timing[3] * 1000),
-                'traceString'   => $traceString,
-                'runLink'       => $runLink,
-                'newTabLink'    => Html::a('to new tab', $newTabUrl, ['target' => '_blank']) . '<br/>',
-                'urlEncoded'    => Html::encode((isset($apiUrl)) ? str_replace(' ', ' ' . $apiUrl, $url) : $url),
-                'bodyEncoded'   => Html::encode($body),
-            ];
-        }
-
-        return $this->render('detail', compact('rows'));
     }
 
     private $_timings;
 
-    public function calculateTimings()
+    public function getTimings()
     {
-        if ($this->_timings !== null) {
-            return $this->_timings;
+        if ($this->_timings === null) {
+            $this->_timings = $this->calculateTimings();
         }
 
+        return $this->_timings;
+    }
+
+    public function calculateTimings()
+    {
         $messages = $this->data['messages'];
         $timings = [];
         $stack = [];
@@ -167,7 +113,7 @@ HTML;
         }
         ksort($timings);
 
-        return $this->_timings = $timings;
+        return $timings;
     }
 
     /**
