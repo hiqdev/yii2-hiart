@@ -37,9 +37,13 @@ class Connection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
 
+    public $commandClass = Command::class;
+
     public $queryClass = Query::class;
 
     public $activeQueryClass = ActiveQuery::class;
+
+    public $name = 'hiart';
 
     /**
      * @var array Config
@@ -119,6 +123,11 @@ class Connection extends Component
         }
     }
 
+    public function getBaseUri()
+    {
+        return $this->config['base_uri'];
+    }
+
     /**
      * Closes the connection when this component is being serialized.
      * @return array
@@ -142,11 +151,11 @@ class Connection extends Component
      * @param array $config the configuration for the Command class
      * @return Command the DB command
      */
-    public function createCommand($config = [])
+    public function createCommand(array $config = [])
     {
         $config['db'] = $this;
 
-        return new Command($config);
+        return new $this->commandClass($config);
     }
 
     /**
@@ -169,6 +178,7 @@ class Connection extends Component
     {
         return new QueryBuilder($this);
     }
+
 
     /**
      * Performs GET HTTP request.

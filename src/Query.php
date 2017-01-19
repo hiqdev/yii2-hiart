@@ -70,7 +70,7 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function one($db = null)
     {
-        $result = $this->createCommand($db)->search(['limit' => 1]);
+        $result = $this->limit(1)->createCommand($db)->search();
         if (empty($result)) {
             return false;
         }
@@ -79,9 +79,10 @@ class Query extends \yii\db\Query implements QueryInterface
         return $record;
     }
 
-    public function search($db = null, $options = [])
+    public function search($db = null)
     {
-        $result = $this->createCommand($db)->search($options);
+        $result = $this->createCommand($db)->search();
+
         if (!empty($result) && $this->indexBy !== null) {
             $rows = [];
             foreach ($result as $key => $row) {
@@ -115,27 +116,6 @@ class Query extends \yii\db\Query implements QueryInterface
         return self::one($db) !== false;
     }
 
-    public function stats($groups)
-    {
-        $this->stats = $groups;
-
-        return $this;
-    }
-
-    public function highlight($highlight)
-    {
-        $this->highlight = $highlight;
-
-        return $this;
-    }
-
-    public function addAggregation($name, $type, $options)
-    {
-        $this->aggregations[$name] = [$type => $options];
-
-        return $this;
-    }
-
     public function action($action)
     {
         $this->action = $action;
@@ -152,9 +132,27 @@ class Query extends \yii\db\Query implements QueryInterface
         return $this;
     }
 
+    public function addBatch($batch)
+    {
+        if (!isset($this->options['batch'])) {
+            $this->options['batch'] = $batch;
+        }
+
+        return $this;
+    }
+
     public function options($options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function addOptions($options)
+    {
+        if (!empty($options)) {
+            $this->options = array_merge($this->options, $options);
+        }
 
         return $this;
     }

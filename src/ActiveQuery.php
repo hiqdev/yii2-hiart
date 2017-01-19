@@ -17,10 +17,7 @@ use yii\helpers\ArrayHelper;
 
 class ActiveQuery extends Query implements ActiveQueryInterface
 {
-    use ActiveQueryTrait {
-        createModels as defaultCreateModels;
-    }
-
+    use ActiveQueryTrait;
     use ActiveRelationTrait;
 
     /**
@@ -249,7 +246,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             return parent::all($db);
         }
 
-        $rows = $this->createCommand($db)->search($this->options);
+        $rows = $this->createCommand($db)->search();
 
         return $this->populate($rows);
     }
@@ -405,9 +402,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function one($db = null)
     {
-        //        $result = $this->createCommand($db)->get();
-
-        $result = $this->createCommand($db)->search(ArrayHelper::merge(['limit' => 1], $this->options));
+        $result = $this->limit(1)->search($db);
         if (empty($result)) {
             return null;
         }
@@ -428,6 +423,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 //                $this->findWith($this->with, $models);
 //                $model = $models[0];
 //            }
+
             return $result;
         }
 
@@ -449,9 +445,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function search($db = null, $options = [])
+    public function OLD_search($db = null, $options = [])
     {
-        $result = $this->createCommand($db)->search($options);
+        $result = parent::search($db, $options);
+
         // TODO implement with() for asArray
         if (!empty($result) && !$this->asArray) {
             $models = $this->createModels($result);

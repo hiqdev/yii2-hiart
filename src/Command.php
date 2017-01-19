@@ -42,7 +42,7 @@ class Command extends \yii\base\Component
      */
     public function search()
     {
-        $this->request->getQuery()->addAction('search');
+        $this->request->getQuery()->addAction('search')->addBatch(true);
 
         return $this->execute();
     }
@@ -51,7 +51,7 @@ class Command extends \yii\base\Component
      * Sends a request to create/insert data.
      * @param mixed $table entity to create
      * @param mixed $columns attributes of object to create
-     * @return mixed
+     * @return $this
      */
     public function insert($table, $columns, array $options = [])
     {
@@ -60,6 +60,12 @@ class Command extends \yii\base\Component
         return $this->setRequest($request);
     }
 
+    /**
+     * Sends a request to create/insert data.
+     * @param mixed $table entity to create
+     * @param mixed $columns attributes of object to create
+     * @return $this
+     */
     public function update($table, $columns, $condition = [], array $options = [])
     {
         $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $options);
@@ -96,12 +102,17 @@ class Command extends \yii\base\Component
      */
     public function execute()
     {
-        $profile = $this->request->getProfile();
-        Yii::beginProfile($profile, __METHOD__);
+        $profile = serialize($this->request);
+        $category = static::getProfileCategory();
+        Yii::beginProfile($profile, $category);
         $response = $this->db->send($this->request);
-        Yii::endProfile($profile, __METHOD__);
+        Yii::endProfile($profile, $category);
 
         return $response->getData();
     }
 
+    public static function getProfileCategory()
+    {
+        return __METHOD__;
+    }
 }

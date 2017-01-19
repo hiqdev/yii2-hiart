@@ -28,34 +28,30 @@ class QueryBuilder extends \yii\base\Object
     }
 
     /**
+     * Builds config array to create Command.
      * @param Query $query
      * @throws NotSupportedException
      * @return array
      */
     public function build(Query $query)
     {
-        return ['request' => $this->buildRequest($query)];
+        return ['request' => $this->createRequest($query)];
+    }
+
+    public function createRequest($query)
+    {
+        return new Request($this, $query);
     }
 
     /**
-     * Prepares query. This is function for you to redefine.
+     * Prepares query before actual building.
+     * This function for you to redefine.
+     * It will be called before other build functions.
      * @param Query $query
      */
     public function prepare(Query $query)
     {
-        $query->prepare($this);
-    }
-
-    public function buildRequest($query)
-    {
-        $this->prepare($query);
-
-        $data = ['query' => $query];
-        foreach (['Auth', 'Method', 'Uri', 'Headers', 'QueryParams', 'FormParams', 'Body'] as $name) {
-            $data[$name] = $this->{'build' . $name}($query);
-        }
-
-        return Request::fromData($data);
+        return $query->prepare($this);
     }
 
     /**
@@ -112,30 +108,44 @@ class QueryBuilder extends \yii\base\Object
         return null;
     }
 
+    /**
+     * Creates insert request.
+     * @param string $table
+     * @param array $columns
+     * @param array $options
+     * @return Request
+     */
     public function insert($table, $columns, array $options = [])
     {
         return $this->perform('insert', $table, $columns, $options);
     }
 
+    /**
+     * Creates update request.
+     * @param string $table
+     * @param array $columns
+     * @param array $options
+     * @return Request
+     */
     public function update($table, $columns, $condition = [], array $options = [])
     {
         $query = $this->createQuery('update', $table, $options)->body($columns)->where($condition);
 
-        return $this->buildRequest($query);
+        return $this->createRequest($query);
     }
 
     public function delete($table, $condition = [], array $options = [])
     {
         $query = $this->createQuery('delete', $table, $options)->where($condition);
 
-        return $this->buildRequest($query);
+        return $this->createRequest($query);
     }
 
     public function perform($action, $table, $body, $options = [])
     {
         $query = $this->createQuery($action, $table, $options)->body($body);
 
-        return $this->buildRequest($query);
+        return $this->createRequest($query);
     }
 
     public function createQuery($action, $table, array $options = [])
