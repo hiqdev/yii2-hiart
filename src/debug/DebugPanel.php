@@ -10,19 +10,19 @@
 
 namespace hiqdev\hiart\debug;
 
+use hiqdev\hiart\Command;
 use Yii;
-use yii\debug\Panel;
+use yii\base\ViewContextInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use yii\log\Logger;
-use yii\web\View;
 
 /**
  * Debugger panel that collects and displays HiArt queries performed.
  */
-class DebugPanel extends Panel
+class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
 {
     public $db = 'hiart';
 
@@ -77,8 +77,7 @@ HTML;
         $apiUrl = null;
         $timings = $this->calculateTimings();
         ArrayHelper::multisort($timings, 3, SORT_DESC);
-        $rows = [];
-        $i = 0;
+
         // Try to get API URL
         try {
             $component = Yii::$app->get('hiart');
@@ -87,8 +86,9 @@ HTML;
         } catch (\yii\base\InvalidConfigException $e) {
             // Pass
         }
+
+        $rows = [];
         foreach ($timings as $logId => $timing) {
-            $duration = sprintf('%.1f ms', $timing[3] * 1000);
             $message = $timing[1];
             $traces = $timing[4];
             if (($pos = mb_strpos($message, '#')) !== false) {
@@ -98,6 +98,7 @@ HTML;
                 $url = $message;
                 $body = null;
             }
+
             $traceString = '';
             if (!empty($traces)) {
                 $traceString .= Html::ul($traces, [
@@ -107,114 +108,32 @@ HTML;
                     },
                 ]);
             }
+
             $ajaxUrl = Url::to(['hiart-query', 'logId' => $logId, 'tag' => $this->tag]);
             $runLink = Html::a('run query', $ajaxUrl, [
-                    'class' => 'hiart-link',
-                    'data' => ['id' => $i],
-                ]) . '<br/>';
+                'class' => 'hiart-link',
+                'data' => ['id' => $logId],
+            ]) . '<br/>';
+
             $path = preg_replace('/^[A-Z]+\s+/', '', $url);
             if (strpos($path, '?') !== false) {
                 $newTabUrl = $apiUrl . rtrim($path, '&') . '&' . $body;
             } else {
                 $newTabUrl = $apiUrl . $path . '?' . $body;
             }
-            $newTabLink = Html::a('to new tab', $newTabUrl, ['target' => '_blank']) . '<br/>';
-            $url_encoded = Html::encode((isset($apiUrl)) ? str_replace(' ', ' ' . $apiUrl, $url) : $url);
-            $body_encoded = Html::encode($body);
-            $rows[] = <<<HTML
-<tr>
-    <td style="width: 10%;">$duration</td>
-    <td style="width: 75%;"><div><b>$url_encoded</b><br/><p>$body_encoded</p>$traceString</div></td>
-    <td style="width: 15%;">$runLink$newTabLink</td>
-</tr>
-<tr style="display: none;" class="hiart-wrapper" data-id="$i">
-    <td class="time"></td><td colspan="3" class="result"></td>
-</tr>
-HTML;
-            ++$i;
+
+            $rows[] = [
+                'logId'         => $logId,
+                'duration'      => sprintf('%.1f ms', $timing[3] * 1000),
+                'traceString'   => $traceString,
+                'runLink'       => $runLink,
+                'newTabLink'    => Html::a('to new tab', $newTabUrl, ['target' => '_blank']) . '<br/>',
+                'urlEncoded'    => Html::encode((isset($apiUrl)) ? str_replace(' ', ' ' . $apiUrl, $url) : $url),
+                'bodyEncoded'   => Html::encode($body),
+            ];
         }
-        $rows = implode("\n", $rows);
 
-        Yii::$app->view->registerCss(<<<'CSS'
-.string { color: green; }
-.number { color: darkorange; }
-.boolean { color: blue; }
-.null { color: magenta; }
-.key { color: red; }
-CSS
-        );
-
-        Yii::$app->view->registerJs(<<<JS
-function syntaxHighlight(json) {
-    json = json.replace(/&/g, '&').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-    });
-}
-
-$('.hiart-link').on('click', function (event) {
-    event.preventDefault();
-
-    var id = $(this).data('id');
-    var result = $('.hiart-wrapper[data-id=' + id +']');
-    result.find('.result').html('Sending request...');
-    result.show();
-    $.ajax({
-        type: 'POST',
-        url: $(this).attr('href'),
-        success: function (data) {
-            var is_json = true;
-            try {
-               var json = JSON.parse(data.result);
-            } catch(e) {
-               is_json = false;
-            }
-            result.find('.time').html(data.time);
-            if (is_json) {
-                result.find('.result').html( syntaxHighlight( JSON.stringify( JSON.parse(data.result), undefined, 10) ) );
-            } else {
-                result.find('.result').html( data.result );
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            result.find('.time').html('');
-            result.find('.result').html('<span style="color: #c00;">Error: ' + errorThrown + ' - ' + textStatus + '</span><br />' + jqXHR.responseText);
-        },
-        dataType: 'json'
-    });
-    return false;
-});
-JS
-            , View::POS_READY);
-
-        return <<<HTML
-<h1>HiArt Queries</h1>
-
-<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
-<thead>
-<tr>
-    <th style="width: 10%;">Time</th>
-    <th style="width: 75%;">Url / Query</th>
-    <th style="width: 15%;">Run Query on node</th>
-</tr>
-</thead>
-<tbody>
-$rows
-</tbody>
-</table>
-HTML;
+        return $this->render('detail', compact('rows'));
     }
 
     private $_timings;
@@ -224,6 +143,7 @@ HTML;
         if ($this->_timings !== null) {
             return $this->_timings;
         }
+
         $messages = $this->data['messages'];
         $timings = [];
         $stack = [];
@@ -233,7 +153,8 @@ HTML;
             if ($level === Logger::LEVEL_PROFILE_BEGIN) {
                 $stack[] = $log;
             } elseif ($level === Logger::LEVEL_PROFILE_END) {
-                if (($last = array_pop($stack)) !== null && $last[0] === $token) {
+                $last = array_pop($stack);
+                if ($last !== null && $last[0] === $token) {
                     $timings[$last[5]] = [count($stack), $token, $last[3], $timestamp - $last[3], $last[4]];
                 }
             }
@@ -255,9 +176,28 @@ HTML;
     public function save()
     {
         $target = $this->module->logTarget;
-        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE,
-            ['hiqdev\hiart\Connection::handleRequest']);
+        $messages = $target->filterMessages($target->messages, Logger::LEVEL_PROFILE, [Command::getProfileCategory()]);
 
         return ['messages' => $messages];
+    }
+
+    protected $_viewPath;
+
+    public function setViewPath($value)
+    {
+        $this->_viewPath = $value;
+    }
+
+    public function getViewPath()
+    {
+        if ($this->_viewPath === null) {
+            $this->_viewPath = dirname(__DIR__) . '/views/debug';
+        }
+        return $this->_viewPath;
+    }
+
+    public function render($file, $data)
+    {
+        return Yii::$app->view->render($file, $data, $this);
     }
 }
