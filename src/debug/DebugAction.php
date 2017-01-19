@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
  */
 
-namespace hiqdev\hiart;
+namespace hiqdev\hiart\debug;
 
 use Yii;
 use yii\base\Action;

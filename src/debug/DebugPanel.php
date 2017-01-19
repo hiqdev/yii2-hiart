@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
  */
 
-namespace hiqdev\hiart;
+namespace hiqdev\hiart\debug;
 
 use Yii;
 use yii\debug\Panel;
@@ -29,7 +29,7 @@ class DebugPanel extends Panel
     public function init()
     {
         $this->actions['hiart-query'] = [
-            'class' => 'hiqdev\\hiart\\DebugAction',
+            'class' => DebugAction::class,
             'panel' => $this,
             'db' => $this->db,
         ];

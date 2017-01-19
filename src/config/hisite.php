@@ -10,12 +10,12 @@
 
 return [
     'modules' => array_filter([
-        'debug' => defined('YII_DEBUG') && YII_DEBUG ? [
+        'debug' => empty($params['debug.enabled']) ? null : [
             'panels' => [
                 'hiart' => [
-                    'class' => \hiqdev\hiart\DebugPanel::class,
+                    'class' => \hiqdev\hiart\debug\DebugPanel::class,
                 ],
             ],
-        ] : null,
+        ],
     ]),
 ];
