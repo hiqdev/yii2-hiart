@@ -11,7 +11,6 @@
 namespace hiqdev\hiart\debug;
 
 use Yii;
-use yii\base\Action;
 use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 use yii\web\HttpException;
@@ -20,16 +19,13 @@ use yii\web\Response;
 /**
  * Debug Action is used by [[DebugPanel]] to perform HiArt queries using ajax.
  */
-class DebugAction extends Action
+class DebugAction extends \yii\base\Action
 {
-    /**
-     * @var string the connection id to use
-     */
-    public $db;
     /**
      * @var DebugPanel
      */
     public $panel;
+
     /**
      * @var \yii\debug\controllers\DefaultController
      */
@@ -39,59 +35,26 @@ class DebugAction extends Action
     {
         $this->controller->loadData($tag);
 
-        $timings = $this->panel->calculateTimings();
+        $timings = $this->panel->getTimings();
         ArrayHelper::multisort($timings, 3, SORT_DESC);
+
         if (!isset($timings[$logId])) {
             throw new HttpException(404, 'Log message not found.');
         }
-        $message = $timings[$logId][1];
-        if (($pos = mb_strpos($message, '#')) !== false) {
-            $url  = mb_substr($message, 0, $pos);
-            $body = mb_substr($message, $pos + 1);
-        } else {
-            $url  = $message;
-            $body = null;
-        }
-        $method = mb_substr($url, 0, $pos = mb_strpos($url, ' '));
-        $url    = mb_substr($url, $pos + 1);
 
-        parse_str($body, $options);
-
-        /* @var $db Connection */
-        $db   = Yii::$app->get($this->db);
-        $time = microtime(true);
-        switch ($method) {
-            case 'GET':
-                $result = $db->get($url, $options, true);
-                break;
-            case 'POST':
-                $result = $db->post($url, $options, $body, true);
-                break;
-            case 'PUT':
-                $result = $db->put($url, $options, $body, true);
-                break;
-            case 'DELETE':
-                $result = $db->delete($url, $options, $body, true);
-                break;
-            case 'HEAD':
-                $result = $db->head($url, $options, $body);
-                break;
-            default:
-                throw new NotSupportedException("Request method '$method' is not supported by HiArt.");
-        }
-        $time = microtime(true) - $time;
-
-        if ($result === true) {
-            $result = '<span class="label label-success">success</span>';
-        } elseif ($result === false) {
-            $result = '<span class="label label-danger">no success</span>';
-        }
+        $request  = unserialize($timings[$logId][1]);
+        var_dump($request);
+        $db       = Yii::$app->get($request->getDbname());
+        $time     = microtime(true);
+        $response = $db->send($request);
+        var_dump($response->getBodyContents());
+        $time     = microtime(true) - $time;
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         return [
             'time'   => sprintf('%.1f ms', $time * 1000),
-            'result' => $result,
+            'result' => var_dump($response->getData()),
         ];
     }
 }

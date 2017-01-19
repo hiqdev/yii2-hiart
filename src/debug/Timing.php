@@ -22,10 +22,7 @@ class Timing
     protected $logId;
     protected $duration;
     protected $traces;
-    protected $dbname;
-    protected $method;
-    protected $uri;
-    protected $body;
+    protected $request;
 
     public function __construct(DebugPanel $panel, $logId)
     {
@@ -56,13 +53,9 @@ class Timing
 
     public function updateFromRaw($rawTiming)
     {
+        $this->request  = unserialize($rawTiming[1]);
         $this->duration = $rawTiming[3];
-        $this->traces = $rawTiming[4];
-        $profile = $rawTiming[1];
-
-        foreach (Request::decodeProfile($profile) as $key => $value) {
-            $this->{$key} = $value;
-        }
+        $this->traces   = $rawTiming[4];
     }
 
     public function getLogId()
@@ -72,7 +65,7 @@ class Timing
 
     public function getMethod()
     {
-        return $this->method;
+        return $this->request->getMethod();
     }
 
     public function getUrlEncoded()
@@ -82,7 +75,7 @@ class Timing
 
     public function getBodyEncoded()
     {
-        return Html::encode($this->body);
+        return Html::encode($this->request->getBody());
     }
 
     public function getDuration()
@@ -117,19 +110,20 @@ class Timing
 
     public function getNewTabLink()
     {
-        $sign = strpos($this->uri, '?') === false ? '?' : '';
-        $newTabUrl = rtrim($this->getFullUri(), '&') . $sign . $this->body;
+        $uri = $this->getFullUri();
+        $sign = strpos($uri, '?') === false ? '?' : '';
+        $newTabUrl = rtrim($uri, '&') . $sign . $this->request->getBody();
 
         return Html::a('to new tab', $newTabUrl, ['target' => '_blank']);
     }
 
     public function getFullUri()
     {
-        return $this->getBaseUri() . '/'. $this->uri;
+        return $this->getBaseUri() . '/'. $this->request->getUri();
     }
 
     public function getBaseUri()
     {
-        $this->panel->getBaseUri($this->dbname);
+        return $this->panel->getBaseUri($this->request->getDbname());
     }
 }

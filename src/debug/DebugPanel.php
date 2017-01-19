@@ -21,14 +21,11 @@ use yii\log\Logger;
  */
 class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
 {
-    public $db = 'hiart';
-
     public function init()
     {
         $this->actions['hiart-query'] = [
             'class' => DebugAction::class,
             'panel' => $this,
-            'db'    => $this->db,
         ];
     }
 
