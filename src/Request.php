@@ -21,6 +21,8 @@ class Request implements \Serializable
      */
     protected $worker;
 
+    protected $workerClass = Worker::class;
+
     /**
      * @var Query
      */
@@ -39,6 +41,8 @@ class Request implements \Serializable
     protected $headers = [];
     protected $body;
     protected $version;
+
+    protected $parts = [];
 
     public function __construct(QueryBuilder $builder, Query $query)
     {
@@ -76,6 +80,17 @@ class Request implements \Serializable
         return $this->version;
     }
 
+    /**
+     * @return Query
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * @return Worker
+     */
     public function getWorker()
     {
         if ($this->worker === null) {
@@ -86,11 +101,6 @@ class Request implements \Serializable
         }
 
         return $this->worker;
-    }
-
-    public function getQuery()
-    {
-        return $this->query;
     }
 
     protected function updateFromQuery()
@@ -110,7 +120,7 @@ class Request implements \Serializable
 
     protected function createWorker()
     {
-        return new Worker($this->method, $this->uri, $this->headers, $this->body, $this->version);
+        return new $this->workerClass($this->method, $this->uri, $this->headers, $this->body, $this->version);
     }
 
     protected function buildDbname()
@@ -174,13 +184,7 @@ class Request implements \Serializable
 
     public function serialize()
     {
-        $this->getWorker();
-        $data = [];
-        foreach (['dbname', 'method', 'uri', 'headers', 'body', 'version'] as $key) {
-            $data[$key] = $this->{$key};
-        }
-
-        return serialize($data);
+        return serialize($this->getParts());
     }
 
     public function unserialize($string)
@@ -188,6 +192,18 @@ class Request implements \Serializable
         foreach (unserialize($string) as $key => $value) {
             $this->{$key} = $value;
         }
+    }
+
+    public function getParts()
+    {
+        if (empty($this->parts)) {
+            $this->getWorker();
+            foreach (['dbname', 'method', 'uri', 'headers', 'body', 'version'] as $key) {
+                $this->parts[$key] = $this->{$key};
+            }
+        }
+
+        return $this->parts;
     }
 
     public function isRaw()

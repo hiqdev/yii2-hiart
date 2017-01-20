@@ -183,67 +183,6 @@ class Connection extends Component
 
 
     /**
-     * Make request and check for error.
-     * @param string $url   URL
-     * @param array  $query query options (GET parameters)
-     * @param string $body  request body (POST parameters)
-     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
-     * @throws HiArtException
-     * @throws \yii\base\InvalidConfigException
-     * @return mixed response
-     */
-    public function makeRequest($method, $url, $query = [], $body = null, $raw = false)
-    {
-        $result = $this->handleRequest($method, $this->prepareUrl($url, $query), $body, $raw);
-
-        return $this->checkResponse($result, $url, $query);
-    }
-
-    /**
-     * Creates URL by joining path part and query options.
-     * @param mixed $path path
-     * @param array $query query options
-     * @return array
-     */
-    private function prepareUrl($path, array $query = [])
-    {
-        $url = $path;
-        $query = array_merge($this->getAuth(), $query);
-        if (!empty($query)) {
-            $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($query);
-        }
-
-        return $url;
-    }
-
-    /**
-     * Handles the request with handler.
-     * Returns array or raw response content, if $raw is true.
-     *
-     * @param string $method POST, GET, etc
-     * @param string $url the URL for request, not including proto and site
-     * @param array|string $body the request body. When array - will be sent as POST params, otherwise - as RAW body.
-     * @param bool $raw Do not try to decode data, event when response is decodeable (JSON). Defaults to `false`
-     * @return array|string
-     */
-    protected function handleRequest($method, $url, $body = null, $raw = false)
-    {
-        $method  = strtoupper($method);
-        $profile = $method . ' ' . $url . '#' . (is_array($body) ? http_build_query($body) : $body);
-        $options = [(is_array($body) ? 'form_params' : 'body') => $body];
-        Yii::beginProfile($profile, __METHOD__);
-        $response = $this->getHandler()->request($method, $url, $options);
-        Yii::endProfile($profile, __METHOD__);
-
-        $res = $response->getBody()->getContents();
-        if (!$raw && preg_grep('|application/json|i', $response->getHeader('Content-Type'))) {
-            $res = Json::decode($res);
-        }
-
-        return $res;
-    }
-
-    /**
      * Returns the request handler (Guzzle client for the moment).
      * Creates and setups handler if not set.
      * @return Handler
@@ -317,46 +256,53 @@ class Connection extends Component
 
     /**
      * Setter for errorChecker.
-     * @param Closure|array $value
+     * @param Closure $checker
      */
-    public function setErrorChecker($value)
+    public function setErrorChecker($checker)
     {
-        $this->_errorChecker = $value;
+        $this->_errorChecker = $checker;
     }
 
     /**
      * Checks response with checkError method and raises exception if error.
-     * @param array  $response response data from API
-     * @param string $url      request URL
-     * @param array  $options  request data
+     * @param Response $response response data from API
      * @throws ErrorResponseException
-     * @return array
+     * @return mixed response data
      */
-    protected function checkResponse($response, $url, $options)
+    public function checkResponse(Response $response)
     {
         $error = $this->checkError($response);
-        if (isset($error)) {
+        if ($error) {
             throw new ErrorResponseException($error, [
-                'requestUrl' => $url,
-                'request'    => $options,
-                'response'   => $response,
+                'request' => $response->getRequest()->getParts(),
+                'response' => $response->getData(),
             ]);
         }
 
-        return $response;
+        return $response->getData();
     }
 
     /**
-     * Checks response with errorChecker callback and returns not null if error.
-     * @param array  $response response data from API
-     * @return null|string
+     * Checks response with errorChecker callback and returns error text if error.
+     * @param Response $response
+     * @return string|false error text or false
      */
-    public function checkError($response)
+    public function checkError(Response $response)
     {
         if (isset($this->_errorChecker)) {
             return call_user_func($this->_errorChecker, $response);
+        } else {
+            return $this->isError($response);
         }
+    }
 
-        return null;
+    /**
+     * Default error checker. TODO check something in response?
+     * @param Response $response
+     * @return bool
+     */
+    public function isError(Response $response)
+    {
+        return false;
     }
 }

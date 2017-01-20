@@ -38,7 +38,7 @@ class Command extends \yii\base\Component
      * Sends a request to retrieve data.
      * In API this could be get, search or list request.
      * @throws ErrorResponseException
-     * @return mixed
+     * @return mixed response data
      */
     public function search()
     {
@@ -86,7 +86,7 @@ class Command extends \yii\base\Component
      * @param string $table
      * @param mixed $body
      * @param array $options
-     * @return mixed
+     * @return mixed response data
      */
     public function perform($action, $table, $body = [], array $options = [])
     {
@@ -100,7 +100,7 @@ class Command extends \yii\base\Component
      * Executes the request.
      * @param string $url URL
      * @param mixed $body request parameters
-     * @return mixed
+     * @return mixed response data
      */
     public function execute()
     {
@@ -110,7 +110,7 @@ class Command extends \yii\base\Component
         $response = $this->db->send($this->request);
         Yii::endProfile($profile, $category);
 
-        return $response->getData();
+        return $this->db->checkResponse($response);
     }
 
     public static function getProfileCategory()
