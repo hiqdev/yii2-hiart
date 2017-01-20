@@ -233,7 +233,7 @@ class ActiveRecord extends BaseActiveRecord
 
         $values = $this->getDirtyAttributes($attributes);
         $data   = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->perform('insert', $data);
+        $result = $this->performScenario('insert', $data);
 
         $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
@@ -257,7 +257,7 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $data   = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->perform('delete', $data);
+        $result = $this->performScenario('delete', $data);
 
         $this->setOldAttributes(null);
         $this->afterDelete();
@@ -287,8 +287,7 @@ class ActiveRecord extends BaseActiveRecord
             return 0;
         }
 
-        $data = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->perform('update', $data);
+        $result = $this->performScenario('update', $values, $options);
 
         $changedAttributes = [];
         foreach ($values as $name => $value) {
@@ -301,21 +300,26 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
-    protected function perform($defaultScenario, $data, $batch = false)
+    public function performScenario($defaultScenario, $data, array $options = [])
     {
-        $command = $this->getScenarioCommand($defaultScenario);
+        $action = $this->getScenarioAction($defaultScenario);
 
-        return static::getDb()->createCommand()->perform($command, static::from(), $data, compact('batch'));
+        return static::perform($action, $data, $options);
+    }
+
+    public static function perform($action, $data, array $options = [])
+    {
+        return static::getDb()->createCommand()->perform($action, static::from(), $data, $options);
     }
 
     /**
-     * Creates command name from the current scenario name.
-     * @param string $default default command name
+     * Converts scenario name to action.
+     * @param string $default default action name
      * @throws InvalidConfigException
      * @throws NotSupportedException
      * @return string
      */
-    public function getScenarioCommand($default = '')
+    public function getScenarioAction($default = '')
     {
         if ($this->isScenarioDefault()) {
             if ($default !== '') {
@@ -325,17 +329,17 @@ class ActiveRecord extends BaseActiveRecord
             }
         } else {
             $scenarioCommands = static::scenarioCommands();
-            if ($command = $scenarioCommands[$this->scenario]) {
-                if ($command === false) {
+            if ($action = $scenarioCommands[$this->scenario]) {
+                if ($action === false) {
                     throw new NotSupportedException('The scenario can not be saved');
                 }
 
-                if (is_array($command) && $command[0] === null) {
-                    $result = $command[1];
-                } elseif (is_array($command)) {
-                    $result = $command;
+                if (is_array($action) && $action[0] === null) {
+                    $result = $action[1];
+                } elseif (is_array($action)) {
+                    $result = $action;
                 } else {
-                    $result = Inflector::id2camel($command);
+                    $result = Inflector::id2camel($action);
                 }
             } else {
                 $result = Inflector::id2camel($this->scenario);

@@ -83,7 +83,9 @@ class Command extends \yii\base\Component
     /**
      * Creates and executes request with given data.
      * @param string $action
-     * @param mixed $body request parameters
+     * @param string $table
+     * @param mixed $body
+     * @param array $options
      * @return mixed
      */
     public function perform($action, $table, $body = [], array $options = [])
