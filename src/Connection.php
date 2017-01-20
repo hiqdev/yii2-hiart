@@ -149,19 +149,6 @@ class Connection extends Component
     }
 
     /**
-     * Performs command.
-     * @param string $action
-     * @param string $table
-     * @param mixed $body
-     * @param array $options
-     * @return mixed
-     */
-    public function perform($action, $table, $body = [], array $options = [])
-    {
-        return $this->createCommand()->perform($action, $table, $body, $options);
-    }
-
-    /**
      * Creates a command for execution.
      * @param array $config the configuration for the Command class
      * @return Command the DB command
