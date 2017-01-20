@@ -112,7 +112,7 @@ class Query extends \yii\db\Query implements QueryInterface
     {
         $this->count = $q;
 
-        return (int) $this->search();
+        return (int) $this->searchAll();
     }
 
     public function exists($db = null)
