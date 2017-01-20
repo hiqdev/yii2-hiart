@@ -42,19 +42,9 @@ $this->registerJs(<<<JS
         $.ajax({
             type: 'POST',
             url: $(this).attr('href'),
-            success: function (data) {
-                var is_json = true;
-                try {
-                   var json = JSON.parse(data.result);
-                } catch(e) {
-                   is_json = false;
-                }
+            success: function (data, status, xhr) {
+                result.find('.result').html( syntaxHighlight( JSON.stringify( data.result, undefined, 10) ) );
                 result.find('.time').html(data.time);
-                if (is_json) {
-                    result.find('.result').html( syntaxHighlight( JSON.stringify( JSON.parse(data.result), undefined, 10) ) );
-                } else {
-                    result.find('.result').html( data.result );
-                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 result.find('.time').html('');
