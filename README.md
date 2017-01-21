@@ -37,34 +37,87 @@ To use this extension, configure hiart component in your application config:
 ```php
     'components' => [
         'hiart' => [
-            'class' => 'hiqdev\hiart\Connection',
-            'config' => [
-                'base_uri' => 'https://api.site.com/',
-            ],
+            'class' => \hiqdev\hiart\curl\Connection::class,
+            'queryBuilderClass' => \hiqdev\hiart\rest\QueryBuilder::class,
+            'baseUri' => 'https://site.com/api/v3/',
         ],
     ],
 ```
 
+Note three main options:
+
+- `class` specifies transport implementation to be used, **cURL** in this case
+- `queryBuilderClass` specifies class that actually implements API to be accessed, **REST** in this case
+- `baseUri` specifies starting point of the API
+
+Available transports are:
+
+- [cURL](http://php.net/manual/en/book.curl.php)
+- [PHP streams](http://php.net/manual/en/book.stream.php)
+- [Guzzle](https://github.com/guzzle/guzzle), provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
+- [yii2-httpclient](https://github.com/yiisoft/yii2-httpclient), provided with [yii2-hiart-httpclient](https://github.com/hiqdev/yii2-hiart-httpclient)
+
+You can implement your own transport, it's not difficult see available implementations.
+It can be even not HTTP based.
+
+There are `QueryBuilder`s for:
+
+- Basic [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)
+- [GitHub API](https://developer.github.com/v3/), provided with [yii2-hiart-github](https://github.com/hiqdev/yii2-hiart-github)
+- [HiPanel](https://hipanel.com) API, provided with [hipanel-hiart](https://github.com/hiqdev/hipanel-hiart)
+
+You can implement your own API.
+Basically all you need is create your QueryBuilder with these methods:
+
+- `buildMethod(Query $query)`
+- `buildHeaders(Query $query)`
+- `buildUri(Query $query)`
+- `buildQueryParams(Query $query)`
+- `buildBody(Query $query)`
+- `buildFormParams(Query $query)`
+
+See available implementations and create issues on GitHub.
+
 ## Usage
 
-Define your Model
+Define your Model:
 
 ```php
-class MyModel extends \hiqdev\hiart\ActiveRecord
+class User extends \hiqdev\hiart\ActiveRecord
 {
-    public function attributes()
+    public function rules()
     {
-        return ['id', 'name', 'else'];
+        return [
+            ['id', 'integer', 'min' => 1],
+            ['login', 'string', 'min' => 2, 'max' => 32],
+        ];
     }
 }
 ```
+
+Note that you use general `hiqdev\hiart\ActiveRecord` class not specific for certain API.
+API is specified in connection options and you don't need to change model classes when
+you change API.
+
+Then you just use your models same way as DB ActiveRecord models.
+
+```php
+$user = new User();
+$user->login = 'sol';
+
+$user->save();
+
+$admins = User::find()->where(['type' => User::ADMIN_TYPE])->all();
+```
+
+Basically all features of Yii ActiveRecords work if your API provides them.
 
 ## License
 
 This project is released under the terms of the BSD-3-Clause [license](LICENSE).
 Read more [here](http://choosealicense.com/licenses/bsd-3-clause).
 
-Copyright © 2015-2016, HiQDev (http://hiqdev.com/)
+Copyright © 2015-2017, HiQDev (http://hiqdev.com/)
 
 ## Acknowledgments
 
