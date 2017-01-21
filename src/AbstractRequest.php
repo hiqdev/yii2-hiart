@@ -10,18 +10,24 @@
 
 namespace hiqdev\hiart;
 
-use GuzzleHttp\Psr7\Request as Worker;
-
-class Request implements \Serializable
+abstract class AbstractRequest implements \Serializable
 {
+    /**
+     * @var string response implementation to be specified in concrete implementation.
+     */
+    protected $responseClass;
+
+    /**
+     * @var string transport implementation to be specified in concrete implementation.
+     */
+    public $handlerClass;
+
     protected $builder;
 
     /**
-     * @var Worker
+     * @var object
      */
     protected $worker;
-
-    protected $workerClass = Worker::class;
 
     /**
      * @var Query
@@ -118,9 +124,14 @@ class Request implements \Serializable
         $this->buildProtocolVersion();
     }
 
-    protected function createWorker()
+    abstract protected function createWorker();
+
+    public function send($options = [])
     {
-        return new $this->workerClass($this->method, $this->uri, $this->headers, $this->body, $this->version);
+        $handler = $this->builder->getHandler();
+        $worker = $handler->send($this->getWorker(), $options);
+
+        return new $this->responseClass($worker, $request);
     }
 
     protected function buildDbname()
@@ -204,6 +215,10 @@ class Request implements \Serializable
         }
 
         return $this->parts;
+    }
+
+    public function send()
+    {
     }
 
     public function isRaw()

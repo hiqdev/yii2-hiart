@@ -15,9 +15,11 @@ use yii\base\NotSupportedException;
 use yii\helpers\ArrayHelper;
 
 /**
- * QueryBuilder builds a PSR7 request from the specification given as a [[Query]] object.
+ * Abstract QueryBuilder.
+ *
+ * QueryBuilder builds a request from the specification given as a [[Query]] object.
  */
-class QueryBuilder extends \yii\base\Object
+abstract class AbstractQueryBuilder extends \yii\base\Object
 {
     public $db;
 
@@ -58,55 +60,21 @@ class QueryBuilder extends \yii\base\Object
      * This function is for you to provide your authentication.
      * @param Query $query
      */
-    public function buildAuth(Query $query)
-    {
-    }
+    abstract public function buildAuth(Query $query);
 
-    public function buildMethod(Query $query)
-    {
-        static $defaultMethods = [
-            'get'       => 'GET',
-            'put'       => 'PUT',
-            'head'      => 'HEAD',
-            'post'      => 'GET',
-            'search'    => 'GET',
-            'insert'    => 'POST',
-            'update'    => 'PUT',
-            'delete'    => 'DELETE',
-        ];
+    abstract public function buildMethod(Query $query);
 
-        return isset($defaultMethods[$query->action]) ? $defaultMethods[$query->action] : 'POST';
-    }
+    abstract public function buildUri(Query $query);
 
-    public function buildUri(Query $query)
-    {
-        return $query->from;
-    }
+    abstract public function buildHeaders(Query $query);
 
-    public function buildHeaders(Query $query)
-    {
-        return [];
-    }
+    abstract public function buildProtocolVersion(Query $query);
 
-    public function buildProtocolVersion(Query $query)
-    {
-        return null;
-    }
+    abstract public function buildQueryParams(Query $query);
 
-    public function buildQueryParams(Query $query)
-    {
-        return [];
-    }
+    abstract public function buildFormParams(Query $query);
 
-    public function buildFormParams(Query $query)
-    {
-        return [];
-    }
-
-    public function buildBody(Query $query)
-    {
-        return null;
-    }
+    abstract public function buildBody(Query $query);
 
     /**
      * Creates insert request.

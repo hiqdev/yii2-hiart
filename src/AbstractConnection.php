@@ -11,35 +11,28 @@
 namespace hiqdev\hiart;
 
 use Closure;
-use GuzzleHttp\Client as Handler;
-use Yii;
+use hiqdev\hiart\stream\Request;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\helpers\Json;
 
 /**
- * Connection class.
+ * Abstract connection class.
  *
- * Example configuration:
- * ```php
- * 'components' => [
- *     'hiart' => [
- *         'class' => 'hiqdev\hiart\Connection',
- *         'config' => [
- *             'base_uri' => 'https://api.site.com/',
- *         ],
- *     ],
- * ],
- * ```
  */
-class Connection extends Component
+abstract class AbstractConnection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
 
-    public $commandClass = Command::class;
+    /**
+     * @var string to be specified in concrete implementation.
+     */
+    public $queryBuilderClass;
 
-    public $queryBuilderClass = QueryBuilder::class;
+    public $requestClass = Request::class;
+
+    public $commandClass = Command::class;
 
     public $queryClass = Query::class;
 
@@ -48,14 +41,14 @@ class Connection extends Component
     public $name = 'hiart';
 
     /**
-     * @var array Config
+     * @var array connection config will be passed to handler
      */
     public $config = [];
 
     /**
-     * @var Handler request handler
+     * @var object request handler common for all requests of this connection.
      */
-    protected static $_handler;
+    protected $_handler;
 
     /**
      * @var QueryBuilder the query builder for this connection
@@ -166,43 +159,29 @@ class Connection extends Component
     public function getQueryBuilder()
     {
         if ($this->_builder === null) {
-            $this->_builder = $this->createQueryBuilder();
+            $this->_builder = new $this->queryBuilderClass($this);
         }
 
         return $this->_builder;
     }
 
     /**
-     * Creates new query builder instance.
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder()
-    {
-        return new $this->queryBuilderClass($this);
-    }
-
-
-    /**
-     * Returns the request handler (Guzzle client for the moment).
-     * Creates and setups handler if not set.
-     * @return Handler
+     * Handler is created and set by request.
+     * @see setHandler
+     * @return object
      */
     public function getHandler()
     {
-        if (static::$_handler === null) {
-            static::$_handler = new Handler($this->config);
-        }
-
-        return static::$_handler;
+        return $this->_handler;
     }
 
     /**
-     * Set handler manually.
-     * @param Handler $value
+     * Requests use this function to keep request handler.
+     * @param object $handler
      */
-    public function setHandler(Handler $value)
+    public function setHandler($handler)
     {
-        static::$_handler = $value;
+        $this->_handler = $handler;
     }
 
     /**
