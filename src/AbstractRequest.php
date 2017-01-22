@@ -89,7 +89,7 @@ abstract class AbstractRequest implements \Serializable
         return $this->query;
     }
 
-    protected function buildRequest()
+    protected function build()
     {
         if ($this->isBuilt === null) {
             if (!empty($this->query)) {
@@ -189,7 +189,7 @@ abstract class AbstractRequest implements \Serializable
     {
         if (empty($this->parts)) {
             $this->getWorker();
-            $this->buildRequest();
+            $this->build();
             foreach (['dbname', 'method', 'uri', 'headers', 'body', 'version'] as $key) {
                 $this->parts[$key] = $this->{$key};
             }

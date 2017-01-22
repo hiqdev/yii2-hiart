@@ -37,7 +37,7 @@ abstract class ProxyRequest extends AbstractRequest
     public function getWorker()
     {
         if ($this->worker === null) {
-            $this->buildRequest();
+            $this->build();
             $this->worker = $this->createWorker();
         }
 
