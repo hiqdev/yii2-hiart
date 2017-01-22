@@ -10,7 +10,9 @@
 
 namespace hiqdev\hiart\rest;
 
-class QueryBuilder extends AbstractQueryBuilder
+use hiqdev\hiart\Query;
+
+class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 {
     /**
      * This function is for you to provide your authentication.

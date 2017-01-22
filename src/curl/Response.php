@@ -13,7 +13,7 @@ namespace hiqdev\hiart\curl;
 use hiqdev\hiart\AbstractResponse;
 
 /**
- * Guzzle response implementation.
+ * cURL response implementation.
  *
  * @author Andrii Vasyliev <sol@hiqdev.com>
  */
