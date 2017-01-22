@@ -23,11 +23,11 @@ class Command extends \yii\base\Component
     public $db;
 
     /**
-     * @var Request request object
+     * @var RequestInterface request object
      */
     protected $request;
 
-    public function setRequest(Request $request)
+    public function setRequest(RequestInterface $request)
     {
         $this->request = $request;
 
@@ -44,38 +44,41 @@ class Command extends \yii\base\Component
     {
         $this->request->getQuery()->addAction('search');
 
-        return $this->execute();
+        return $this->send();
     }
 
     /**
      * Sends a request to create/insert data.
      * @param mixed $table entity to create
      * @param mixed $columns attributes of object to create
+     * @param array $params request parameters
      * @return $this
      */
-    public function insert($table, $columns, array $options = [])
+    public function insert($table, $columns, array $params = [])
     {
-        $request = $this->db->getQueryBuilder()->insert($table, $columns, $options);
+        $request = $this->db->getQueryBuilder()->insert($table, $columns, $params);
 
         return $this->setRequest($request);
     }
 
     /**
-     * Sends a request to create/insert data.
-     * @param mixed $table entity to create
-     * @param mixed $columns attributes of object to create
+     * Sends a request to update data.
+     * @param mixed $table entity to update
+     * @param mixed $columns attributes of object to update
+     * @param array $condition
+     * @param array $params request parameters
      * @return $this
      */
-    public function update($table, $columns, $condition = [], array $options = [])
+    public function update($table, $columns, $condition = [], array $params = [])
     {
-        $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $options);
+        $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $params);
 
         return $this->setRequest($request);
     }
 
-    public function delete($table, $condition, array $options = [])
+    public function delete($table, $condition, array $params = [])
     {
-        $request = $this->db->getQueryBuilder()->delete($table, $condition, $options);
+        $request = $this->db->getQueryBuilder()->delete($table, $condition, $params);
 
         return $this->setRequest($request);
     }
@@ -85,29 +88,28 @@ class Command extends \yii\base\Component
      * @param string $action
      * @param string $table
      * @param mixed $body
-     * @param array $options
+     * @param array $params request parameters
      * @return mixed response data
      */
-    public function perform($action, $table, $body = [], array $options = [])
+    public function perform($action, $table, $body = [], array $params = [])
     {
-        $request = $this->db->getQueryBuilder()->perform($action, $table, $body, $options);
+        $request = $this->db->getQueryBuilder()->perform($action, $table, $body, $params);
         $this->setRequest($request);
 
-        return $this->execute();
+        return $this->send();
     }
 
     /**
      * Executes the request.
-     * @param string $url URL
-     * @param mixed $body request parameters
+     * @param array $options send options
      * @return mixed response data
      */
-    public function execute()
+    public function send($options = [])
     {
         $profile = serialize($this->request);
         $category = static::getProfileCategory();
         Yii::beginProfile($profile, $category);
-        $response = $this->db->send($this->request);
+        $response = $this->request->send($options);
         Yii::endProfile($profile, $category);
 
         return $this->db->checkResponse($response);

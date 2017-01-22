@@ -44,8 +44,7 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "~2.0",
-        "guzzlehttp/guzzle": "6.*"
+        "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
         "hiqdev/hidev-php": "<2.0",

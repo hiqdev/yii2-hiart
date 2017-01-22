@@ -11,6 +11,8 @@
 namespace hiqdev\hiart\stream;
 
 use hiqdev\hiart\AbstractRequest;
+use hiqdev\hiart\RequestErrorException;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
 /**
@@ -43,7 +45,7 @@ class Request extends AbstractRequest
             $responseHeaders = $http_response_header;
             fclose($stream);
         } catch (\Exception $e) {
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw new RequestErrorException($e->getMessage(), $e->getCode(), $e);
         }
 
         return new $this->responseClass($this, $responseContent, $responseHeaders);

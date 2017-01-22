@@ -11,9 +11,9 @@
 namespace hiqdev\hiart;
 
 /**
- * Class ErrorResponseException.
+ * Request error exception.
  */
-class ErrorResponseException extends Exception
+class RequestErrorException extends Exception
 {
     /**
      * @var array The API response

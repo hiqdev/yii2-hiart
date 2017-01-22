@@ -173,19 +173,6 @@ abstract class AbstractConnection extends Component
     }
 
     /**
-     * Sends given request.
-     * @param Request $request
-     * @param array $options
-     * @return Response
-     */
-    public function send(Request $request, array $options = [])
-    {
-        $worker = $this->getHandler()->send($request->getWorker(), $options);
-
-        return new Response($worker, $request);
-    }
-
-    /**
      * @return boolean
      */
     public function isDisabledAuth()

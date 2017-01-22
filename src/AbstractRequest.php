@@ -10,7 +10,7 @@
 
 namespace hiqdev\hiart;
 
-abstract class AbstractRequest implements \Serializable
+abstract class AbstractRequest implements RequestInterface
 {
     /**
      * @var string response implementation to be specified in concrete implementation
@@ -41,6 +41,7 @@ abstract class AbstractRequest implements \Serializable
     protected $body;
     protected $version;
 
+    protected $isBuilt = false;
     protected $parts = [];
     protected $fullUri;
 
