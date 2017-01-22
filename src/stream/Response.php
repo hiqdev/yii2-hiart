@@ -19,8 +19,24 @@ use hiqdev\hiart\AbstractResponse;
  */
 class Response extends AbstractResponse
 {
-    /**
-     * @var ResponseWorker
-     */
-    protected $worker;
+    protected $rawData;
+
+    protected $headers;
+
+    public function __construct(Request $request, $rawData, array $headers)
+    {
+        $this->request = $request;
+        $this->rawData = $rawData;
+        $this->headers = $headers;
+    }
+
+    public function getRawData()
+    {
+        return $this->rawData;
+    }
+
+    public function getHeader($name)
+    {
+        return isset($this->headers[$name]) ? $this->headers[$name] : null;
+    }
 }
