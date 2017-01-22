@@ -19,7 +19,7 @@ use yii\helpers\ArrayHelper;
  *
  * QueryBuilder builds a request from the specification given as a [[Query]] object.
  */
-abstract class AbstractQueryBuilder extends \yii\base\Object
+abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBuilderInterface
 {
     public $db;
 
