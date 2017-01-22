@@ -10,18 +10,12 @@
 
 namespace hiqdev\hiart;
 
-use Psr\Http\Message\ResponseInterface;
 use yii\helpers\Json;
 
-class Response
+abstract class AbstractResponse
 {
     /**
-     * @var ResponseInterface
-     */
-    protected $worker;
-
-    /**
-     * @var Request
+     * @var RequestInterface
      */
     protected $request;
 
@@ -31,17 +25,6 @@ class Response
     protected $data;
 
     protected $isDecoded = false;
-
-    public function __construct(ResponseInterface $worker, Request $request)
-    {
-        $this->worker = $worker;
-        $this->request = $request;
-    }
-
-    public function getWorker()
-    {
-        return $this->worker;
-    }
 
     public function getRequest()
     {
@@ -60,7 +43,7 @@ class Response
 
     public function decodeData()
     {
-        $data = $this->getBodyContents();
+        $data = $this->getRawData();
         if (!$this->isRaw() && $this->isJson()) {
             $data = Json::decode($data);
         }
@@ -68,10 +51,7 @@ class Response
         return $data;
     }
 
-    public function getBodyContents()
-    {
-        return $this->worker->getBody()->getContents();
-    }
+    abstract public function getRawData();
 
     public function isRaw()
     {
@@ -83,8 +63,5 @@ class Response
         return preg_grep('|application/json|i', $this->getHeader('Content-Type'));
     }
 
-    public function getHeader($name)
-    {
-        return $this->worker->getHeader($name);
-    }
+    abstract public function getHeader($name);
 }

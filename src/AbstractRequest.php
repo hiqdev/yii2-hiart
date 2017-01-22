@@ -42,6 +42,7 @@ abstract class AbstractRequest implements \Serializable
     protected $version;
 
     protected $parts = [];
+    protected $fullUri;
 
     abstract public function send($options = []);
 
@@ -64,6 +65,25 @@ abstract class AbstractRequest implements \Serializable
     public function getUri()
     {
         return $this->uri;
+    }
+
+    public function getFullUri()
+    {
+        if ($this->fullUri === null) {
+            $this->fullUri = $this->createFullUri();
+        }
+
+        return $this->fullUri;
+    }
+
+    public function createFullUri()
+    {
+        return ($this->isFullUri($this->uri) ? '' : $this->db->baseUri) . $this->uri;
+    }
+
+    public function isFullUri($uri)
+    {
+        return preg_match('/^https?:\\/\\//i', $uri);
     }
 
     public function getHeaders()
@@ -188,7 +208,6 @@ abstract class AbstractRequest implements \Serializable
     public function getParts()
     {
         if (empty($this->parts)) {
-            $this->getWorker();
             $this->build();
             foreach (['dbname', 'method', 'uri', 'headers', 'body', 'version'] as $key) {
                 $this->parts[$key] = $this->{$key};

@@ -44,6 +44,11 @@ abstract class AbstractConnection extends Component
     public $config = [];
 
     /**
+     * @var array request options will be use used in Request
+     */
+    public $requestOptions = [];
+
+    /**
      * @var object request handler common for all requests of this connection
      */
     protected $_handler;

@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-namespace hiqdev\hiart;
+namespace hiqdev\hiart\proxy;
 
-abstract class ProxyRequest extends AbstractRequest
+abstract class Request extends \hiqdev\hiart\AbstractRequest
 {
     /**
      * @var object
@@ -28,7 +28,7 @@ abstract class ProxyRequest extends AbstractRequest
     {
         $worker = $this->getHandler()->send($this->getWorker(), $options);
 
-        return new $this->responseClass($worker, $request);
+        return new $this->responseClass($this, $worker);
     }
 
     /**
