@@ -5,7 +5,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -13,7 +13,6 @@ namespace hiqdev\hiart;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;
-use yii\helpers\ArrayHelper;
 
 class ActiveQuery extends Query implements ActiveQueryInterface
 {
@@ -207,7 +206,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
     }
 
-    public function select($columns, $option = NULL)
+    public function select($columns, $option = null)
     {
         $this->select = $columns;
 
@@ -385,5 +384,4 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $inverseRelation = $relatedModel->getRelation($this->inverseOf);
         $relatedModel->populateRelation($this->inverseOf, $inverseRelation->multiple ? [$this->primaryModel] : $this->primaryModel);
     }
-
 }

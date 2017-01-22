@@ -5,14 +5,10 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
-
-use yii\base\InvalidParamException;
-use yii\base\NotSupportedException;
-use yii\helpers\ArrayHelper;
 
 /**
  * QueryBuilder interface.
@@ -31,7 +27,7 @@ interface QueryBuilderInterface
 
     /**
      * Builds transport protocol version.
-     * @param Query $query 
+     * @param Query $query
      * @return string
      */
     public function buildProtocolVersion(Query $query);

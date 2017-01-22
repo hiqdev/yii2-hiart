@@ -2,7 +2,7 @@
 
 use yii\web\View;
 
-$this->registerCss(<<<CSS
+$this->registerCss(<<<'CSS'
     .string { color: green; }
     .number { color: darkorange; }
     .boolean { color: blue; }

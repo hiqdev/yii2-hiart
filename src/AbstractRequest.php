@@ -5,7 +5,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -13,7 +13,7 @@ namespace hiqdev\hiart;
 abstract class AbstractRequest implements \Serializable
 {
     /**
-     * @var string response implementation to be specified in concrete implementation.
+     * @var string response implementation to be specified in concrete implementation
      */
     protected $responseClass;
 

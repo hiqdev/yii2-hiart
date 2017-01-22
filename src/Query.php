@@ -5,15 +5,12 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use Yii;
-use yii\base\Component;
 use yii\db\QueryInterface;
-use yii\helpers\ArrayHelper;
 
 /**
  * Query represents API query in a way that is independent from a concrete API.
@@ -32,7 +29,7 @@ use yii\helpers\ArrayHelper;
  *      - from: entity being queried, e.g. user
  *      - join: data how to join with other entities
  * - other standard query options provided with QueryTrait:
- *      - where, limit, offset, orderBy, indexBy
+ *      - where, limit, offset, orderBy, indexBy.
  */
 class Query extends \yii\db\Query implements QueryInterface
 {
@@ -52,7 +49,7 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public static function instantiate($action, $from, array $options = [])
     {
-        $query = new static;
+        $query = new static();
 
         return $query->action($action)->from($from)->options($options);
     }

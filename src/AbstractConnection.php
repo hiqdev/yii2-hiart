@@ -5,7 +5,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -19,14 +19,13 @@ use yii\helpers\Json;
 
 /**
  * Abstract connection class.
- *
  */
 abstract class AbstractConnection extends Component
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
 
     /**
-     * @var string to be specified in concrete implementation.
+     * @var string to be specified in concrete implementation
      */
     public $queryBuilderClass;
 
@@ -46,7 +45,7 @@ abstract class AbstractConnection extends Component
     public $config = [];
 
     /**
-     * @var object request handler common for all requests of this connection.
+     * @var object request handler common for all requests of this connection
      */
     protected $_handler;
 
@@ -154,7 +153,7 @@ abstract class AbstractConnection extends Component
     }
 
     /**
-     * @return QueryBuilder the query builder for this connection.
+     * @return QueryBuilder the query builder for this connection
      */
     public function getQueryBuilder()
     {
