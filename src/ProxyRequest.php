@@ -18,7 +18,7 @@ abstract class ProxyRequest extends AbstractRequest
     protected $worker;
 
     /**
-     * @var string transport implementation to be specified in concrete implementation
+     * @var string transport implementation to be specified in concrete implementation.
      */
     public $handlerClass;
 
@@ -26,8 +26,7 @@ abstract class ProxyRequest extends AbstractRequest
 
     public function send($options = [])
     {
-        $handler = $this->builder->getHandler();
-        $worker = $handler->send($this->getWorker(), $options);
+        $worker = $this->getHandler()->send($this->getWorker(), $options);
 
         return new $this->responseClass($worker, $request);
     }
