@@ -215,12 +215,14 @@ abstract class AbstractRequest implements \Serializable
 
     protected function createHandler()
     {
-        return new $this->handlerClass($this->getDb()->config);
+        $config = $this->prepareHandlerConfig($this->getDb()->config);
+
+        return new $this->handlerClass($config);
     }
 
-    protected function getHandlerConfig()
+    protected function prepareHandlerConfig($config)
     {
-        return $this->getDb()->config;
+        return $config;
     }
 
     public function getDb()

@@ -13,7 +13,6 @@ namespace hiqdev\hiart;
 use Closure;
 use hiqdev\hiart\stream\Request;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\helpers\Json;
 
@@ -100,21 +99,6 @@ abstract class AbstractConnection extends Component
     public function enableAuth()
     {
         $this->_disabledAuth = false;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws InvalidConfigException
-     */
-    public function init()
-    {
-        if (!$this->config['base_uri']) {
-            throw new InvalidConfigException('The `base_uri` config option must be set');
-        }
-
-        if (!isset($this->config['headers']['User-Agent'])) {
-            $this->config['headers']['User-Agent'] = 'HiArt/0.x';
-        }
     }
 
     public function getBaseUri()
