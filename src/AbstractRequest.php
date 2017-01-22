@@ -18,16 +18,9 @@ abstract class AbstractRequest implements \Serializable
     protected $responseClass;
 
     /**
-     * @var string transport implementation to be specified in concrete implementation.
+     * @var QueryBuilderInterface
      */
-    public $handlerClass;
-
     protected $builder;
-
-    /**
-     * @var object
-     */
-    protected $worker;
 
     /**
      * @var Query
@@ -50,7 +43,9 @@ abstract class AbstractRequest implements \Serializable
 
     protected $parts = [];
 
-    public function __construct(QueryBuilder $builder, Query $query)
+    abstract public function send($options = []);
+
+    public function __construct(QueryBuilderInterface $builder, Query $query)
     {
         $this->builder = $builder;
         $this->query = $query;
@@ -94,19 +89,14 @@ abstract class AbstractRequest implements \Serializable
         return $this->query;
     }
 
-    /**
-     * @return Worker
-     */
-    public function getWorker()
+    protected function buildRequest()
     {
-        if ($this->worker === null) {
+        if ($this->isBuilt === null) {
             if (!empty($this->query)) {
                 $this->updateFromQuery();
             }
-            $this->worker = $this->createWorker();
+            $this->isBuilt = true;
         }
-
-        return $this->worker;
     }
 
     protected function updateFromQuery()
@@ -124,19 +114,9 @@ abstract class AbstractRequest implements \Serializable
         $this->buildProtocolVersion();
     }
 
-    abstract protected function createWorker();
-
-    public function send($options = [])
-    {
-        $handler = $this->builder->getHandler();
-        $worker = $handler->send($this->getWorker(), $options);
-
-        return new $this->responseClass($worker, $request);
-    }
-
     protected function buildDbname()
     {
-        $this->dbname = $this->builder->db->name;
+        $this->dbname = $this->getDb()->name;
     }
 
     protected function buildAuth()
@@ -209,6 +189,7 @@ abstract class AbstractRequest implements \Serializable
     {
         if (empty($this->parts)) {
             $this->getWorker();
+            $this->buildRequest();
             foreach (['dbname', 'method', 'uri', 'headers', 'body', 'version'] as $key) {
                 $this->parts[$key] = $this->{$key};
             }
@@ -217,12 +198,33 @@ abstract class AbstractRequest implements \Serializable
         return $this->parts;
     }
 
-    public function send()
-    {
-    }
-
     public function isRaw()
     {
         return !empty($this->query->options['raw']);
+    }
+
+    protected function getHandler()
+    {
+        $handler = $this->getDb()->getHandler();
+        if ($handler === null) {
+            $handler = $this->createHandler();
+        }
+
+        return $handler;
+    }
+
+    protected function createHandler()
+    {
+        return new $this->handlerClass($this->getDb()->config);
+    }
+
+    protected function getHandlerConfig()
+    {
+        return $this->getDb()->config;
+    }
+
+    public function getDb()
+    {
+        return $this->builder->db;
     }
 }
