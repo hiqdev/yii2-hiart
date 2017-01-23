@@ -11,6 +11,7 @@
 namespace hiqdev\hiart;
 
 use Closure;
+use Yii;
 use hiqdev\hiart\stream\Request;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -35,6 +36,8 @@ abstract class AbstractConnection extends Component
     public $queryClass = Query::class;
 
     public $activeQueryClass = ActiveQuery::class;
+
+    public static $dbname = 'hiart';
 
     public $name = 'hiart';
 
@@ -73,6 +76,11 @@ abstract class AbstractConnection extends Component
      * Must return `null`, if the response does not contain an error
      */
     protected $_errorChecker;
+
+    public static function getDb($dbname = null)
+    {
+        return Yii::$app->get($dbname ?: static::$dbname);
+    }
 
     public function setAuth($auth)
     {

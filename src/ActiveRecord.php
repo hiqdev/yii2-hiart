@@ -10,7 +10,7 @@
 
 namespace hiqdev\hiart;
 
-use Yii;
+use hiqdev\hiart\AbstractConnection;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
@@ -30,7 +30,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('hiart');
+        return AbstractConnection::getDb();
     }
 
     /**
