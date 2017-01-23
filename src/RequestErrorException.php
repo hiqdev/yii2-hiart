@@ -12,17 +12,16 @@ namespace hiqdev\hiart;
 
 /**
  * Request error exception.
+ *
+ * For exceptions during request sending.
  */
 class RequestErrorException extends Exception
 {
     /**
-     * @var array The API response
+     * @return RequestInterface
      */
-    public $response;
-
-    public function __construct($message, array $errorInfo = [], $code = 0, \Exception $previous = null)
+    public function getRequest()
     {
-        parent::__construct($message, $errorInfo, $code, $previous);
-        $this->response = $this->errorInfo['response'];
+        return $this->errorInfo['request'];
     }
 }

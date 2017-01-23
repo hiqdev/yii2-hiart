@@ -45,7 +45,8 @@ class Request extends AbstractRequest
             $responseHeaders = $http_response_header;
             fclose($stream);
         } catch (\Exception $e) {
-            throw new RequestErrorException($e->getMessage(), $e->getCode(), $e);
+            $errorInfo = ['request' => $this];
+            throw new RequestErrorException($e->getMessage(), $errorInfo, $e->getCode(), $e);
         }
 
         return new $this->responseClass($this, $responseContent, $responseHeaders);
