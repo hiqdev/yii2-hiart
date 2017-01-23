@@ -51,7 +51,7 @@ class Response extends AbstractResponse
         foreach ($headers as $header) {
             if (strncmp($header, 'HTTP/', 5) === 0) {
                 $parts = explode(' ', $header, 3);
-                $this->version = substr($parts[0], 6);
+                $this->version = substr($parts[0], 5);
                 $this->statusCode = $parts[1];
                 $this->reasonPhrase = $parts[2];
             } elseif (($pos = strpos($header, ':')) !== false) {
