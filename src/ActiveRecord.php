@@ -44,6 +44,14 @@ class ActiveRecord extends BaseActiveRecord
         return new $class(get_called_class());
     }
 
+    /**
+     * This function is called from `Query::prepare`.
+     * You can redefine it to get desired behavior.
+     */
+    public static function prepare(Query $query, QueryBuilderInterface $builder)
+    {
+    }
+
     public function isScenarioDefault()
     {
         return $this->scenario === static::SCENARIO_DEFAULT;
@@ -163,14 +171,15 @@ class ActiveRecord extends BaseActiveRecord
     {
         $attributes = [];
         foreach ($this->rules() as $rule) {
-            if (is_string(reset($rule))) {
-                continue;
+            $names = reset($rule);
+            if (is_string($names)) {
+                $names = [$names];
             }
-            foreach (reset($rule) as $attribute) {
-                if (substr_compare($attribute, '!', 0, 1) === 0) {
-                    $attribute = mb_substr($attribute, 1);
+            foreach ($names as $name) {
+                if (substr_compare($name, '!', 0, 1) === 0) {
+                    $name = mb_substr($name, 1);
                 }
-                $attributes[$attribute] = $attribute;
+                $attributes[$name] = $name;
             }
         }
 

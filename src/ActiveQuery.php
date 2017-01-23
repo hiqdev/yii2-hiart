@@ -98,10 +98,14 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * Prepares query for use. See NOTE.
+     * @param QueryBuilder $builder
      * @return static
      */
     public function prepare($builder = null)
     {
+        $class = $this->modelClass;
+        $class::prepare($this, $builder);
+
         // NOTE: because the same ActiveQuery may be used to build different SQL statements
         // (e.g. by ActiveDataProvider, one for count query, the other for row data query,
         // it is important to make sure the same ActiveQuery can be used to build SQL statements
