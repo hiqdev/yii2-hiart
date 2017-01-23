@@ -41,7 +41,7 @@ abstract class AbstractRequest implements RequestInterface
     protected $body;
     protected $version;
 
-    protected $isBuilt = false;
+    protected $isBuilt;
     protected $parts = [];
     protected $fullUri;
 
@@ -79,7 +79,7 @@ abstract class AbstractRequest implements RequestInterface
 
     public function createFullUri()
     {
-        return ($this->isFullUri($this->uri) ? '' : $this->db->baseUri) . $this->uri;
+        return ($this->isFullUri($this->uri) ? '' : $this->getDb()->getBaseUri()) . $this->uri;
     }
 
     public function isFullUri($uri)
@@ -169,6 +169,9 @@ abstract class AbstractRequest implements RequestInterface
     protected function buildHeaders()
     {
         $this->headers = $this->builder->buildHeaders($this->query);
+        if (empty($this->headers['User-Agent'])) {
+            $this->headers['User-Agent'] = $this->prepareUserAgent();
+        }
     }
 
     protected function buildBody()
@@ -243,6 +246,11 @@ abstract class AbstractRequest implements RequestInterface
     protected function prepareHandlerConfig($config)
     {
         return $config;
+    }
+
+    protected function prepareUserAgent()
+    {
+        return $this->getDb()->getUserAgent();
     }
 
     public function getDb()

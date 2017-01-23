@@ -22,7 +22,7 @@ use yii\helpers\Inflector;
  */
 class Request extends AbstractRequest
 {
-    protected $workerClass = RequestWorker::class;
+    protected $responseClass = Response::class;
 
     public $defaultOptions = [
         'http' => [
@@ -35,9 +35,9 @@ class Request extends AbstractRequest
 
     public function send($options = [])
     {
-        $this->build();
 
         try {
+            $this->build();
             $context = stream_context_create($this->prepareContextOptions($options));
             $stream = fopen($this->getFullUri(), 'rb', false, $context);
             $responseContent = stream_get_contents($stream);
@@ -56,8 +56,9 @@ class Request extends AbstractRequest
     {
         $requestOptions = [
             'http' => [
+                'protocol_version' => $this->version,
                 'method' => $this->method,
-                'header' => $this->headers,
+                'header' => static::composeHeaderLines($this->headers),
             ],
         ];
 
@@ -65,14 +66,14 @@ class Request extends AbstractRequest
             $requestOptions['http']['content'] = $this->body;
         }
 
-        $dbOptions = $this->convertContextOptions($this->getDb()->requestOptions);
+        $dbOptions = $this->convertContextOptions($this->getDb()->config);
         $sendOptions = $this->convertContextOptions($options);
 
         return ArrayHelper::merge($this->defaultOptions, $dbOptions, $requestOptions, $sendOptions);
     }
 
     /**
-     * Converts raw options to stream context options.
+     * Composes stream context options from raw options.
      * @param array $options raw options.
      * @return array stream context options.
      */
@@ -90,5 +91,21 @@ class Request extends AbstractRequest
         }
 
         return $contextOptions;
+    }
+
+    public static function composeHeaderLines($headers)
+    {
+        $result = [];
+        foreach ($headers as $name => $values) {
+            $name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+            if (is_string($values)) {
+                $values = [$values];
+            }
+            foreach ($values as $value) {
+                $result[] = "$name: $value";
+            }
+        }
+
+        return $result;
     }
 }
