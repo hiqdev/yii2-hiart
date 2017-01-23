@@ -38,15 +38,14 @@ abstract class AbstractConnection extends Component
 
     public $name = 'hiart';
 
-    /**
-     * @var array connection config will be passed to handler
-     */
-    public $config = [];
+    public $userAgent = 'HiArt/0.x';
+
+    public $baseUri;
 
     /**
-     * @var array request options will be use used in Request
+     * @var array transport config will be used in Request for handler or proxy request
      */
-    public $requestOptions = [];
+    public $config = [];
 
     /**
      * @var object request handler common for all requests of this connection
@@ -104,11 +103,6 @@ abstract class AbstractConnection extends Component
     public function enableAuth()
     {
         $this->_disabledAuth = false;
-    }
-
-    public function getBaseUri()
-    {
-        return $this->config['base_uri'];
     }
 
     /**
@@ -258,5 +252,14 @@ abstract class AbstractConnection extends Component
     public function isError(Response $response)
     {
         return false;
+    }
+    public function getBaseUri()
+    {
+        return $this->baseUri;
+    }
+
+    public function getUserAgent()
+    {
+        return $this->userAgent;
     }
 }
