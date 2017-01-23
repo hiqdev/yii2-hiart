@@ -111,8 +111,9 @@ class Command extends \yii\base\Component
         Yii::beginProfile($profile, $category);
         $response = $this->request->send($options);
         Yii::endProfile($profile, $category);
+        $this->db->checkResponse($response);
 
-        return $this->db->checkResponse($response);
+        return $response->getData();
     }
 
     public static function getProfileCategory()

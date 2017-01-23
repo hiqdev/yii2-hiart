@@ -12,6 +12,10 @@ namespace hiqdev\hiart;
 
 interface ResponseInterface
 {
+    public function getRequest();
+
+    public function getData();
+
     public function getRawData();
 
     public function getHeader($name);

@@ -154,20 +154,27 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Returns the list of all attribute names of the model.
-     *
-     * This method must be overridden by child classes to define available attributes.
-     *
-     * Attributes are names of fields of the corresponding API object.
-     * The primaryKey for HiArt documents is the `id` field by default which is not part of the attributes.
-     *
-     * @throws \yii\base\InvalidConfigException if not overridden in a child class
-     *
-     * @return string[] list of attribute names
+     * Returns the list of attribute names.
+     * By default, this method returns all attributes mentioned in rules.
+     * You may override this method to change the default behavior.
+     * @return string[] list of attribute names.
      */
     public function attributes()
     {
-        throw new InvalidConfigException('The attributes() method of HiArt ActiveRecord has to be implemented by child classes.');
+        $attributes = [];
+        foreach ($this->rules() as $rule) {
+            if (is_string(reset($rule))) {
+                continue;
+            }
+            foreach (reset($rule) as $attribute) {
+                if (substr_compare($attribute, '!', 0, 1) === 0) {
+                    $attribute = mb_substr($attribute, 1);
+                }
+                $attributes[$attribute] = $attribute;
+            }
+        }
+
+        return array_values($attributes);
     }
 
     /**

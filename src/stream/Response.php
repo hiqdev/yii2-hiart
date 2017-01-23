@@ -23,11 +23,15 @@ class Response extends AbstractResponse
 
     protected $headers;
 
-    public function __construct(Request $request, $rawData, array $headers)
+    protected $statusCode;
+
+    protected $reasonPhrase;
+
+    public function __construct(Request $request, $rawData, array $rawHeaders)
     {
         $this->request = $request;
         $this->rawData = $rawData;
-        $this->headers = $headers;
+        $this->headers = $this->parseHeaders($rawHeaders);
     }
 
     public function getRawData()
@@ -37,6 +41,38 @@ class Response extends AbstractResponse
 
     public function getHeader($name)
     {
+        $name = strtolower($name);
+
         return isset($this->headers[$name]) ? $this->headers[$name] : null;
+    }
+
+    public function parseHeaders($headers)
+    {
+        foreach ($headers as $header) {
+            if (strncmp($header, 'HTTP/', 5) === 0) {
+                $parts = explode(' ', $header, 3);
+                $this->version = substr($parts[0], 6);
+                $this->statusCode = $parts[1];
+                $this->reasonPhrase = $parts[2];
+            } elseif (($pos = strpos($header, ':')) !== false) {
+                $name = strtolower(trim(substr($header, 0, $pos)));
+                $value = trim(substr($header, $pos + 1));
+                $result[$name][] = $value;
+            } else {
+                $result['raw'][] = $header;
+            }
+        }
+
+        return $result;
+    }
+
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    public function getReasonPhrase()
+    {
+        return $this->reasonPhrase;
     }
 }

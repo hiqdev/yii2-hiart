@@ -213,11 +213,11 @@ abstract class AbstractConnection extends Component
 
     /**
      * Checks response with checkError method and raises exception if error.
-     * @param Response $response response data from API
+     * @param ResponseInterface $response response data from API
      * @throws ErrorResponseException
      * @return mixed response data
      */
-    public function checkResponse(Response $response)
+    public function checkResponse(ResponseInterface $response)
     {
         $error = $this->checkError($response);
         if ($error) {
@@ -226,16 +226,14 @@ abstract class AbstractConnection extends Component
                 'response' => $response->getData(),
             ]);
         }
-
-        return $response->getData();
     }
 
     /**
      * Checks response with errorChecker callback and returns error text if error.
-     * @param Response $response
+     * @param ResponseInterface $response
      * @return string|false error text or false
      */
-    public function checkError(Response $response)
+    public function checkError(ResponseInterface $response)
     {
         if (isset($this->_errorChecker)) {
             return call_user_func($this->_errorChecker, $response);
@@ -246,13 +244,14 @@ abstract class AbstractConnection extends Component
 
     /**
      * Default error checker. TODO check something in response?
-     * @param Response $response
+     * @param ResponseInterface $response
      * @return bool
      */
-    public function isError(Response $response)
+    public function isError(ResponseInterface $response)
     {
         return false;
     }
+
     public function getBaseUri()
     {
         return $this->baseUri;

@@ -12,7 +12,7 @@ namespace hiqdev\hiart;
 
 use yii\helpers\Json;
 
-abstract class AbstractResponse
+abstract class AbstractResponse implements ResponseInterface
 {
     /**
      * @var RequestInterface
@@ -60,7 +60,7 @@ abstract class AbstractResponse
 
     public function isJson()
     {
-        return preg_grep('|application/json|i', $this->getHeader('Content-Type'));
+        return !empty(preg_grep('|application/json|i', $this->getHeader('Content-Type')));
     }
 
     abstract public function getHeader($name);

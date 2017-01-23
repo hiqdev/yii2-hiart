@@ -10,7 +10,23 @@
 
 namespace hiqdev\hiart\rest;
 
-class Connection extends AbstractConnection
+use hiqdev\hiart\ResponseInterface;
+use hiqdev\hiart\ResponseErrorException;
+
+class Connection extends \hiqdev\hiart\AbstractConnection
 {
     public $queryBuilderClass = QueryBuilder::class;
+
+    public function checkResponse(ResponseInterface $response)
+    {
+        $code = $response->getStatusCode();
+        if ($code>=200 && $code<300) {
+            return;
+        }
+
+        throw new ResponseErrorException($response->getReasonPhrase(), [
+            'request' => $response->getRequest()->getParts(),
+            'response' => $response->getData(),
+        ], $code);
+    }
 }
