@@ -63,6 +63,7 @@
     },
     "extra": {
         "config-plugin": {
+            "params": "src/config/params.php",
             "hisite": "src/config/hisite.php"
         }
     },
