@@ -20,15 +20,17 @@ return empty($params['hiart.enabled']) ? [] : [
     ]),
     'components' => array_filter([
         $params['hiart.dbname'] => array_filter([
-            'class' => \hiqdev\hiart\hiart\Connection::class,
-            'name' => $params['hiart.dbname'],
+            'class' => $params['hiart.class'],
             'requestClass' => $params['hiart.requestClass'],
+            'name' => $params['hiart.dbname'],
+            'config' => $params['hiart.config'],
+            'baseUri' => $params['hiart.baseUri'],
         ]),
     ]),
     'container' => [
         'singletons' => [
             \hiqdev\hiart\ConnectionInterface::class => function () {
-                return Yii::$app->get($params['hiart.dbname']);
+                return Yii::$app->get(Yii::$app->params['hiart.dbname']);
             },
         ],
     ],
