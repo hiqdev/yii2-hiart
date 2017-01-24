@@ -47,6 +47,7 @@
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
+        "hiqdev/yii2-hiart-github": "dev-master",
         "hiqdev/hidev-php": "<2.0",
         "hiqdev/hidev-hiqdev": "<2.0"
     },

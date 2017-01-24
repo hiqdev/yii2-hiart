@@ -4,6 +4,9 @@
         <testsuite name="Unit Test Suite">
             <directory>./tests/unit/</directory>
         </testsuite>
+        <testsuite name="GitHub functional">
+            <directory>./vendor/hiqdev/hidev-hiart/tests/functional/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
