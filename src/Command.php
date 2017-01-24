@@ -5,100 +5,119 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use yii\base\Component;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
-use yii\helpers\Json;
+use Yii;
 
 /**
- * The Command class implements the API for accessing REST API.
+ * The Command class implements execution of request.
  */
-class Command extends Component
+class Command extends \yii\base\Component
 {
     /**
      * @var Connection
      */
     public $db;
-    /**
-     * @var string|array the indexes to execute the query on. Defaults to null meaning all indexes
-     */
-    public $index;
-    /**
-     * @var string|array the types to execute the query on. Defaults to null meaning all types
-     */
-    public $type;
-    /**
-     * @var array list of arrays or json strings that become parts of a query
-     */
-    public $queryParts = [];
 
     /**
-     * Sends a request to the _search API and returns the result.
-     * @param array $options
+     * @var RequestInterface request object
+     */
+    protected $request;
+
+    public function setRequest(RequestInterface $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * Sends a request to retrieve data.
+     * In API this could be get, search or list request.
      * @throws ErrorResponseException
-     * @return mixed
+     * @return mixed response data
      */
-    public function search($options = [])
+    public function search()
     {
-        $url     = $this->index . Inflector::id2camel(ArrayHelper::remove($options, 'scenario', 'search'));
-        $query   = $this->queryParts;
-        $options = array_merge($query, $options);
+        $this->request->getQuery()->addAction('search');
 
-        return $this->db->post($url, $options);
-    }
-
-    public function insert($action, $data, $id = null, $options = [])
-    {
-        $options = array_merge($data, $options);
-
-        if ($id !== null) {
-            return $this->db->put($action . 'Update', array_merge($options, ['id' => $id]));
-        } else {
-            return $this->db->post($action . 'Create', $options);
-        }
-    }
-
-    public function get($modelName, $primaryKey, $options)
-    {
-        return $this->db->post($modelName . 'GetInfo', ArrayHelper::merge(['id' => $primaryKey], $options));
-    }
-
-    public function mget($index, $type, $ids, $options = [])
-    {
-        $body = Json::encode(['ids' => array_values($ids)]);
-
-        return $this->db->post([$index, $type, '_mget'], $options, $body);
-    }
-
-    public function exists($index, $type, $id)
-    {
-        return $this->db->head([$index, $type, $id]);
-    }
-
-    public function delete($index, $id, $options = [])
-    {
-        return $this->db->delete($index . 'Delete', array_merge($options, ['id' => $id]));
-    }
-
-    public function update($index, $id, $data, $options = [])
-    {
-        $options['id'] = $id;
-
-        return $this->db->put($index . 'Update', array_merge($data, $options));
+        return $this->send();
     }
 
     /**
-     * @param $action
-     * @param mixed $body request parameters
-     * @return mixed
+     * Sends a request to create/insert data.
+     * @param mixed $table entity to create
+     * @param mixed $columns attributes of object to create
+     * @param array $params request parameters
+     * @return $this
      */
-    public function perform($action, $body = [])
+    public function insert($table, $columns, array $params = [])
     {
-        return $this->db->post($action, [], $body);
+        $request = $this->db->getQueryBuilder()->insert($table, $columns, $params);
+
+        return $this->setRequest($request);
+    }
+
+    /**
+     * Sends a request to update data.
+     * @param mixed $table entity to update
+     * @param mixed $columns attributes of object to update
+     * @param array $condition
+     * @param array $params request parameters
+     * @return $this
+     */
+    public function update($table, $columns, $condition = [], array $params = [])
+    {
+        $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $params);
+
+        return $this->setRequest($request);
+    }
+
+    public function delete($table, $condition, array $params = [])
+    {
+        $request = $this->db->getQueryBuilder()->delete($table, $condition, $params);
+
+        return $this->setRequest($request);
+    }
+
+    /**
+     * Creates and executes request with given data.
+     * @param string $action
+     * @param string $table
+     * @param mixed $body
+     * @param array $params request parameters
+     * @return mixed response data
+     */
+    public function perform($action, $table, $body = [], array $params = [])
+    {
+        $request = $this->db->getQueryBuilder()->perform($action, $table, $body, $params);
+        $this->setRequest($request);
+
+        return $this->send();
+    }
+
+    /**
+     * Executes the request.
+     * @param array $options send options
+     * @return mixed response data
+     */
+    public function send($options = [])
+    {
+        $profile = serialize($this->request);
+        $category = static::getProfileCategory();
+        Yii::beginProfile($profile, $category);
+        $response = $this->request->send($options);
+        Yii::endProfile($profile, $category);
+        $this->db->checkResponse($response);
+
+        return $response->getData();
+    }
+
+    public static function getProfileCategory()
+    {
+        return __METHOD__;
     }
 }

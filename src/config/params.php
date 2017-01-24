@@ -8,4 +8,11 @@
  * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
  */
 
-return [];
+return [
+    'hiart.enabled'         => true,
+    'hiart.class'           => \hiqdev\hiart\rest\Connection::class,
+    'hiart.requestClass'    => \hiqdev\hiart\stream\Request::class,
+    'hiart.dbname'          => 'hiart',
+    'hiart.config'          => [],
+    'hiart.baseUri'         => null,
+];

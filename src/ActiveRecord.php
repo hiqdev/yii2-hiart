@@ -5,12 +5,12 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use Yii;
+use hiqdev\hiart\AbstractConnection;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
@@ -30,42 +30,26 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('hiart');
+        return AbstractConnection::getDb();
     }
 
     /**
      * {@inheritdoc}
-     *
      * @return ActiveQuery the newly created [[ActiveQuery]] instance
      */
-    public static function find($options = [])
+    public static function find()
     {
-        $config = [
-            'class'   => ActiveQuery::class,
-            'options' => $options,
-        ];
-        return Yii::createObject($config, [get_called_class()]);
+        $class = static::getDb()->activeQueryClass;
+
+        return new $class(get_called_class());
     }
 
     /**
-     * {@inheritdoc}
+     * This function is called from `Query::prepare`.
+     * You can redefine it to get desired behavior.
      */
-    public static function findOne($condition, $options = [])
+    public static function prepare(Query $query, QueryBuilderInterface $builder)
     {
-        $query = static::find($options);
-        if (is_array($condition)) {
-            return $query->andWhere($condition)->one();
-        } else {
-            return static::get($condition);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findAll($condition, $options = [])
-    {
-        return static::find($options)->andWhere($condition)->all();
     }
 
     public function isScenarioDefault()
@@ -87,7 +71,7 @@ class ActiveRecord extends BaseActiveRecord
             return null;
         }
         $command = static::getDb()->createCommand();
-        $result  = $command->get(static::type(), $primaryKey, $options);
+        $result  = $command->get(static::from(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -178,20 +162,28 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Returns the list of all attribute names of the model.
-     *
-     * This method must be overridden by child classes to define available attributes.
-     *
-     * Attributes are names of fields of the corresponding API object.
-     * The primaryKey for HiArt documents is the `id` field by default which is not part of the attributes.
-     *
-     * @throws \yii\base\InvalidConfigException if not overridden in a child class
-     *
-     * @return string[] list of attribute names
+     * Returns the list of attribute names.
+     * By default, this method returns all attributes mentioned in rules.
+     * You may override this method to change the default behavior.
+     * @return string[] list of attribute names.
      */
     public function attributes()
     {
-        throw new InvalidConfigException('The attributes() method of HiArt ActiveRecord has to be implemented by child classes.');
+        $attributes = [];
+        foreach ($this->rules() as $rule) {
+            $names = reset($rule);
+            if (is_string($names)) {
+                $names = [$names];
+            }
+            foreach ($names as $name) {
+                if (substr_compare($name, '!', 0, 1) === 0) {
+                    $name = mb_substr($name, 1);
+                }
+                $attributes[$name] = $name;
+            }
+        }
+
+        return array_values($attributes);
     }
 
     /**
@@ -219,12 +211,6 @@ class ActiveRecord extends BaseActiveRecord
      * For example, by creating a record based on the value of a column,
      * you may implement the so-called single-table inheritance mapping.
      *
-     * @param array $row row data to be populated into the record.
-     *                   This array consists of the following keys:
-     *                   - `_source`: refers to the attributes of the record.
-     *                   - `_type`: the type this record is stored in.
-     *                   - `_index`: the index this record is stored in.
-     *
      * @return static the newly created active record
      */
     public static function instantiate($row)
@@ -233,9 +219,9 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return string the name of the type of this record
+     * @return string the name of the entity of this record
      */
-    public static function type()
+    public static function from()
     {
         return Inflector::camel2id(StringHelper::basename(get_called_class()), '-');
     }
@@ -262,11 +248,8 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $values = $this->getDirtyAttributes($attributes);
-
-        $command = $this->getScenarioCommand('create');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $data   = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->performScenario('insert', $data);
 
         $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
@@ -289,10 +272,8 @@ class ActiveRecord extends BaseActiveRecord
             return false;
         }
 
-        $command = $this->getScenarioCommand('delete');
-        $data    = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
-
-        $result = static::getDb()->createCommand()->perform($command, $data);
+        $data   = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->performScenario('delete', $data);
 
         $this->setOldAttributes(null);
         $this->afterDelete();
@@ -316,18 +297,14 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $values = $this->getAttributes($attributes);
-//        $values = $this->attributes;
-
         if (empty($values)) {
             $this->afterSave(false, $values);
 
             return 0;
         }
 
-        $command = $this->getScenarioCommand('update');
-        $data    = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
+        $result = $this->performScenario('update', $values, $options);
 
-        $result            = static::getDb()->createCommand()->perform($command, $data);
         $changedAttributes = [];
         foreach ($values as $name => $value) {
             $changedAttributes[$name] = $this->getOldAttribute($name);
@@ -339,35 +316,26 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
-    /**
-     * Custom method for HiArt.
-     *
-     * @param $action
-     * @param array $options
-     * @param bool  $bulk
-     *
-     * @return array
-     */
-    public static function perform($action, $options = [], $bulk = false)
+    public function performScenario($defaultScenario, $data, array $options = [])
     {
-        $action = ($bulk === true ? static::index() : static::type()) . $action;
-        $result = static::getDb()->createCommand()->perform($action, $options);
+        $action = $this->getScenarioAction($defaultScenario);
 
-        return $result;
+        return static::perform($action, $data, $options);
+    }
+
+    public static function perform($action, $data, array $options = [])
+    {
+        return static::getDb()->createCommand()->perform($action, static::from(), $data, $options);
     }
 
     /**
-     * Creates the command name for the specified scenario name.
-     *
-     * @param string $default
-     * @param bool   $bulk
-     *
+     * Converts scenario name to action.
+     * @param string $default default action name
      * @throws InvalidConfigException
      * @throws NotSupportedException
-     *
      * @return string
      */
-    public function getScenarioCommand($default = '', $bulk = false)
+    public function getScenarioAction($default = '')
     {
         if ($this->isScenarioDefault()) {
             if ($default !== '') {
@@ -376,29 +344,25 @@ class ActiveRecord extends BaseActiveRecord
                 throw new InvalidConfigException('Scenario not specified');
             }
         } else {
-            $scenarioCommands = static::scenarioCommands($bulk);
-            if ($command = $scenarioCommands[$this->scenario]) {
-                if ($command === false) {
+            $scenarioCommands = static::scenarioCommands();
+            if ($action = $scenarioCommands[$this->scenario]) {
+                if ($action === false) {
                     throw new NotSupportedException('The scenario can not be saved');
                 }
 
-                if (is_array($command) && $command[0] === null) {
-                    $result = $command[1];
-                } elseif (is_array($command)) {
-                    $result = $command;
+                if (is_array($action) && $action[0] === null) {
+                    $result = $action[1];
+                } elseif (is_array($action)) {
+                    $result = $action;
                 } else {
-                    $result = Inflector::id2camel($command);
+                    $result = Inflector::id2camel($action);
                 }
             } else {
                 $result = Inflector::id2camel($this->scenario);
             }
         }
 
-        if (is_array($result)) {
-            return implode('', $result);
-        } else {
-            return static::type() . ($bulk ? 's' : '') . $result;
-        }
+        return is_array($result) ? implode('', $result) : $result;
     }
 
     /**

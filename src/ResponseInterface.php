@@ -8,4 +8,15 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-return require __DIR__ . '/common.php';
+namespace hiqdev\hiart;
+
+interface ResponseInterface
+{
+    public function getRequest();
+
+    public function getData();
+
+    public function getRawData();
+
+    public function getHeader($name);
+}

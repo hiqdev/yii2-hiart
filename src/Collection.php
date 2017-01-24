@@ -5,7 +5,7 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
@@ -50,7 +50,6 @@ class Collection extends Component
 
     /**
      * @var string the name of the form. Sets automatically on [[set()]]
-     *
      * @see set()
      */
     public $formName;
@@ -60,9 +59,7 @@ class Collection extends Component
      *               - model (instance of operating model)
      *               - key   - the key of the loaded item
      *               - value - the value of the loaded item
-     *
      * Should return array, where the first item is the new key, and the second - a new value. Example:
-     *
      * ```
      * return [$key, $value];
      * ```
@@ -72,7 +69,6 @@ class Collection extends Component
     /**
      * @var ActiveRecord the template model instance. May be set manually by [[setModel()]] or
      * automatically on [[set()]] call
-     *
      * @see setModel()
      * @see set()
      */
@@ -80,14 +76,12 @@ class Collection extends Component
 
     /**
      * @var array options that will be passed to the new model when loading data in [[load]]
-     *
      * @see load()
      */
     public $modelOptions = [];
 
     /**
      * @var ActiveRecord the first model of the set. Fills automatically by [[set()]]
-     *
      * @see set()
      */
     public $first;
@@ -99,10 +93,8 @@ class Collection extends Component
 
     /**
      * Sets the model of the collection.
-     *
      * @param ActiveRecord|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
      * using given options array
-     *
      * @return object|ActiveRecord
      */
     public function setModel($model)
@@ -125,7 +117,6 @@ class Collection extends Component
 
     /**
      * Returns the [[model]].
-     *
      * @return ActiveRecord
      */
     public function getModel()
@@ -154,7 +145,6 @@ class Collection extends Component
 
     /**
      * Sets the scenario of the default model.
-     *
      * @param $value string scenario
      */
     public function setScenario($value)
@@ -164,7 +154,6 @@ class Collection extends Component
 
     /**
      * Gets the scenario the default model.
-     *
      * @return string the scenario
      */
     public function getScenario()
@@ -174,7 +163,6 @@ class Collection extends Component
 
     /**
      * Updates [[formName]] from the current [[model]].
-     *
      * @return string the form name
      */
     public function updateFormName()
@@ -188,14 +176,12 @@ class Collection extends Component
 
     /**
      * We can load data from 3 different structures:.
-     *
      * 1) POST: [
      *     'ModelName' => [
      *         'attribute1' => 'value1',
      *         'attribute2' => 'value2'
      *     ]
      * ]
-     *
      * 2) POST: [
      *      'ModelName' => [
      *          1   => [
@@ -209,14 +195,12 @@ class Collection extends Component
      * }
      * 3) foreach ($selection as $id) {
      *      $res[$id] = [reset($model->primaryKey()) => $id];
-     *    }
+     *    }.
      * @param array|callable $data - the data to be proceeded.
      *                             If is callable - gets arguments:
      *                             - model
      *                             - fromName
-     *
      * @throws InvalidConfigException
-     *
      * @return Collection
      */
     public function load($data = null)
@@ -230,15 +214,15 @@ class Collection extends Component
             if (isset($data[$this->formName])) {
                 $data = $data[$this->formName];
 
-                $is_bulk = true;
+                $is_batch = true;
                 foreach ($data as $k => $v) {
                     if (!is_array($v)) {
-                        $is_bulk = false;
+                        $is_batch = false;
                         break;
                     }
                 }
 
-                if (!$is_bulk) {
+                if (!$is_batch) {
                     $data = [$data];
                 }
             } elseif ($data['selection']) {
@@ -271,9 +255,7 @@ class Collection extends Component
 
     /**
      * Sets the array of AR models to the collection.
-     *
      * @param array|ActiveRecord $models - array of AR Models or a single model
-     *
      * @return $this
      */
     public function set($models)
@@ -282,18 +264,16 @@ class Collection extends Component
             $models = [$models];
         }
 
-        /* @var $first ActiveRecord */
         $first = reset($models);
         if ($first === false) {
             return $this;
         }
         $this->first = $first;
 
-        /// redo
         $this->formName = $first->formName();
         $this->model    = $first->className();
+        $this->models   = $models;
 
-        $this->models = $models;
         if ($this->checkConsistency && !$this->isConsistent()) {
             throw new InvalidValueException('Models are not objects of same class or not follow same operation');
         }
@@ -303,16 +283,13 @@ class Collection extends Component
 
     /**
      * Saves the current collection.
-     *
      * This method will call [[insert()]] or [[update()]].
-     *
      * @param bool  $runValidation whether to perform validation before saving the collection
      * @param array $attributes    list of attribute names that need to be saved. Defaults to null,
      *                             meaning all attributes that are loaded will be saved. If the scenario is specified, will use only
      *                             fields from the scenario
      * @param array $options       the array of options that will be passed to [[insert]] or [[update]] methods to override
      *                             model parameters
-     *
      * @return bool whether the saving succeeds
      */
     public function save($runValidation = true, $attributes = null, $options = [])
@@ -328,7 +305,7 @@ class Collection extends Component
         }
     }
 
-    public function insert($runValidation = true, $attributes = null, $options = [])
+    public function insert($runValidation = true, $attributes = null, array $options = [])
     {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
@@ -340,13 +317,11 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $options);
-        $command = $this->first->getScenarioCommand('create', true);
-
-        $results = $this->first->getDb()->createCommand()->perform($command, $data);
+        $options['batch'] = true;
+        $data    = $this->collectData($attributes);
+        $results = $this->first->perform('create', $data, $options);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
-            /* @var $model ActiveRecord */
             $values = &$data[$key];
             $result = &$results[$key];
 
@@ -364,7 +339,7 @@ class Collection extends Component
         return true;
     }
 
-    public function update($runValidation = true, $attributes = null, $options = [])
+    public function update($runValidation = true, $attributes = null, array $options = [])
     {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
@@ -376,15 +351,14 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $options);
-        $command = $this->first->getScenarioCommand('update', true);
-        $results = $this->first->getDb()->createCommand()->perform($command, $data);
+        $options['batch'] = true;
+        $data    = $this->collectData($attributes);
+        $results = $this->first->perform('update', $data, $options);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
             $values            = array_key_exists($key, $data) ? $data[$key] : $data[$model->id]; /// XXX not good
             foreach ($values as $name => $value) {
-                /* @var $model ActiveRecord */
                 $changedAttributes[$name] = $model->getOldAttribute($name);
                 $model->setOldAttribute($name, $value);
             }
@@ -398,42 +372,29 @@ class Collection extends Component
 
     public function delete()
     {
-        $result = false;
-        if ($this->beforeDelete()) {
-            $data    = $this->collectData();
-            $command = $this->first->getScenarioCommand('delete', true);
-
-            $results = $this->first->getDb()->createCommand()->perform($command, $data);
-            $this->afterDelete();
+        if (!$this->beforeDelete()) {
+            return false;
         }
 
-        return $result;
+        $data    = $this->collectData();
+        $results = $this->first->perform('delete', $data, true);
+
+        $this->afterDelete();
+
+        return $results;
     }
 
     /**
      * Collects data from the stored models.
-     *
-     * @param string|array   $attributes list of attributes names
-     * @param callable|array $options    overrides the model attributes
-     *                                   If is array - merges with the model attributes
-     *                                   If is callable - gets two arguments:
-     *                                   1) the array of model attributes
-     *                                   2) the model object
-     *
+     * @param string|array $attributes list of attributes names
      * @return array
      */
-    public function collectData($attributes = null, $options = [])
+    public function collectData($attributes = null)
     {
-        $data       = [];
+        $data = [];
         foreach ($this->models as $model) {
-            /* @var $model ActiveRecord */
             $key = $model->getPrimaryKey();
-            if ($options instanceof Closure) {
-                $row = call_user_func($options, $model->getAttributes($attributes), $model);
-            } else {
-                $row = array_merge($model->getAttributes($attributes), $options);
-            }
-
+            $row = $model->getAttributes($attributes);
             if ($key) {
                 $data[$key] = $row;
             } else {
@@ -446,13 +407,11 @@ class Collection extends Component
 
     /**
      * Whether one of models has an error.
-     *
      * @return bool
      */
     public function hasErrors()
     {
         foreach ($this->models as $model) {
-            /* @var $model ActiveRecord */
             if ($model->hasErrors()) {
                 return true;
             }
@@ -463,13 +422,11 @@ class Collection extends Component
 
     /**
      * Returns the first error of the collection.
-     *
      * @return bool|mixed
      */
     public function getFirstError()
     {
         foreach ($this->models as $model) {
-            /* @var $model ActiveRecord */
             if ($model->hasErrors()) {
                 $errors = $model->getFirstErrors();
 
@@ -561,10 +518,8 @@ class Collection extends Component
 
     /**
      * Iterates over all of the models and triggers some event.
-     *
      * @param string     $name  the event name
      * @param ModelEvent $event
-     *
      * @return bool whether is valid
      */
     public function triggerModels($name, ModelEvent $event = null)
@@ -573,7 +528,6 @@ class Collection extends Component
             $event = new ModelEvent();
         }
         foreach ($this->models as $model) {
-            /* @var $model ActiveRecord */
             $model->trigger($name, $event);
         }
 
@@ -582,10 +536,8 @@ class Collection extends Component
 
     /**
      * Calls [[triggerModels()]], then calls [[trigger()]].
-     *
      * @param string     $name  the event name
      * @param ModelEvent $event
-     *
      * @return bool whether is valid
      */
     public function triggerAll($name, ModelEvent $event = null)
@@ -605,7 +557,6 @@ class Collection extends Component
         $new       = $this->first->getIsNewRecord();
         $className = $this->first->className();
         foreach ($this->models as $model) {
-            /* @var $model ActiveRecord */
             if ($new !== $model->getIsNewRecord() || $className !== $model->className()) {
                 return false;
             }

@@ -8,13 +8,19 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-namespace hiqdev\hiart;
+namespace hiqdev\hiart\curl;
 
-class ActiveDataProvider extends \yii\data\ActiveDataProvider
+use hiqdev\hiart\AbstractResponse;
+
+/**
+ * cURL response implementation.
+ *
+ * @author Andrii Vasyliev <sol@hiqdev.com>
+ */
+class Response extends AbstractResponse
 {
     /**
-     * @var ActiveQuery the query that is used to fetch data models and [[totalCount]]
-     * if it is not explicitly set
+     * @var ResponseWorker
      */
-    public $query;
+    protected $worker;
 }

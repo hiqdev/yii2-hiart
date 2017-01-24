@@ -10,11 +10,18 @@
 
 namespace hiqdev\hiart;
 
-class ActiveDataProvider extends \yii\data\ActiveDataProvider
+/**
+ * Request error exception.
+ *
+ * For exceptions during request sending.
+ */
+class RequestErrorException extends Exception
 {
     /**
-     * @var ActiveQuery the query that is used to fetch data models and [[totalCount]]
-     * if it is not explicitly set
+     * @return RequestInterface
      */
-    public $query;
+    public function getRequest()
+    {
+        return $this->errorInfo['request'];
+    }
 }

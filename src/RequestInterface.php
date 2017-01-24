@@ -8,4 +8,9 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-return require __DIR__ . '/common.php';
+namespace hiqdev\hiart;
+
+interface RequestInterface extends \Serializable
+{
+    public function send($options = []);
+}

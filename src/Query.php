@@ -5,41 +5,59 @@
  * @link      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
- * @copyright Copyright (c) 2015-2016, HiQDev (http://hiqdev.com/)
+ * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
 namespace hiqdev\hiart;
 
-use Yii;
-use yii\base\Component;
 use yii\db\QueryInterface;
-use yii\db\QueryTrait;
 
-class Query extends Component implements QueryInterface
+/**
+ * Query represents API query in a way that is independent from a concrete API.
+ * Holds API query information:
+ * - general query data
+ *      - action: action to be performed with this query, e.g. search, insert, update, delete
+ *      - options: other additional options, like
+ *          - raw: do not decode response
+ *          - batch: batch(bulk) request
+ *          - timeout, ...
+ * - insert/update query data
+ *      - body: insert or update data
+ * - select query data
+ *      - select: fields to select
+ *      - count: marks count query
+ *      - from: entity being queried, e.g. user
+ *      - join: data how to join with other entities
+ * - other standard query options provided with QueryTrait:
+ *      - where, limit, offset, orderBy, indexBy.
+ */
+class Query extends \yii\db\Query implements QueryInterface
 {
-    use QueryTrait;
-
-    public $index;
-    public $type;
-    public $select;
-    public $join;
+    /**
+     * @var string action that this query performs
+     */
+    public $action;
 
     /**
-     * {@inheritdoc}
+     * @var array query options e.g. raw, batch
      */
-    public function init()
+    public $options = [];
+
+    public $count;
+
+    public $body = [];
+
+    public static function instantiate($action, $from, array $options = [])
     {
-        parent::init();
-        // setting the default limit according to api defaults
-        if ($this->limit === null) {
-            $this->limit = 'ALL';
-        }
+        $query = new static();
+
+        return $query->action($action)->from($from)->options($options);
     }
 
     public function createCommand($db = null)
     {
         if ($db === null) {
-            $db = Yii::$app->get('hiart');
+            throw new \Exception('no db given to Query::createCommand');
         }
 
         $commandConfig = $db->getQueryBuilder()->build($this);
@@ -47,66 +65,39 @@ class Query extends Component implements QueryInterface
         return $db->createCommand($commandConfig);
     }
 
-    public function join($type)
+    public function one($db = null)
     {
-        $this->join[] = (array) $type;
-
-        return $this;
+        return $this->limit(1)->addOption('batch', false)->search();
     }
 
     public function all($db = null)
     {
-        $result = $this->createCommand($db)->search();
-        if (empty($result['hits']['hits'])) {
-            return [];
-        }
-        $rows = $result['hits']['hits'];
-        if ($this->indexBy === null) {
-            return $rows;
-        }
-        $models = [];
-        foreach ($rows as $key => $row) {
-            if ($this->indexBy !== null) {
-                if (is_string($this->indexBy)) {
-                    $key = isset($row['fields'][$this->indexBy]) ? reset($row['fields'][$this->indexBy]) : $row['_source'][$this->indexBy];
-                } else {
+        $rows = $this->searchAll();
+
+        if (!empty($rows) && $this->indexBy !== null) {
+            $result = [];
+            foreach ($rows as $row) {
+                if ($this->indexBy instanceof \Closure) {
                     $key = call_user_func($this->indexBy, $row);
+                } else {
+                    $key = $row[$this->indexBy];
                 }
+                $result[$key] = $row;
             }
-            $models[$key] = $row;
+            $rows = $result;
         }
 
-        return $models;
+        return $rows;
     }
 
-    public function one($db = null)
+    public function searchAll($db = null)
     {
-        $result = $this->createCommand($db)->search(['limit' => 1]);
-        if (empty($result)) {
-            return false;
-        }
-        $record = reset($result);
-
-        return $record;
+        return $this->addOption('batch', true)->search();
     }
 
-    public function search($db = null, $options = [])
+    public function search($db = null)
     {
-        $result = $this->createCommand($db)->search($options);
-        if (!empty($result) && $this->indexBy !== null) {
-            $rows = [];
-            foreach ($result as $key => $row) {
-                if (is_string($this->indexBy)) {
-                    $key = isset($row['fields'][$this->indexBy]) ? $row['fields'][$this->indexBy] : $row['_source'][$this->indexBy];
-                } else {
-                    $key = call_user_func($this->indexBy, $row);
-                }
-                $rows[$key] = $row;
-            }
-            $result = $rows;
-        }
-
-        return $result;
+        return $this->createCommand($db)->search();
     }
 
     public function delete($db = null, $options = [])
@@ -114,108 +105,74 @@ class Query extends Component implements QueryInterface
         return $this->createCommand($db)->deleteByQuery($options);
     }
 
-    public function scalar($field, $db = null)
-    {
-        $record = self::one($db);
-        if ($record !== false) {
-            if ($field === '_id') {
-                return $record['_id'];
-            } elseif (isset($record['_source'][$field])) {
-                return $record['_source'][$field];
-            } elseif (isset($record['fields'][$field])) {
-                return count($record['fields'][$field]) === 1 ? reset($record['fields'][$field]) : $record['fields'][$field];
-            }
-        }
-
-        return null;
-    }
-
-    public function column($field, $db = null)
-    {
-        $command                        = $this->createCommand($db);
-        $command->queryParts['_source'] = [$field];
-        $result                         = $command->search();
-        if (empty($result['hits']['hits'])) {
-            return [];
-        }
-        $column = [];
-        foreach ($result['hits']['hits'] as $row) {
-            if (isset($row['fields'][$field])) {
-                $column[] = $row['fields'][$field];
-            } elseif (isset($row['_source'][$field])) {
-                $column[] = $row['_source'][$field];
-            } else {
-                $column[] = null;
-            }
-        }
-
-        return $column;
-    }
-
     public function count($q = '*', $db = null)
     {
-        $options          = [];
-        $options['count'] = 1;
+        $this->count = $q;
 
-        return $this->createCommand($db)->search($options);
+        return (int) $this->searchAll();
     }
 
     public function exists($db = null)
     {
-        return self::one($db) !== false;
+        return !empty(self::one($db));
     }
 
-    public function stats($groups)
+    public function action($action)
     {
-        $this->stats = $groups;
+        $this->action = $action;
 
         return $this;
     }
 
-    public function highlight($highlight)
+    public function addAction($action)
     {
-        $this->highlight = $highlight;
+        if (empty($this->action)) {
+            $this->action = $action;
+        }
 
         return $this;
     }
 
-    public function addAggregation($name, $type, $options)
+    public function addOption($name, $value)
     {
-        $this->aggregations[$name] = [$type => $options];
+        if (!isset($this->options[$name])) {
+            $this->options[$name] = $value;
+        }
 
         return $this;
     }
 
-    public function addAgg($name, $type, $options)
+    public function getOption($name)
     {
-        return $this->addAggregation($name, $type, $options);
+        return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
-    public function addSuggester($name, $definition)
+    public function options($options)
     {
-        $this->suggest[$name] = $definition;
+        $this->options = $options;
 
         return $this;
     }
 
-    public function query($query)
+    public function addOptions($options)
     {
-        $this->query = $query;
+        if (!empty($options)) {
+            $this->options = array_merge($this->options, $options);
+        }
 
         return $this;
     }
 
-    public function filter($filter)
+    public function body($body)
     {
-        $this->filter = $filter;
+        $this->body = $body;
 
         return $this;
     }
 
-    public function from($index, $type = null)
+    public function innerJoin($table, $on = '', $params = [])
     {
-        $this->index = $index;
-        $this->type  = $type;
+        $this->join[] = (array) $table;
 
         return $this;
     }
@@ -238,13 +195,6 @@ class Query extends Component implements QueryInterface
         } else {
             $this->source = func_get_args();
         }
-
-        return $this;
-    }
-
-    public function timeout($timeout)
-    {
-        $this->timeout = $timeout;
 
         return $this;
     }
