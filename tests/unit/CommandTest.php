@@ -11,7 +11,6 @@
 namespace hiqdev\hiart\tests\unit;
 
 use hiqdev\hiart\Command;
-use hiqdev\hiart\tests\Mock;
 use Yii;
 
 /**
@@ -22,24 +21,16 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @var Command
      */
-    protected $object;
+    protected $command;
 
-    /**
-     * @var Mock
-     */
-    protected $mock;
-
-    protected $action  = 'testAction';
-    protected $options = ['a' => 'b'];
-    protected $result  = ['x' => 'z'];
+    protected $table = 'testAction';
+    protected $columns = ['a' => 'b'];
 
     protected function setUp()
     {
-        $this->mock = new Mock($this->result);
-        $this->object = Yii::createObject([
+        $this->command = Yii::createObject([
             'class' => Command::class,
-            'index' => 'test',
-            'db'    => $this->mock,
+            'db'    => Yii::$app->get('hiart'),
         ]);
     }
 
@@ -47,21 +38,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     {
     }
 
-    public function testSearch()
+    public function testInsert()
     {
-        $result = $this->object->search($this->options);
-        $this->assertSame($this->result, $result);
-        $this->assertSame('post', $this->mock->name);
-        $this->assertSame('testSearch', $this->mock->args[0]);
-        $this->assertSame($this->options, $this->mock->args[1]);
-    }
-
-    public function testPerform()
-    {
-        $result = $this->object->perform($this->action, $this->options);
-        $this->assertSame($this->result, $result);
-        $this->assertSame('post', $this->mock->name);
-        $this->assertSame($this->action, $this->mock->args[0]);
-        $this->assertSame($this->options, $this->mock->args[2]);
+        $this->command->insert($this->table, $this->columns);
     }
 }

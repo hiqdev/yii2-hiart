@@ -8,7 +8,12 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(-1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
+
+Yii::$app = new \yii\console\Application(array_merge([
+    'id' => 'hiart',
+    'basePath' => __DIR__,
+], require \hiqdev\composer\config\Builder::path('common')));

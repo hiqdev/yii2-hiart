@@ -5,7 +5,7 @@
             <directory>./tests/unit/</directory>
         </testsuite>
         <testsuite name="GitHub functional">
-            <directory>./vendor/hiqdev/hidev-hiart/tests/functional/</directory>
+            <directory>./vendor/hiqdev/yii2-hiart-github/tests/functional/</directory>
         </testsuite>
     </testsuites>
     <filter>

@@ -10,67 +10,31 @@
 
 namespace hiqdev\hiart\tests\unit;
 
-use GuzzleHttp\Psr7\Response;
-use hiqdev\hiart\Connection;
-use hiqdev\hiart\tests\Mock;
-use Yii;
+use hiqdev\hiart\rest\Connection;
 
 /**
  * Connection test class.
  */
 class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Connection
-     */
-    protected $object;
+    protected $shortUri = 'http://api.dev';
 
-    /**
-     * @var Mock
-     */
-    protected $mock;
-
-    protected $site   = 'http://test.api.site/';
-    protected $url    = 'test/url';
-    protected $query  = ['a' => 'b'];
-    protected $body   = ['c' => 'd'];
-    protected $result = 'xyz result string';
+    protected $fixedUri = 'http://api.dev/';
 
     protected function setUp()
     {
-        $response     = new Response(200, [], $this->result);
-        $this->mock   = new Mock($response);
-        $this->object = Yii::createObject([
-            'class'   => Connection::class,
-            'handler' => $this->mock,
-            'config'  => [
-                'base_uri' => $this->site,
-            ],
-            'errorChecker' => function ($res) {
-                return null;
-            },
-        ]);
+        $this->db = new Connection();
     }
 
     protected function tearDown()
     {
     }
 
-    public function testGet()
+    public function testGetBaseUri()
     {
-        $result = $this->object->get($this->url, [], false);
-        $this->assertSame($this->result, $result);
-        $this->assertSame('request',   $this->mock->name);
-        $this->assertSame('GET',       $this->mock->args[0]);
-        $this->assertSame($this->url,  $this->mock->args[1]);
-    }
-
-    public function testErrorChecker()
-    {
-        $this->object->setErrorChecker(function ($res) {
-            return $res;
-        });
-        $this->setExpectedException('hiqdev\hiart\ErrorResponseException', $this->result);
-        $this->object->get($this->url, [], false);
+        $this->db->baseUri = $this->shortUri;
+        $this->assertSame($this->fixedUri, $this->db->getBaseUri());
+        $this->db->baseUri = $this->fixedUri;
+        $this->assertSame($this->fixedUri, $this->db->getBaseUri());
     }
 }
