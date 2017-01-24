@@ -70,7 +70,7 @@ class Timing
 
     public function getUrlEncoded()
     {
-        return Html::encode($this->getFullUri());
+        return Html::encode($this->request->getFullUri());
     }
 
     public function getBodyEncoded()
@@ -110,20 +110,10 @@ class Timing
 
     public function getNewTabLink()
     {
-        $uri = $this->getFullUri();
+        $uri = $this->request->getFullUri();
         $sign = strpos($uri, '?') === false ? '?' : '';
         $newTabUrl = rtrim($uri, '&') . $sign . $this->request->getBody();
 
         return Html::a('to new tab', $newTabUrl, ['target' => '_blank']);
-    }
-
-    public function getFullUri()
-    {
-        return $this->getBaseUri() . '/' . $this->request->getUri();
-    }
-
-    public function getBaseUri()
-    {
-        return $this->panel->getBaseUri($this->request->getDbname());
     }
 }

@@ -65,15 +65,6 @@ class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
         ]);
     }
 
-    public function getBaseUri($dbname)
-    {
-        try {
-            return Yii::$app->get($dbname)->getBaseUri();
-        } catch (InvalidConfigException $e) {
-            return null;
-        }
-    }
-
     private $_timings;
 
     public function getTimings()
