@@ -8,4 +8,4 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-return require './common.php';
+return require __DIR__ . '/common.php';
