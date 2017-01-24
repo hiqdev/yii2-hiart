@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
  */
 
-return [
+return empty($params['hiart.enabled']) ? [] : [
     'modules' => array_filter([
         'debug' => empty($params['debug.enabled']) ? null : [
             'panels' => [
@@ -18,4 +18,18 @@ return [
             ],
         ],
     ]),
+    'components' => array_filter([
+        $params['hiart.dbname'] => array_filter([
+            'class' => \hiqdev\hiart\hiart\Connection::class,
+            'name' => $params['hiart.dbname'],
+            'requestClass' => $params['hiart.requestClass'],
+        ]),
+    ]),
+    'container' => [
+        'singletons' => [
+            \hiqdev\hiart\ConnectionInterface::class => function () {
+                return Yii::$app->get($params['hiart.dbname']);
+            },
+        ],
+    ],
 ];

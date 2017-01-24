@@ -20,7 +20,7 @@ use yii\helpers\Json;
 /**
  * Abstract connection class.
  */
-abstract class AbstractConnection extends Component
+abstract class AbstractConnection extends Component implements ConnectionInterface
 {
     const EVENT_AFTER_OPEN = 'afterOpen';
 
@@ -79,7 +79,7 @@ abstract class AbstractConnection extends Component
 
     public static function getDb($dbname = null)
     {
-        return Yii::$app->get($dbname ?: static::$dbname);
+        return $dbname ? Yii::$app->get($dbname) : Yii::$container->get(ConnectionInterface::class);
     }
 
     public function setAuth($auth)
