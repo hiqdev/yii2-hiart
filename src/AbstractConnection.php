@@ -260,8 +260,21 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
         return false;
     }
 
+    /**
+     * Return API base uri.
+     * Adds trailing slash if uri is domain only.
+     * @return string
+     */
     public function getBaseUri()
     {
+        static $checked;
+        if (empty($checked)) {
+            if (count(explode('/', $this->baseUri, 4)) === 3) {
+                $this->baseUri .= '/';
+            }
+            $checked = true;
+        }
+
         return $this->baseUri;
     }
 
