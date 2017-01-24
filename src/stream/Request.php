@@ -35,7 +35,6 @@ class Request extends AbstractRequest
 
     public function send($options = [])
     {
-
         try {
             $this->build();
             $context = stream_context_create($this->prepareContextOptions($options));
@@ -74,8 +73,8 @@ class Request extends AbstractRequest
 
     /**
      * Composes stream context options from raw options.
-     * @param array $options raw options.
-     * @return array stream context options.
+     * @param array $options raw options
+     * @return array stream context options
      */
     protected function convertContextOptions(array $options)
     {

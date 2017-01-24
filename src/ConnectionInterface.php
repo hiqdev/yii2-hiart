@@ -10,13 +10,6 @@
 
 namespace hiqdev\hiart;
 
-use Closure;
-use Yii;
-use hiqdev\hiart\stream\Request;
-use yii\base\Component;
-use yii\base\InvalidParamException;
-use yii\helpers\Json;
-
 /**
  * HiArt connection interface.
  */
@@ -24,7 +17,7 @@ interface ConnectionInterface
 {
     /**
      * Gets connection by name or finds default.
-     * @param string $dbname 
+     * @param string $dbname
      * @return ConnectionInterface
      */
     public static function getDb($dbname = null);

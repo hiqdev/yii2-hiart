@@ -10,8 +10,6 @@
 
 namespace hiqdev\hiart\proxy;
 
-use yii\helpers\Json;
-
 abstract class Response extends \hiqdev\hiart\AbstractResponse
 {
     /**

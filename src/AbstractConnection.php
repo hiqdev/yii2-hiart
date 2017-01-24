@@ -11,8 +11,8 @@
 namespace hiqdev\hiart;
 
 use Closure;
-use Yii;
 use hiqdev\hiart\stream\Request;
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\helpers\Json;

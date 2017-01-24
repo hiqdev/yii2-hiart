@@ -18,7 +18,7 @@ abstract class Request extends \hiqdev\hiart\AbstractRequest
     protected $worker;
 
     /**
-     * @var string transport implementation to be specified in concrete implementation.
+     * @var string transport implementation to be specified in concrete implementation
      */
     public $handlerClass;
 

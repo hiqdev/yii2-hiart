@@ -10,8 +10,8 @@
 
 namespace hiqdev\hiart\rest;
 
-use hiqdev\hiart\ResponseInterface;
 use hiqdev\hiart\ResponseErrorException;
+use hiqdev\hiart\ResponseInterface;
 
 class Connection extends \hiqdev\hiart\AbstractConnection
 {
@@ -20,7 +20,7 @@ class Connection extends \hiqdev\hiart\AbstractConnection
     public function checkResponse(ResponseInterface $response)
     {
         $code = $response->getStatusCode();
-        if ($code>=200 && $code<300) {
+        if ($code >= 200 && $code < 300) {
             return;
         }
 

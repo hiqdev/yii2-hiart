@@ -12,7 +12,6 @@ namespace hiqdev\hiart\debug;
 
 use hiqdev\hiart\Command;
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\base\ViewContextInterface;
 use yii\log\Logger;
 

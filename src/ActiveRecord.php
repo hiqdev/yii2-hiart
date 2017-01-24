@@ -10,7 +10,6 @@
 
 namespace hiqdev\hiart;
 
-use hiqdev\hiart\AbstractConnection;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
@@ -165,7 +164,7 @@ class ActiveRecord extends BaseActiveRecord
      * Returns the list of attribute names.
      * By default, this method returns all attributes mentioned in rules.
      * You may override this method to change the default behavior.
-     * @return string[] list of attribute names.
+     * @return string[] list of attribute names
      */
     public function attributes()
     {
