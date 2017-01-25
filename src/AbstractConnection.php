@@ -56,7 +56,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     protected $_handler;
 
     /**
-     * @var QueryBuilder the query builder for this connection
+     * @var AbstractQueryBuilder the query builder for this connection
      */
     protected $_builder;
 
@@ -77,6 +77,10 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
      */
     protected $_errorChecker;
 
+    /**
+     * @param null $dbname
+     * @return ConnectionInterface|AbstractConnection
+     */
     public static function getDb($dbname = null)
     {
         return $dbname ? Yii::$app->get($dbname) : Yii::$container->get(ConnectionInterface::class);
@@ -144,7 +148,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     }
 
     /**
-     * @return QueryBuilder the query builder for this connection
+     * @return AbstractQueryBuilder the query builder for this connection
      */
     public function getQueryBuilder()
     {
@@ -220,45 +224,30 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     }
 
     /**
-     * Checks response with checkError method and raises exception if error.
+     * Checks response method and raises exception if error found.
      * @param ResponseInterface $response response data from API
-     * @throws ErrorResponseException
-     * @return mixed response data
+     * @throws ResponseErrorException when response is invalid
      */
     public function checkResponse(ResponseInterface $response)
     {
-        $error = $this->checkError($response);
-        if ($error) {
-            throw new ErrorResponseException($error, [
-                'request' => $response->getRequest()->getParts(),
-                'response' => $response->getData(),
-            ]);
-        }
-    }
-
-    /**
-     * Checks response with errorChecker callback and returns error text if error.
-     * @param ResponseInterface $response
-     * @return string|false error text or false
-     */
-    public function checkError(ResponseInterface $response)
-    {
         if (isset($this->_errorChecker)) {
-            return call_user_func($this->_errorChecker, $response);
+            $error = call_user_func($this->_errorChecker, $response);
         } else {
-            return $this->isError($response);
+            $error = $this->getResponseError($response);
+        }
+
+        if ($error) {
+            throw new ResponseErrorException($error, $response);
         }
     }
 
     /**
-     * Default error checker. TODO check something in response?
+     * Method checks whether the response is an error
+     *
      * @param ResponseInterface $response
-     * @return bool
+     * @return false|string the error text or boolean `false`, when the response is not an error
      */
-    public function isError(ResponseInterface $response)
-    {
-        return false;
-    }
+    abstract public function getResponseError(ResponseInterface $response);
 
     /**
      * Return API base uri.

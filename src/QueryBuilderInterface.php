@@ -37,4 +37,6 @@ interface QueryBuilderInterface
     public function buildFormParams(Query $query);
 
     public function buildBody(Query $query);
+
+    public function prepare(Query $query);
 }

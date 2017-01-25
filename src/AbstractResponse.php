@@ -20,10 +20,15 @@ abstract class AbstractResponse implements ResponseInterface
     protected $request;
 
     /**
-     * @var mixed response data
+     * @var string response data. The property contains RAW response data
+     * @see decodeData()
+     * @see isDecoded
      */
     protected $data;
 
+    /**
+     * @var bool whether response is already decoded
+     */
     protected $isDecoded = false;
 
     public function getRequest()
@@ -44,20 +49,42 @@ abstract class AbstractResponse implements ResponseInterface
     public function decodeData()
     {
         $data = $this->getRawData();
-        if (!$this->isRaw() && $this->isJson()) {
-            $data = Json::decode($data);
+
+        if ($this->isRaw()) {
+            return $data;
         }
 
+        if ($this->isJson()) {
+            return Json::decode($data);
+        }
+
+        // TODO: implement decoding for XML and other types
+
+        // throw new ResponseDecodingException('Failed to detect response data type', $this);
+        // TODO: throw exception instead of returning
         return $data;
     }
 
+    /**
+     * Method returns RAW request data
+     *
+     * @return string
+     */
     abstract public function getRawData();
 
+    /**
+     * Whether the request is RAW and should not be decoded
+     * @return bool
+     */
     public function isRaw()
     {
         return $this->request->isRaw();
     }
 
+    /**
+     * Method checks whether response is a JSON response
+     * @return bool
+     */
     public function isJson()
     {
         return !empty(preg_grep('|application/json|i', $this->getHeader('Content-Type')));

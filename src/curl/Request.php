@@ -13,15 +13,12 @@ namespace hiqdev\hiart\curl;
 use hiqdev\hiart\AbstractRequest;
 
 /**
- * cURL request implementation.
- *
- * @author Andrii Vasyliev <sol@hiqdev.com>
+ * Class Request represents request using cURL library
  */
 class Request extends AbstractRequest
 {
-    protected $workerClass = RequestWorker::class;
-
-    protected function createWorker()
+    public function send($options = [])
     {
+
     }
 }

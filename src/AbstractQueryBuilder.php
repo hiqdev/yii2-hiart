@@ -81,7 +81,7 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
      * @param string $table
      * @param array $columns
      * @param array $options
-     * @return Request
+     * @return AbstractRequest
      */
     public function insert($table, $columns, array $options = [])
     {
@@ -93,7 +93,7 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
      * @param string $table
      * @param array $columns
      * @param array $options
-     * @return Request
+     * @return AbstractRequest
      */
     public function update($table, $columns, $condition = [], array $options = [])
     {

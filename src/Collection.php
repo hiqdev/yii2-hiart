@@ -334,7 +334,7 @@ class Collection extends Component
             $model->afterSave(true, $changedAttributes);
         }
 
-        $this->afterSave(true);
+        $this->afterSave();
 
         return true;
     }

@@ -19,8 +19,23 @@ use hiqdev\hiart\AbstractResponse;
  */
 class Response extends AbstractResponse
 {
-    /**
-     * @var ResponseWorker
-     */
-    protected $worker;
+    public function getRawData()
+    {
+
+    }
+
+    public function getHeader($name)
+    {
+
+    }
+
+    public function getStatusCode()
+    {
+
+    }
+
+    public function getReasonPhrase()
+    {
+
+    }
 }

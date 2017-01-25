@@ -258,6 +258,9 @@ abstract class AbstractRequest implements RequestInterface
         return $this->getDb()->getUserAgent();
     }
 
+    /**
+     * @return AbstractConnection|ConnectionInterface
+     */
     public function getDb()
     {
         return isset($this->builder) ? $this->builder->db : AbstractConnection::getDb($this->dbname);

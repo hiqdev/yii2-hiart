@@ -17,16 +17,20 @@ class Connection extends \hiqdev\hiart\AbstractConnection
 {
     public $queryBuilderClass = QueryBuilder::class;
 
-    public function checkResponse(ResponseInterface $response)
+    /**
+     * Method checks whether the response is an error
+     *
+     * @param ResponseInterface $response
+     * @return false|string the error text or boolean `false`, when the response is not an error
+     */
+    public function getResponseError(ResponseInterface $response)
     {
         $code = $response->getStatusCode();
         if ($code >= 200 && $code < 300) {
-            return;
+            return false;
         }
 
-        throw new ResponseErrorException($response->getReasonPhrase(), [
-            'request' => $response->getRequest()->getParts(),
-            'response' => $response->getData(),
-        ], $code);
+        return $response->getReasonPhrase();
+
     }
 }

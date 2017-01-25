@@ -18,7 +18,7 @@ use Yii;
 class Command extends \yii\base\Component
 {
     /**
-     * @var Connection
+     * @var AbstractConnection
      */
     public $db;
 

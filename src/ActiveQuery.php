@@ -10,6 +10,7 @@
 
 namespace hiqdev\hiart;
 
+use hiqdev\hiart\rest\QueryBuilder;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;

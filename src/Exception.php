@@ -10,6 +10,9 @@
 
 namespace hiqdev\hiart;
 
+/**
+ * Class Exception represent general exception occurred in HiArt
+ */
 class Exception extends \yii\db\Exception
 {
     /**

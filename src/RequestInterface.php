@@ -10,7 +10,30 @@
 
 namespace hiqdev\hiart;
 
+use hiqdev\hiart\curl\Response;
+
 interface RequestInterface extends \Serializable
 {
+    /**
+     * @param array $options
+     * @return Response
+     * @throws RequestErrorException
+     */
     public function send($options = []);
+
+    /**
+     * @return string
+     */
+    public function getBody();
+
+    /**
+     * @return string
+     */
+    public function getFullUri();
+
+    /**
+     * Method returns the Request method in the uppercase, e.g. GET, POST, DELETE
+     * @return string
+     */
+    public function getMethod();
 }
