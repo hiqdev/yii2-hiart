@@ -14,12 +14,21 @@ use hiqdev\hiart\Query;
 
 class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 {
+    protected $authHeaders = [];
+
     /**
      * This function is for you to provide your authentication.
      * @param Query $query
      */
     public function buildAuth(Query $query)
     {
+        $auth = $this->db->getAuth();
+        if (isset($auth['headerToken'])) {
+            $authHeaders['Authorization'] = 'token ' . $auth['headerToken'];
+        }
+        if (isset($auth['headerBearer'])) {
+            $authHeaders['Authorization'] = 'Bearer ' . $auth['headerBearer'];
+        }
     }
 
     public function buildMethod(Query $query)
@@ -45,7 +54,7 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 
     public function buildHeaders(Query $query)
     {
-        return [];
+        return $this->authHeaders;
     }
 
     public function buildProtocolVersion(Query $query)
