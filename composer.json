@@ -67,8 +67,9 @@
         "config-plugin": {
             "params": "src/config/params.php",
             "common": "src/config/common.php",
-            "hisite": "src/config/hisite.php",
-            "hidev": "src/config/hidev.php"
+            "hisite": "src/config/common.php",
+            "hidev": "src/config/common.php",
+            "tests": "src/config/common.php"
         }
     },
     "repositories": [
