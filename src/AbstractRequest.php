@@ -18,6 +18,11 @@ abstract class AbstractRequest implements RequestInterface
     protected $responseClass;
 
     /**
+     * @var string request handler implementation to be specified in concrete implementation
+     */
+    protected $handlerClass;
+
+    /**
      * @var QueryBuilderInterface
      */
     protected $builder;
