@@ -32,4 +32,14 @@ abstract class Response extends \hiqdev\hiart\AbstractResponse
     {
         return $this->worker->getHeader($name);
     }
+
+    public function getStatusCode()
+    {
+        return $this->worker->getStatusCode();
+    }
+
+    public function getReasonPhrase()
+    {
+        return $this->worker->getReasonPhrase();
+    }
 }
