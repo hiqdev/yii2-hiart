@@ -21,9 +21,9 @@ abstract class Request extends \hiqdev\hiart\AbstractRequest
 
     public function send($options = [])
     {
-        $worker = $this->getHandler()->send($this->getWorker(), $options);
+        $responseWorker = $this->getHandler()->send($this->getWorker(), $options);
 
-        return new $this->responseClass($this, $worker);
+        return new $this->responseClass($this, $responseWorker);
     }
 
     /**
