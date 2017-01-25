@@ -24,10 +24,10 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
     {
         $auth = $this->db->getAuth();
         if (isset($auth['headerToken'])) {
-            $authHeaders['Authorization'] = 'token ' . $auth['headerToken'];
+            $this->authHeaders['Authorization'] = 'token ' . $auth['headerToken'];
         }
         if (isset($auth['headerBearer'])) {
-            $authHeaders['Authorization'] = 'Bearer ' . $auth['headerBearer'];
+            $this->authHeaders['Authorization'] = 'Bearer ' . $auth['headerBearer'];
         }
     }
 
