@@ -48,6 +48,8 @@ class Response extends AbstractResponse
 
     public function parseHeaders($headers)
     {
+        $result = [];
+
         foreach ($headers as $header) {
             if (strncmp($header, 'HTTP/', 5) === 0) {
                 $parts = explode(' ', $header, 3);

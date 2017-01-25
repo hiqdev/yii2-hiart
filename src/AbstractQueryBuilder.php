@@ -21,6 +21,9 @@ use yii\helpers\ArrayHelper;
  */
 abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBuilderInterface
 {
+    /**
+     * @var AbstractConnection
+     */
     public $db;
 
     public function __construct($connection, $config = [])

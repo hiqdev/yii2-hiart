@@ -37,7 +37,7 @@ class Command extends \yii\base\Component
     /**
      * Sends a request to retrieve data.
      * In API this could be get, search or list request.
-     * @throws ErrorResponseException
+     * @throws ResponseErrorException
      * @return mixed response data
      */
     public function search()

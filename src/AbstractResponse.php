@@ -90,5 +90,9 @@ abstract class AbstractResponse implements ResponseInterface
         return !empty(preg_grep('|application/json|i', $this->getHeader('Content-Type')));
     }
 
+    /**
+     * @param $name
+     * @return array
+     */
     abstract public function getHeader($name);
 }
