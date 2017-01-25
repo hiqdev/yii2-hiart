@@ -42,9 +42,8 @@ class DebugAction extends \yii\base\Action
         }
 
         $request  = unserialize($timings[$logId][1]);
-        $db       = Yii::$app->get($request->getDbname());
         $time     = microtime(true);
-        $response = $db->send($request);
+        $response = $request->send();
         $time     = microtime(true) - $time;
 
         Yii::$app->response->format = Response::FORMAT_JSON;
