@@ -17,13 +17,29 @@ interface ResponseInterface
      */
     public function getRequest();
 
+    /**
+     * @return mixed
+     */
     public function getData();
 
+    /**
+     * @return string
+     */
     public function getRawData();
 
+    /**
+     * @param string $name the header name
+     * @return array|null Array of the header values, or null when header is not present in the response
+     */
     public function getHeader($name);
 
+    /**
+     * @return string
+     */
     public function getStatusCode();
 
+    /**
+     * @return static
+     */
     public function getReasonPhrase();
 }
