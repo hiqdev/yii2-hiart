@@ -11,14 +11,113 @@
 namespace hiqdev\hiart\curl;
 
 use hiqdev\hiart\AbstractRequest;
+use hiqdev\hiart\RequestErrorException;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class Request represents request using cURL library
  */
 class Request extends AbstractRequest
 {
+    protected $responseClass = Response::class;
+
+    /**
+     * @var array default cURL options
+     */
+    public $defaultOptions = [
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HEADER => true,
+    ];
+
+    /**
+     * @param array $options
+     * @return array|mixed
+     * @throws RequestErrorException
+     */
     public function send($options = [])
     {
+        try {
+            $this->build();
 
+            $curl = curl_init($this->getFullUri());
+            $this->setCurlOptions($curl);
+            $response = curl_exec($curl);
+            $info = curl_getinfo($curl);
+            $error = curl_error($curl);
+            $errorCode = curl_errno($curl);
+            curl_close($curl);
+        } catch (RequestErrorException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new RequestErrorException($e->getMessage(), $this, $e->getCode(), $e);
+        }
+
+        return new $this->responseClass($this, $response, $info, $error, $errorCode);
+    }
+
+    /**
+     * @param resource $curl
+     * @throws RequestErrorException
+     */
+    protected function setCurlOptions($curl)
+    {
+        $requestOptions = $this->buildMethodOptions();
+        $requestOptions[CURLOPT_HTTPHEADER] = $this->buildHeaderLines();
+
+        if ($this->getVersion() === '1.1') {
+            $requestOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
+        } elseif ($this->getVersion() === '1.0') {
+            $requestOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_0;
+        } else {
+            throw new RequestErrorException('Request version "' . $this->getVersion() . '" is not support by cURL', $this);
+        }
+
+        $options = ArrayHelper::merge($this->defaultOptions, $this->getDb()->config, $requestOptions);
+        curl_setopt_array($curl, $options);
+    }
+
+    /**
+     * @return array
+     */
+    protected function buildMethodOptions()
+    {
+        $options = [];
+
+        if ($this->getMethod() === 'GET') {
+            return $options;
+        }
+
+        if (!empty($this->getBody())) {
+            $options[CURLOPT_POSTFIELDS] = $this->getBody();
+        }
+
+        if ($this->getMethod() === 'POST') {
+            $options[CURLOPT_POST] = true;
+        } else {
+            $options[CURLOPT_CUSTOMREQUEST] = $this->getMethod();
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return array
+     */
+    protected function buildHeaderLines()
+    {
+        $result = [];
+
+        foreach ($this->getHeaders() as $name => $values) {
+            $name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
+            if (is_string($values)) {
+                $values = [$values];
+            }
+            foreach ($values as $value) {
+                $result[] = "$name: $value";
+            }
+        }
+
+        return $result;
     }
 }
