@@ -37,14 +37,15 @@ class Command extends \yii\base\Component
     /**
      * Sends a request to retrieve data.
      * In API this could be get, search or list request.
+     * @param array $options send options
      * @throws ResponseErrorException
      * @return mixed response data
      */
-    public function search()
+    public function search($options = [])
     {
         $this->request->getQuery()->addAction('search');
 
-        return $this->send();
+        return $this->send($options);
     }
 
     /**
