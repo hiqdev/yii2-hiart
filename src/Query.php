@@ -67,6 +67,11 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function one($db = null)
     {
+        return $this->searchOne($db);
+    }
+
+    public function searchOne($db = null)
+    {
         return $this->limit(1)->addOption('batch', false)->search();
     }
 

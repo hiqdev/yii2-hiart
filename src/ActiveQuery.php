@@ -66,7 +66,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             // lazy loading
             if (is_array($this->via)) {
                 // via relation
-                /* @var $viaQuery ActiveQuery */
+                /** @var $viaQuery ActiveQuery */
                 list($viaName, $viaQuery) = $this->via;
                 if ($viaQuery->multiple) {
                     $viaModels = $viaQuery->all();
@@ -245,9 +245,13 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function one($db = null)
     {
-        $row = parent::one($db);
+        if ($this->asArray) {
+            return parent::one($db);
+        }
 
-        return $this->asArray ? $row : reset($this->populate([$row]));
+        $row = $this->searchOne($db);
+
+        return reset($this->populate([$row]));
     }
 
     /**
