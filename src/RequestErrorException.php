@@ -11,7 +11,7 @@
 namespace hiqdev\hiart;
 
 /**
- * Class RequestErrorException represents an error occurred during the request sending
+ * Class RequestErrorException represents an error occurred during the request sending.
  */
 class RequestErrorException extends Exception
 {
@@ -28,7 +28,8 @@ class RequestErrorException extends Exception
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct($message, RequestInterface $request, $code = 0, \Exception $previous = null) {
+    public function __construct($message, RequestInterface $request, $code = 0, \Exception $previous = null)
+    {
         $this->request = $request;
         parent::__construct($message, $this->getErrorInfo(), $code, $previous);
     }

@@ -15,7 +15,7 @@ use hiqdev\hiart\AbstractResponse;
 use hiqdev\hiart\ResponseErrorException;
 
 /**
- * Class Response represents response through cURL library
+ * Class Response represents response through cURL library.
  */
 class Response extends AbstractResponse
 {
@@ -40,11 +40,11 @@ class Response extends AbstractResponse
     protected $reasonPhrase;
 
     /**
-     * Response constructor
+     * Response constructor.
      *
      * @param AbstractRequest $request
-     * @param string $rawBody the raw response, returned by `curl_exec()` method.
-     * @param array $info the cURL information, returned by `curl_getinfo()` method.
+     * @param string $rawBody the raw response, returned by `curl_exec()` method
+     * @param array $info the cURL information, returned by `curl_getinfo()` method
      * @param string $error the cURL error message, if present. Empty string otherwise.
      * @param int $errorCode the cURL error code, if present. Integer `0` otherwise.
      * @throws ResponseErrorException
@@ -80,7 +80,7 @@ class Response extends AbstractResponse
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getStatusCode()
     {
@@ -88,7 +88,7 @@ class Response extends AbstractResponse
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getReasonPhrase()
     {
@@ -96,15 +96,15 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Parses raw response and returns parsed information
+     * Parses raw response and returns parsed information.
      *
      * @param string $data the raw response
      * @param array $info the curl information (result of `gurl_getinfo` call)
-     * @return array Array with the following keys will be returned:
+     * @return array array with the following keys will be returned:
      *  - data: string, response data;
      *  - headers: array, response headers;
      *  - statusCode: string, the response status-code;
-     *  - reasonPhrase: string, the response reason phrase (OK, NOT FOUND, etc).
+     *  - reasonPhrase: string, the response reason phrase (OK, NOT FOUND, etc)
      */
     protected function parseRawResponse($data, $info)
     {
@@ -117,11 +117,11 @@ class Response extends AbstractResponse
         // First line is status-code HTTP/1.1 200 OK
         list(, $result['statusCode'], $result['reasonPhrase']) = explode(' ', array_shift($rawHeaders), 3);
         foreach ($rawHeaders as $line) {
-            if ($line == '') {
+            if ($line === '') {
                 continue;
             }
 
-            list ($key, $value) = explode(': ', $line);
+            list($key, $value) = explode(': ', $line);
             $result['headers'][$key][] = $value;
         }
 
@@ -129,7 +129,7 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Checks $error and $errorCode for transport errors
+     * Checks $error and $errorCode for transport errors.
      *
      * @param string $error the cURL error message, if present. Empty string otherwise.
      * @param int $errorCode the cURL error code, if present. Integer `0` otherwise.

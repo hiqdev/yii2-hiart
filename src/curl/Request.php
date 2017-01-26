@@ -15,7 +15,7 @@ use hiqdev\hiart\RequestErrorException;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class Request represents request using cURL library
+ * Class Request represents request using cURL library.
  */
 class Request extends AbstractRequest
 {
@@ -32,8 +32,8 @@ class Request extends AbstractRequest
 
     /**
      * @param array $options
-     * @return array|mixed
      * @throws RequestErrorException
+     * @return array|mixed
      */
     public function send($options = [])
     {

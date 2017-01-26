@@ -35,8 +35,8 @@ class Request extends AbstractRequest
 
     /**
      * @param array $options
-     * @return mixed
      * @throws RequestErrorException
+     * @return mixed
      */
     public function send($options = [])
     {

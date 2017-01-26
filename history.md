@@ -1,6 +1,25 @@
 hiqdev/yii2-hiart
 -----------------
 
+## [Under development]
+
+- Implemented cURL transport
+    - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
+- Refactored exceptions
+    - [55f40a4] 2017-01-26 Updated stream/Request::send() to follow RequestErrorException API changes [@SilverFire]
+    - [1780efc] 2017-01-26 Enhanced AbstractResponse::isJson to prevent warning when there is not Content-Type header available [@SilverFire]
+    - [9305ec8] 2017-01-26 Refactored exceptions to get rid of $errorInfo [@SilverFire]
+- Improved PHPDocs, refactored many different methods, other minor enhancements equestErrorException
+    - [68752e3] 2017-01-26 PHPDocs updated [@SilverFire]
+    - [c8064d8] 2017-01-25 Minor enhancements [@SilverFire]
+    - [381da06] 2017-01-25 + default getStatusCode and getReasonPhrase to proxy Request [@hiqsol]
+    - [3aae6ec] 2017-01-25 added use of tests config [@hiqsol]
+    - [f81184a] 2017-01-25 Improved PHPDocs, refactored many different methods, other minor enhancements [@SilverFire]
+    - [2a1eefb] 2017-01-25 fixed building auth headers [@hiqsol]
+    - [a54f1f6] 2017-01-25 added auth headers NOT TESTED [@hiqsol]
+    - [938ad95] 2017-01-25 fixed sending request in DebugAction [@hiqsol]
+    - [3f77a7f] 2017-01-25 renamed a bit [@hiqsol]
+
 ## [0.1.0] - 2017-01-25
 
 - Changed nearly everything: **REDONE** to be usable for any API
@@ -443,9 +462,22 @@ hiqdev/yii2-hiart
 [d3756e4]: https://github.com/hiqdev/yii2-hiart/commit/d3756e4
 [ea50c04]: https://github.com/hiqdev/yii2-hiart/commit/ea50c04
 [8047d37]: https://github.com/hiqdev/yii2-hiart/commit/8047d37
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.0.4...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/hiqdev/yii2-hiart/releases/tag/0.0.1
 [0.1.0]: https://github.com/hiqdev/yii2-hiart/compare/0.0.4...0.1.0
+[a2a733f]: https://github.com/hiqdev/yii2-hiart/commit/a2a733f
+[55f40a4]: https://github.com/hiqdev/yii2-hiart/commit/55f40a4
+[68752e3]: https://github.com/hiqdev/yii2-hiart/commit/68752e3
+[1780efc]: https://github.com/hiqdev/yii2-hiart/commit/1780efc
+[9305ec8]: https://github.com/hiqdev/yii2-hiart/commit/9305ec8
+[c8064d8]: https://github.com/hiqdev/yii2-hiart/commit/c8064d8
+[381da06]: https://github.com/hiqdev/yii2-hiart/commit/381da06
+[3aae6ec]: https://github.com/hiqdev/yii2-hiart/commit/3aae6ec
+[f81184a]: https://github.com/hiqdev/yii2-hiart/commit/f81184a
+[2a1eefb]: https://github.com/hiqdev/yii2-hiart/commit/2a1eefb
+[a54f1f6]: https://github.com/hiqdev/yii2-hiart/commit/a54f1f6
+[938ad95]: https://github.com/hiqdev/yii2-hiart/commit/938ad95
+[3f77a7f]: https://github.com/hiqdev/yii2-hiart/commit/3f77a7f

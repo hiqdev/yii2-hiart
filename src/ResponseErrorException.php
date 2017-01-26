@@ -21,14 +21,15 @@ class ResponseErrorException extends Exception
     protected $response;
 
     /**
-     * ResponseErrorException constructor
+     * ResponseErrorException constructor.
      *
      * @param string $message the error message
      * @param ResponseInterface $response
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct($message, ResponseInterface $response, $code = 0, \Exception $previous = null) {
+    public function __construct($message, ResponseInterface $response, $code = 0, \Exception $previous = null)
+    {
         $this->response = $response;
         parent::__construct($message, $this->getErrorInfo(), $code, $previous);
     }

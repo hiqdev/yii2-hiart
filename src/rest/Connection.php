@@ -10,7 +10,6 @@
 
 namespace hiqdev\hiart\rest;
 
-use hiqdev\hiart\ResponseErrorException;
 use hiqdev\hiart\ResponseInterface;
 
 class Connection extends \hiqdev\hiart\AbstractConnection
@@ -18,7 +17,7 @@ class Connection extends \hiqdev\hiart\AbstractConnection
     public $queryBuilderClass = QueryBuilder::class;
 
     /**
-     * Method checks whether the response is an error
+     * Method checks whether the response is an error.
      *
      * @param ResponseInterface $response
      * @return false|string the error text or boolean `false`, when the response is not an error
@@ -31,6 +30,5 @@ class Connection extends \hiqdev\hiart\AbstractConnection
         }
 
         return $response->getReasonPhrase();
-
     }
 }

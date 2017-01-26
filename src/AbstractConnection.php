@@ -242,7 +242,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     }
 
     /**
-     * Method checks whether the response is an error
+     * Method checks whether the response is an error.
      *
      * @param ResponseInterface $response
      * @return false|string the error text or boolean `false`, when the response is not an error

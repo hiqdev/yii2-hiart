@@ -66,14 +66,14 @@ abstract class AbstractResponse implements ResponseInterface
     }
 
     /**
-     * Method returns RAW request data
+     * Method returns RAW request data.
      *
      * @return string
      */
     abstract public function getRawData();
 
     /**
-     * Whether the request is RAW and should not be decoded
+     * Whether the request is RAW and should not be decoded.
      * @return bool
      */
     public function isRaw()
@@ -82,7 +82,7 @@ abstract class AbstractResponse implements ResponseInterface
     }
 
     /**
-     * Method checks whether response is a JSON response
+     * Method checks whether response is a JSON response.
      * @return bool
      */
     public function isJson()

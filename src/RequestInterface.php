@@ -16,8 +16,8 @@ interface RequestInterface extends \Serializable
 {
     /**
      * @param array $options
-     * @return Response
      * @throws RequestErrorException
+     * @return Response
      */
     public function send($options = []);
 
@@ -32,7 +32,7 @@ interface RequestInterface extends \Serializable
     public function getFullUri();
 
     /**
-     * Method returns the Request method in the uppercase, e.g. GET, POST, DELETE
+     * Method returns the Request method in the uppercase, e.g. GET, POST, DELETE.
      * @return string
      */
     public function getMethod();

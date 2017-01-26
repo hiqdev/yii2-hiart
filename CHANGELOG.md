@@ -1,6 +1,12 @@
 hiqdev/yii2-hiart
 -----------------
 
+## [Under development]
+
+- Implemented cURL transport ([@SilverFire])
+- Refactored exceptions ([@SilverFire])
+- Improved PHPDocs, refactored many different methods, other minor enhancements equestErrorException ([@SilverFire], [@hiqsol])
+
 ## [0.1.0] - 2017-01-25
 
 - Changed nearly everything: **REDONE** to be usable for any API ([@hiqsol])
@@ -63,7 +69,7 @@ hiqdev/yii2-hiart
 [andreyklochok@gmail.com]: https://github.com/tafid
 [@BladeRoot]: https://github.com/BladeRoot
 [bladeroot@gmail.com]: https://github.com/BladeRoot
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.0.4...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
