@@ -43,14 +43,6 @@ class ActiveRecord extends BaseActiveRecord
         return new $class(get_called_class());
     }
 
-    /**
-     * This function is called from `Query::prepare`.
-     * You can redefine it to get desired behavior.
-     */
-    public static function prepare(Query $query, QueryBuilderInterface $builder)
-    {
-    }
-
     public function isScenarioDefault()
     {
         return $this->scenario === static::SCENARIO_DEFAULT;
