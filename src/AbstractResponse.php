@@ -87,7 +87,12 @@ abstract class AbstractResponse implements ResponseInterface
      */
     public function isJson()
     {
-        return !empty(preg_grep('|application/json|i', $this->getHeader('Content-Type')));
+        $value = $this->getHeader('Content-Type');
+        if ($value === null) {
+            return false;
+        }
+
+        return !empty(preg_grep('|application/json|i', $value));
     }
 
     /**
