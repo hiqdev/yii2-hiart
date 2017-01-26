@@ -25,21 +25,12 @@ class ResponseErrorException extends Exception
      *
      * @param string $message the error message
      * @param ResponseInterface $response
-     * @param array $errorInfo
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct(
-        $message,
-        ResponseInterface $response,
-        array $errorInfo = [],
-        $code = 0,
-        \Exception $previous = null
-    ) {
+    public function __construct($message, ResponseInterface $response, $code = 0, \Exception $previous = null) {
         $this->response = $response;
-        $errorInfo = array_merge($this->getDetailsArray(), $errorInfo);
-
-        parent::__construct($message, $errorInfo, $code, $previous);
+        parent::__construct($message, $this->getErrorInfo(), $code, $previous);
     }
 
     /**
@@ -69,7 +60,7 @@ class ResponseErrorException extends Exception
     /**
      * @return array
      */
-    protected function getDetailsArray()
+    protected function getErrorInfo()
     {
         $request = $this->getRequest();
         $response = $this->getResponse();

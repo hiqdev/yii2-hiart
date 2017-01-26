@@ -15,7 +15,7 @@ class ResponseDecodingException extends ResponseErrorException
     /**
      * {@inheritdoc}
      */
-    protected function getDetailsArray()
+    protected function getErrorInfo()
     {
         $request = $this->getRequest();
         $response = $this->getResponse();

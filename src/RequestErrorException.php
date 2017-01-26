@@ -25,21 +25,12 @@ class RequestErrorException extends Exception
      *
      * @param string $message
      * @param RequestInterface $request
-     * @param array $errorInfo
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct(
-        $message,
-        RequestInterface $request,
-        array $errorInfo = [],
-        $code = 0,
-        \Exception $previous = null
-    ) {
+    public function __construct($message, RequestInterface $request, $code = 0, \Exception $previous = null) {
         $this->request = $request;
-        $errorInfo = array_merge($this->getDetailsArray(), $errorInfo);
-
-        parent::__construct($message, $errorInfo, $code, $previous);
+        parent::__construct($message, $this->getErrorInfo(), $code, $previous);
     }
 
     /**
@@ -53,7 +44,7 @@ class RequestErrorException extends Exception
     /**
      * @return array
      */
-    protected function getDetailsArray()
+    protected function getErrorInfo()
     {
         $request = $this->getRequest();
 
