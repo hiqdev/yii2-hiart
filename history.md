@@ -4,6 +4,7 @@ hiqdev/yii2-hiart
 ## [Under development]
 
 - Implemented cURL transport
+    - [951ae15] 2017-01-26 csfixed [@SilverFire]
     - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
 - Refactored exceptions
     - [55f40a4] 2017-01-26 Updated stream/Request::send() to follow RequestErrorException API changes [@SilverFire]
@@ -481,3 +482,4 @@ hiqdev/yii2-hiart
 [a54f1f6]: https://github.com/hiqdev/yii2-hiart/commit/a54f1f6
 [938ad95]: https://github.com/hiqdev/yii2-hiart/commit/938ad95
 [3f77a7f]: https://github.com/hiqdev/yii2-hiart/commit/3f77a7f
+[951ae15]: https://github.com/hiqdev/yii2-hiart/commit/951ae15
