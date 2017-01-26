@@ -33,6 +33,11 @@ class Request extends AbstractRequest
         ],
     ];
 
+    /**
+     * @param array $options
+     * @return mixed
+     * @throws RequestErrorException
+     */
     public function send($options = [])
     {
         try {
@@ -44,8 +49,7 @@ class Request extends AbstractRequest
             $responseHeaders = $http_response_header;
             fclose($stream);
         } catch (\Exception $e) {
-            $errorInfo = ['request' => $this];
-            throw new RequestErrorException($e->getMessage(), $errorInfo, $e->getCode(), $e);
+            throw new RequestErrorException($e->getMessage(), $this, $e->getCode(), $e);
         }
 
         return new $this->responseClass($this, $responseContent, $responseHeaders);
