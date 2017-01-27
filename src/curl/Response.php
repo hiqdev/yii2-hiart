@@ -141,4 +141,18 @@ class Response extends AbstractResponse
             throw new ResponseErrorException($error, $this, $errorCode);
         }
     }
+
+    /**
+     * Returns array of all headers.
+     * Key - Header name
+     * Value - array of header values. For example:
+     *
+     * ```php
+     * ['Location' => ['http://example.com'], 'Expires' => ['Thu, 01 Jan 1970 00:00:00 GMT']]
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
 }

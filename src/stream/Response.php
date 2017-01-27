@@ -46,6 +46,11 @@ class Response extends AbstractResponse
         return isset($this->headers[$name]) ? $this->headers[$name] : null;
     }
 
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
     public function parseHeaders($headers)
     {
         $result = [];
