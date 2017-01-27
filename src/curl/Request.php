@@ -41,7 +41,7 @@ class Request extends AbstractRequest
             $this->build();
 
             $curl = curl_init($this->getFullUri());
-            $this->setCurlOptions($curl);
+            curl_setopt_array($curl, $this->prepareCurlOptions($options));
             $response = curl_exec($curl);
             $info = curl_getinfo($curl);
             $error = curl_error($curl);
@@ -57,10 +57,11 @@ class Request extends AbstractRequest
     }
 
     /**
-     * @param resource $curl
+     * @param array $options
      * @throws RequestErrorException
+     * @return array
      */
-    protected function setCurlOptions($curl)
+    protected function prepareCurlOptions($options)
     {
         $requestOptions = $this->buildMethodOptions();
         $requestOptions[CURLOPT_HTTPHEADER] = $this->buildHeaderLines();
@@ -73,8 +74,7 @@ class Request extends AbstractRequest
             throw new RequestErrorException('Request version "' . $this->getVersion() . '" is not support by cURL', $this);
         }
 
-        $options = ArrayHelper::merge($this->defaultOptions, $this->getDb()->config, $requestOptions);
-        curl_setopt_array($curl, $options);
+        return ArrayHelper::merge($this->defaultOptions, $this->getDb()->config, $requestOptions, $options);
     }
 
     /**
