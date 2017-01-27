@@ -3,9 +3,10 @@ hiqdev/yii2-hiart
 
 ## [Under development]
 
-- Implemented cURL transport ([@SilverFire])
+- Changed: renamed `from` -> `tableName` in ActiveRecord ([@hiqsol], [@SilverFire])
+- Changed: refactored a lot, removed junk, improved PHPDocs ([@hiqsol], [@SilverFire])
+- Implemented **cURL** transport ([@hiqsol], [@SilverFire])
 - Refactored exceptions ([@SilverFire])
-- Improved PHPDocs, refactored many different methods, other minor enhancements equestErrorException ([@SilverFire], [@hiqsol])
 
 ## [0.1.0] - 2017-01-25
 

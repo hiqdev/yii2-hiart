@@ -3,7 +3,16 @@ hiqdev/yii2-hiart
 
 ## [Under development]
 
-- Improved PHPDocs, refactored many different methods, other minor enhancements
+- Changed: renamed `from` -> `tableName` in ActiveRecord
+    - [193dda0] 2017-01-27 fixed wrong tableName -> from renaming [@hiqsol]
+    - [54dcc08] 2017-01-27 renamed from -> `tableName` in ActiveRecord [@hiqsol]
+    - [1f652c8] 2017-01-27 Fixed ActiveQuery::one() not to populate row when it is null [@SilverFire]
+- Changed: refactored a lot, removed junk, improved PHPDocs
+    - [96de4d1] 2017-01-27 csfixed [@hiqsol]
+    - [1ef448c] 2017-01-27 removed `ActiveRecord::get()` [@hiqsol]
+    - [46bb95f] 2017-01-27 removed index and joinIndex from ActiveRecord [@hiqsol]
+    - [5f11ea8] 2017-01-27 removed primaryValue from ActiveRecord [@hiqsol]
+    - [140aa1b] 2017-01-27 Added `getHeaders` method to the ResponseInterface [@SilverFire]
     - [64d485c] 2017-01-27 + hiart.auth param [@hiqsol]
     - [ea06ace] 2017-01-26 changed `Command::search`: added passing send options [@hiqsol]
     - [5cb9c71] 2017-01-26 + Query::searchOne for redefining [@hiqsol]
@@ -17,10 +26,13 @@ hiqdev/yii2-hiart
     - [a54f1f6] 2017-01-25 added auth headers NOT TESTED [@hiqsol]
     - [938ad95] 2017-01-25 fixed sending request in DebugAction [@hiqsol]
     - [3f77a7f] 2017-01-25 renamed a bit [@hiqsol]
-- Implemented cURL transport
+- Implemented **cURL** transport
+    - [e80a08d] 2017-01-27 refactored setCurlOptions -> prepareCurlOptions [@hiqsol]
     - [951ae15] 2017-01-26 csfixed [@SilverFire]
     - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
 - Refactored exceptions
+    - [9182f1d] 2017-01-27 PHPDocs enhanced [@SilverFire]
+    - [3e5573c] 2017-01-27 Improved PHPDocs, addedd response headers to the exception information [@SilverFire]
     - [55f40a4] 2017-01-26 Updated stream/Request::send() to follow RequestErrorException API changes [@SilverFire]
     - [1780efc] 2017-01-26 Enhanced AbstractResponse::isJson to prevent warning when there is not Content-Type header available [@SilverFire]
     - [9305ec8] 2017-01-26 Refactored exceptions to get rid of $errorInfo [@SilverFire]
@@ -491,3 +503,14 @@ hiqdev/yii2-hiart
 [ea06ace]: https://github.com/hiqdev/yii2-hiart/commit/ea06ace
 [5cb9c71]: https://github.com/hiqdev/yii2-hiart/commit/5cb9c71
 [dfb1362]: https://github.com/hiqdev/yii2-hiart/commit/dfb1362
+[96de4d1]: https://github.com/hiqdev/yii2-hiart/commit/96de4d1
+[1ef448c]: https://github.com/hiqdev/yii2-hiart/commit/1ef448c
+[193dda0]: https://github.com/hiqdev/yii2-hiart/commit/193dda0
+[e80a08d]: https://github.com/hiqdev/yii2-hiart/commit/e80a08d
+[54dcc08]: https://github.com/hiqdev/yii2-hiart/commit/54dcc08
+[46bb95f]: https://github.com/hiqdev/yii2-hiart/commit/46bb95f
+[5f11ea8]: https://github.com/hiqdev/yii2-hiart/commit/5f11ea8
+[1f652c8]: https://github.com/hiqdev/yii2-hiart/commit/1f652c8
+[9182f1d]: https://github.com/hiqdev/yii2-hiart/commit/9182f1d
+[3e5573c]: https://github.com/hiqdev/yii2-hiart/commit/3e5573c
+[140aa1b]: https://github.com/hiqdev/yii2-hiart/commit/140aa1b
