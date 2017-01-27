@@ -250,6 +250,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
 
         $row = $this->searchOne($db);
+        if ($row === null) {
+            return null;
+        }
 
         return reset($this->populate([$row]));
     }
