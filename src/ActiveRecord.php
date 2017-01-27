@@ -120,20 +120,6 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return string the name of the index this record is stored in
-     */
-    public static function index()
-    {
-        //        return Inflector::pluralize(Inflector::camel2id(StringHelper::basename(get_called_class()), '-'));
-        return mb_strtolower(StringHelper::basename(get_called_class()) . 's');
-    }
-
-    public static function joinIndex()
-    {
-        return static::index();
-    }
-
-    /**
      * Creates an active record instance.
      *
      * This method is called together with [[populateRecord()]] by [[ActiveQuery]].
