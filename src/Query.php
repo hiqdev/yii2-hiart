@@ -51,7 +51,7 @@ class Query extends \yii\db\Query implements QueryInterface
     {
         $query = new static();
 
-        return $query->action($action)->from($from)->options($options);
+        return $query->action($action)->tableName($from)->options($options);
     }
 
     /**

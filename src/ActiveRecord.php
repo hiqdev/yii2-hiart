@@ -62,7 +62,7 @@ class ActiveRecord extends BaseActiveRecord
             return null;
         }
         $command = static::getDb()->createCommand();
-        $result  = $command->get(static::from(), $primaryKey, $options);
+        $result  = $command->get(static::tableName(), $primaryKey, $options);
 
         if ($result) {
             $model = static::instantiate($result);
@@ -140,7 +140,7 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * @return string the name of the entity of this record
      */
-    public static function from()
+    public static function tableName()
     {
         return Inflector::camel2id(StringHelper::basename(get_called_class()), '-');
     }
@@ -244,7 +244,7 @@ class ActiveRecord extends BaseActiveRecord
 
     public static function perform($action, $data, array $options = [])
     {
-        return static::getDb()->createCommand()->perform($action, static::from(), $data, $options);
+        return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
     }
 
     /**
