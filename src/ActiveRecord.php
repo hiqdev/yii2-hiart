@@ -95,64 +95,6 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * +     * The name of the main attribute
-     * +     *
-     * Examples:.
-     *
-     * This will directly reference to the attribute 'name'
-     * ```
-     *     return 'name';
-     * ```
-     *
-     * This will concatenate listed attributes, separated with `delimiter` value.
-     * If delimiter is not set, space is used by default.
-     * ```
-     *     return ['seller', 'client', 'delimiter' => '/'];
-     * ```
-     *
-     * The callable method, that will get [[$model]] and should return value of name attribute
-     * ```
-     *     return function ($model) {
-     *        return $model->someField ? $model->name : $model->otherName;
-     *     };
-     * ```
-     *
-     * @throws InvalidConfigException
-     *
-     * @return string|callable|array
-     *
-     * @author SilverFire
-     */
-    public function primaryValue()
-    {
-        return static::formName();
-    }
-
-    /**
-     * Returns the value of the primary attribute.
-     *
-     * @throws InvalidConfigException
-     *
-     * @return mixed|null
-     *
-     * @see primaryValue()
-     */
-    public function getPrimaryValue()
-    {
-        $primaryValue = $this->primaryValue();
-
-        if ($primaryValue instanceof \Closure) {
-            return call_user_func($primaryValue, [$this]);
-        } elseif (is_array($primaryValue)) {
-            $delimiter = ArrayHelper::remove($primaryValue, 'delimiter', ' ');
-
-            return implode($delimiter, $this->getAttributes($primaryValue));
-        } else {
-            return $this->getAttribute($primaryValue);
-        }
-    }
-
-    /**
      * Returns the list of attribute names.
      * By default, this method returns all attributes mentioned in rules.
      * You may override this method to change the default behavior.
