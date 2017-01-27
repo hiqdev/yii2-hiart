@@ -3,14 +3,11 @@ hiqdev/yii2-hiart
 
 ## [Under development]
 
-- Implemented cURL transport
-    - [951ae15] 2017-01-26 csfixed [@SilverFire]
-    - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
-- Refactored exceptions
-    - [55f40a4] 2017-01-26 Updated stream/Request::send() to follow RequestErrorException API changes [@SilverFire]
-    - [1780efc] 2017-01-26 Enhanced AbstractResponse::isJson to prevent warning when there is not Content-Type header available [@SilverFire]
-    - [9305ec8] 2017-01-26 Refactored exceptions to get rid of $errorInfo [@SilverFire]
-- Improved PHPDocs, refactored many different methods, other minor enhancements equestErrorException
+- Improved PHPDocs, refactored many different methods, other minor enhancements
+    - [64d485c] 2017-01-27 + hiart.auth param [@hiqsol]
+    - [ea06ace] 2017-01-26 changed `Command::search`: added passing send options [@hiqsol]
+    - [5cb9c71] 2017-01-26 + Query::searchOne for redefining [@hiqsol]
+    - [dfb1362] 2017-01-26 removed `ActiveRecord::prepare()` [@hiqsol]
     - [68752e3] 2017-01-26 PHPDocs updated [@SilverFire]
     - [c8064d8] 2017-01-25 Minor enhancements [@SilverFire]
     - [381da06] 2017-01-25 + default getStatusCode and getReasonPhrase to proxy Request [@hiqsol]
@@ -20,6 +17,13 @@ hiqdev/yii2-hiart
     - [a54f1f6] 2017-01-25 added auth headers NOT TESTED [@hiqsol]
     - [938ad95] 2017-01-25 fixed sending request in DebugAction [@hiqsol]
     - [3f77a7f] 2017-01-25 renamed a bit [@hiqsol]
+- Implemented cURL transport
+    - [951ae15] 2017-01-26 csfixed [@SilverFire]
+    - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
+- Refactored exceptions
+    - [55f40a4] 2017-01-26 Updated stream/Request::send() to follow RequestErrorException API changes [@SilverFire]
+    - [1780efc] 2017-01-26 Enhanced AbstractResponse::isJson to prevent warning when there is not Content-Type header available [@SilverFire]
+    - [9305ec8] 2017-01-26 Refactored exceptions to get rid of $errorInfo [@SilverFire]
 
 ## [0.1.0] - 2017-01-25
 
@@ -483,3 +487,7 @@ hiqdev/yii2-hiart
 [938ad95]: https://github.com/hiqdev/yii2-hiart/commit/938ad95
 [3f77a7f]: https://github.com/hiqdev/yii2-hiart/commit/3f77a7f
 [951ae15]: https://github.com/hiqdev/yii2-hiart/commit/951ae15
+[64d485c]: https://github.com/hiqdev/yii2-hiart/commit/64d485c
+[ea06ace]: https://github.com/hiqdev/yii2-hiart/commit/ea06ace
+[5cb9c71]: https://github.com/hiqdev/yii2-hiart/commit/5cb9c71
+[dfb1362]: https://github.com/hiqdev/yii2-hiart/commit/dfb1362
