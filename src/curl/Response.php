@@ -145,7 +145,7 @@ class Response extends AbstractResponse
     /**
      * Returns array of all headers.
      * Key - Header name
-     * Value - array of header values. For example:
+     * Value - array of header values. For example:.
      *
      * ```php
      * ['Location' => ['http://example.com'], 'Expires' => ['Thu, 01 Jan 1970 00:00:00 GMT']]

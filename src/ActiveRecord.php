@@ -14,7 +14,6 @@ use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
 use yii\db\BaseActiveRecord;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 

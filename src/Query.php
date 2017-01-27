@@ -56,8 +56,8 @@ class Query extends \yii\db\Query implements QueryInterface
 
     /**
      * @param null $db
-     * @return Command
      * @throws \Exception
+     * @return Command
      */
     public function createCommand($db = null)
     {
