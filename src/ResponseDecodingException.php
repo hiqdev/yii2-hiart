@@ -30,7 +30,8 @@ class ResponseDecodingException extends ResponseErrorException
 
         return [
             'statusCode' => $response->getStatusCode(),
-            'responseData' => $response->getRawData(),
+            'data' => $response->getRawData(),
+            'headers' => $response->getHeaders(),
             'request' => [
                 'method' => $request->getMethod(),
                 'uri' => $request->getFullUri(),
