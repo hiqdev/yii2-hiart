@@ -20,11 +20,12 @@ return empty($params['hiart.enabled']) ? [] : [
     ]),
     'components' => array_filter([
         $params['hiart.dbname'] => array_filter([
-            'class' => $params['hiart.class'],
-            'requestClass' => $params['hiart.requestClass'],
-            'name' => $params['hiart.dbname'],
-            'config' => $params['hiart.config'],
-            'baseUri' => $params['hiart.baseUri'],
+            'class'         => $params['hiart.class'],
+            'requestClass'  => $params['hiart.requestClass'],
+            'name'          => $params['hiart.dbname'],
+            'auth'          => $params['hiart.auth'],
+            'config'        => $params['hiart.config'],
+            'baseUri'       => $params['hiart.baseUri'],
         ]),
     ]),
     'container' => [

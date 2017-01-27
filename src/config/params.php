@@ -13,6 +13,7 @@ return [
     'hiart.class'           => \hiqdev\hiart\rest\Connection::class,
     'hiart.requestClass'    => \hiqdev\hiart\stream\Request::class,
     'hiart.dbname'          => 'hiart',
+    'hiart.auth'            => [],
     'hiart.config'          => [],
     'hiart.baseUri'         => null,
 ];
