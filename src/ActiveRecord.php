@@ -49,33 +49,6 @@ class ActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * Gets a record by its primary key.
-     *
-     * @param mixed $primaryKey the primaryKey value
-     * @param array $options    options given in this parameter are passed to API
-     *
-     * @return null|static the record instance or null if it was not found
-     */
-    public static function get($primaryKey = null, $options = [])
-    {
-        if ($primaryKey === null) {
-            return null;
-        }
-        $command = static::getDb()->createCommand();
-        $result  = $command->get(static::tableName(), $primaryKey, $options);
-
-        if ($result) {
-            $model = static::instantiate($result);
-            static::populateRecord($model, $result);
-            $model->afterFind();
-
-            return $model;
-        }
-
-        return null;
-    }
-
-    /**
      * This method defines the attribute that uniquely identifies a record.
      *
      * The primaryKey for HiArt objects is the `id` field by default. This field is not part of the
