@@ -54,6 +54,11 @@ class Query extends \yii\db\Query implements QueryInterface
         return $query->action($action)->from($from)->options($options);
     }
 
+    /**
+     * @param null $db
+     * @return Command
+     * @throws \Exception
+     */
     public function createCommand($db = null)
     {
         if ($db === null) {
