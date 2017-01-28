@@ -10,14 +10,12 @@
 
 namespace hiqdev\hiart;
 
-use hiqdev\hiart\curl\Response;
-
 interface RequestInterface extends \Serializable
 {
     /**
      * @param array $options
      * @throws RequestErrorException
-     * @return Response
+     * @return ResponseInterface
      */
     public function send($options = []);
 
