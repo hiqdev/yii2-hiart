@@ -1,7 +1,7 @@
 HiArt
 =====
 
-**Tools to use API as ActiveRecord for Yii2**
+**ActiveRecord for API**
 
 [![Latest Stable Version](https://poser.pugx.org/hiqdev/yii2-hiart/v/stable)](https://packagist.org/packages/hiqdev/yii2-hiart)
 [![Total Downloads](https://poser.pugx.org/hiqdev/yii2-hiart/downloads)](https://packagist.org/packages/hiqdev/yii2-hiart)
@@ -10,7 +10,9 @@ HiArt
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/hiqdev/yii2-hiart.svg)](https://scrutinizer-ci.com/g/hiqdev/yii2-hiart/)
 [![Dependency Status](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master/badge.svg)](https://www.versioneye.com/php/hiqdev:yii2-hiart/dev-master)
 
-Use your API as ActiveRecord
+This Yii2 extension provides [ActiveRecord](http://en.wikipedia.org/wiki/Active_record_pattern)
+implementation that allows to access remote/web API same way as you do with normal
+[Yii2 DB ActiveRecord](http://www.yiiframework.com/doc-2.0/guide-db-active-record.html).
 
 ## Installation
 

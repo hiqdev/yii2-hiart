@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<EOF
-Tools to use API as ActiveRecord for Yii2
+ActiveRecord for API
 
 @link      https://github.com/hiqdev/yii2-hiart
 @package   yii2-hiart

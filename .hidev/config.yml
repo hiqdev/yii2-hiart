@@ -1,9 +1,11 @@
 package:
     type:           yii2-extension
     name:           yii2-hiart
-    title:          Tools to use API as ActiveRecord for Yii2
+    title:          ActiveRecord for API
     headline:       HiArt
-    keywords:       api, ActiveRecord, extension, yii2
+    keywords:       API, ActiveRecord, extension, yii2, rest
     namespace:      hiqdev\hiart
-    description:    Use your API as ActiveRecord
-
+    description:    |
+        This Yii2 extension provides [ActiveRecord](http://en.wikipedia.org/wiki/Active_record_pattern)
+        implementation that allows to access remote/web API same way as you do with normal
+        [Yii2 DB ActiveRecord](http://www.yiiframework.com/doc-2.0/guide-db-active-record.html).
