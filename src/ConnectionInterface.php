@@ -21,4 +21,11 @@ interface ConnectionInterface
      * @return ConnectionInterface
      */
     public static function getDb($dbname = null);
+
+    /**
+     * Creates API command.
+     * @param array $config
+     * @return mixed response
+     */
+    public function createCommand(array $config = []);
 }
