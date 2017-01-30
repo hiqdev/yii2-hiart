@@ -16,25 +16,31 @@ Note three main options:
 - `requestClass` specifies transport implementation to be used, **cURL** in this case
 - `baseUri` specifies starting point of the API
 
+### Transports
+
 Available transports are:
 
 - [PHP streams](http://php.net/manual/en/book.stream.php), **default**, included in this package
-- [cURL](http://php.net/manual/en/book.curl.php), included in this package
+- [cURL](http://php.net/manual/en/book.curl.php), provided with [yii2-hiart-curl](https://github.com/hiqdev/yii2-hiart-curl)
 - [Guzzle](https://github.com/guzzle/guzzle), provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
 - [yii2-httpclient](https://github.com/yiisoft/yii2-httpclient), provided with [yii2-hiart-httpclient](https://github.com/hiqdev/yii2-hiart-httpclient)
 
-You can implement your own transport, it's not difficult see available implementations.
-All you need is to create two classes:
-It can be even not HTTP based.
+You can implement your own transport.
+All you need is to create two classes: `Request` and `Response`, it's not difficult see available implementations.
+Transport can be even non-HTTP based.
 
-There are `QueryBuilder`s for:
+### Query builders
 
-- Basic [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), included in this package
+QueryBuilder is what actually implements an API.
+
+We are developing `QueryBuilder`s for:
+
+- Basic [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer), included in this package
 - [GitHub API](https://developer.github.com/v3/), provided with [yii2-hiart-github](https://github.com/hiqdev/yii2-hiart-github)
 - [HiPanel API](https://hipanel.com/), provided with [hipanel-hiart](https://github.com/hiqdev/hipanel-hiart)
 
 You can implement your own API.
-Basically all you need is to create your QueryBuilder with these methods:
+Basically all you need is create your `QueryBuilder` class with these methods:
 
 - `buildMethod(Query $query)`
 - `buildHeaders(Query $query)`
@@ -43,4 +49,4 @@ Basically all you need is to create your QueryBuilder with these methods:
 - `buildBody(Query $query)`
 - `buildFormParams(Query $query)`
 
-See available implementations and create issues on GitHub.
+See available implementations and ask questions using issues on GitHub.
