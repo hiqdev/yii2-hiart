@@ -219,6 +219,13 @@ class ActiveRecord extends BaseActiveRecord
         return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
     }
 
+    public static function batchPerform($action, $data, array $options = [])
+    {
+        $options['batch'] = true;
+
+        return static::perform($action, $data, $options);
+    }
+
     /**
      * Converts scenario name to action.
      * @param string $default default action name
