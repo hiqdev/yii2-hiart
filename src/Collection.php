@@ -318,7 +318,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes);
-        $results = $this->first->batchPerformScenario('create', $data, $options);
+        $results = $this->first->batchQuery('create', $data, $options);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -351,7 +351,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes);
-        $results = $this->first->batchPerformScenario('update', $data, $options);
+        $results = $this->first->batchQuery('update', $data, $options);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -375,7 +375,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData();
-        $results = $this->first->batchPerformScenario('delete', $data);
+        $results = $this->first->batchQuery('delete', $data);
 
         $this->afterDelete();
 

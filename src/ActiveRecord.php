@@ -140,7 +140,7 @@ class ActiveRecord extends BaseActiveRecord
 
         $values = $this->getDirtyAttributes($attributes);
         $data   = array_merge($values, $options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->performScenario('insert', $data);
+        $result = $this->query('insert', $data);
 
         $pk        = static::primaryKey()[0];
         $this->$pk = $result['id'];
@@ -164,7 +164,7 @@ class ActiveRecord extends BaseActiveRecord
         }
 
         $data   = array_merge($options, ['id' => $this->getOldPrimaryKey()]);
-        $result = $this->performScenario('delete', $data);
+        $result = $this->query('delete', $data);
 
         $this->setOldAttributes(null);
         $this->afterDelete();
@@ -194,7 +194,7 @@ class ActiveRecord extends BaseActiveRecord
             return 0;
         }
 
-        $result = $this->performScenario('update', $values, $options);
+        $result = $this->query('update', $values, $options);
 
         $changedAttributes = [];
         foreach ($values as $name => $value) {
@@ -207,23 +207,18 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
-    public function batchPerformScenario($defaultScenario, $data = [], array $options = [])
+    public function batchQuery($defaultScenario, $data = [], array $options = [])
     {
         $options['batch'] = true;
 
-        return $this->performScenario($defaultScenario, $data, $options);
+        return $this->query($defaultScenario, $data, $options);
     }
 
-    public function performScenario($defaultScenario, $data = [], array $options = [])
+    public function query($defaultScenario, $data = [], array $options = [])
     {
         $action = $this->getScenarioAction($defaultScenario);
 
         return static::perform($action, $data, $options);
-    }
-
-    public static function perform($action, $data = [], array $options = [])
-    {
-        return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
     }
 
     public static function batchPerform($action, $data = [], array $options = [])
@@ -231,6 +226,11 @@ class ActiveRecord extends BaseActiveRecord
         $options['batch'] = true;
 
         return static::perform($action, $data, $options);
+    }
+
+    public static function perform($action, $data = [], array $options = [])
+    {
+        return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
     }
 
     /**
