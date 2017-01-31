@@ -207,26 +207,26 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
-    public function batchPerformScenario($defaultScenario, $data, array $options = [])
+    public function batchPerformScenario($defaultScenario, $data = [], array $options = [])
     {
         $options['batch'] = true;
 
         return $this->performScenario($defaultScenario, $data, $options);
     }
 
-    public function performScenario($defaultScenario, $data, array $options = [])
+    public function performScenario($defaultScenario, $data = [], array $options = [])
     {
         $action = $this->getScenarioAction($defaultScenario);
 
         return static::perform($action, $data, $options);
     }
 
-    public static function perform($action, $data, array $options = [])
+    public static function perform($action, $data = [], array $options = [])
     {
         return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
     }
 
-    public static function batchPerform($action, $data, array $options = [])
+    public static function batchPerform($action, $data = [], array $options = [])
     {
         $options['batch'] = true;
 
