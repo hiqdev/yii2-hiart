@@ -317,9 +317,8 @@ class Collection extends Component
             return false;
         }
 
-        $options['batch'] = true;
         $data    = $this->collectData($attributes);
-        $results = $this->first->perform('create', $data, $options);
+        $results = $this->first->batchPerformScenario('create', $data, $options);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -351,9 +350,8 @@ class Collection extends Component
             return false;
         }
 
-        $options['batch'] = true;
         $data    = $this->collectData($attributes);
-        $results = $this->first->perform('update', $data, $options);
+        $results = $this->first->batchPerformScenario('update', $data, $options);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -377,7 +375,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData();
-        $results = $this->first->perform('delete', $data, true);
+        $results = $this->first->batchPerformScenario('delete', $data);
 
         $this->afterDelete();
 

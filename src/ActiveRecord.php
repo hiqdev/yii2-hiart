@@ -207,6 +207,13 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
+    public function batchPerformScenario($defaultScenario, $data, array $options = [])
+    {
+        $options['batch'] = true;
+
+        return $this->performScenario($defaultScenario, $data, $options);
+    }
+
     public function performScenario($defaultScenario, $data, array $options = [])
     {
         $action = $this->getScenarioAction($defaultScenario);
@@ -236,56 +243,24 @@ class ActiveRecord extends BaseActiveRecord
     public function getScenarioAction($default = '')
     {
         if ($this->isScenarioDefault()) {
-            if ($default !== '') {
-                $result = Inflector::id2camel($default);
-            } else {
+            if (empty($default)) {
                 throw new InvalidConfigException('Scenario not specified');
             }
+
+            return $default;
         } else {
-            $scenarioCommands = static::scenarioCommands();
-            if ($action = $scenarioCommands[$this->scenario]) {
-                if ($action === false) {
-                    throw new NotSupportedException('The scenario can not be saved');
-                }
+            $actions = static::scenarioActions();
 
-                if (is_array($action) && $action[0] === null) {
-                    $result = $action[1];
-                } elseif (is_array($action)) {
-                    $result = $action;
-                } else {
-                    $result = Inflector::id2camel($action);
-                }
-            } else {
-                $result = Inflector::id2camel($this->scenario);
-            }
+            return isset($actions[$this->scenario]) ? $actions[$this->scenario] : $this->scenario;
         }
-
-        return is_array($result) ? implode('', $result) : $result;
     }
 
     /**
-     * Define an array of relations between scenario and API call action.
-     *
-     * Example:
-     *
-     * ```
-     * [
-     *      'update-name'                => 'set-name', /// ModuleSetName
-     *      'update-related-name'        => [Action::formName(), 'SetName'], /// ActionSetName
-     *      'update-self-case-sensetive' => [null, 'SomeSENSETIVE'] /// ModuleSomeSENSETIVE
-     * ]
-     * ~~
-     *
-     *  key string name of scenario
-     *  value string|array
-     *              string will be passed to [[Inflector::id2camel|id2camel]] inflator
-     *              array - first attribute a module name, second - value
-     *
-     * Tricks: pass null as first argument of array to leave command's case unchanged (no inflator calling)
-     *
+     * Provides a correspondance array: scenario -> API action.
+     * E.g. ['update-name' => 'set-name']
      * @return array
      */
-    public function scenarioCommands()
+    public function scenarioActions()
     {
         return [];
     }
