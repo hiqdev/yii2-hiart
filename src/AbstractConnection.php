@@ -249,6 +249,8 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
      */
     abstract public function getResponseError(ResponseInterface $response);
 
+    protected $baseUriChecked;
+
     /**
      * Return API base uri.
      * Adds trailing slash if uri is domain only.
@@ -256,12 +258,11 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
      */
     public function getBaseUri()
     {
-        static $checked;
-        if (empty($checked)) {
-            if (count(explode('/', $this->baseUri, 4)) === 3) {
+        if (empty($this->baseUriChecked)) {
+            if (preg_match('#^https?://[^/]+$#', $this->baseUri)) {
                 $this->baseUri .= '/';
             }
-            $checked = true;
+            $this->baseUriChecked = true;
         }
 
         return $this->baseUri;

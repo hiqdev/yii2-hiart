@@ -30,10 +30,14 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
     }
 
-    public function testGetBaseUri()
+    public function testShortBaseUri()
     {
         $this->db->baseUri = $this->shortUri;
         $this->assertSame($this->fixedUri, $this->db->getBaseUri());
+    }
+
+    public function testFixedBaseUri()
+    {
         $this->db->baseUri = $this->fixedUri;
         $this->assertSame($this->fixedUri, $this->db->getBaseUri());
     }
