@@ -1,13 +1,25 @@
 hiqdev/yii2-hiart
 -----------------
 
-## [Under development]
+## [0.1.1] - 2017-02-07
 
-- Changed: renamed `from` -> `tableName` in ActiveRecord
+- Renamed performScenario to `query` and `batchQuery`
+    - [2993c1e] 2017-02-07 csfixed [@hiqsol]
+    - [c478145] 2017-01-31 renamed batch/performScenario -> batch/query [@hiqsol]
+    - [e7b0e12] 2017-01-31 added default to $data in batch/Perform/Scenario() [@hiqsol]
+- Added `batchPerform`
+    - [ae55bad] 2017-01-30 + `ActiveRecord::batchPerform()` [@hiqsol]
+- Renamed scenarioCommands to `scenarioActions`
+    - [f00d744] 2017-01-31 renamed scenarioActions <- scenarioCommands, added batchPerformScenario [@hiqsol]
+- Renamed from -> `tableName` in ActiveRecord
     - [193dda0] 2017-01-27 fixed wrong tableName -> from renaming [@hiqsol]
     - [54dcc08] 2017-01-27 renamed from -> `tableName` in ActiveRecord [@hiqsol]
     - [1f652c8] 2017-01-27 Fixed ActiveQuery::one() not to populate row when it is null [@SilverFire]
-- Changed: refactored a lot, removed junk, improved PHPDocs
+- Refactored a lot, removed junk, improved docs
+    - [84b4362] 2017-02-07 docs [@hiqsol]
+    - [4033561] 2017-01-30 doc [@hiqsol]
+    - [87486fb] 2017-01-30 changed project title and description [@hiqsol]
+    - [9f0144b] 2017-01-30 + createCommand to ConnectionInterface [@hiqsol]
     - [96de4d1] 2017-01-27 csfixed [@hiqsol]
     - [1ef448c] 2017-01-27 removed `ActiveRecord::get()` [@hiqsol]
     - [46bb95f] 2017-01-27 removed index and joinIndex from ActiveRecord [@hiqsol]
@@ -26,7 +38,8 @@ hiqdev/yii2-hiart
     - [a54f1f6] 2017-01-25 added auth headers NOT TESTED [@hiqsol]
     - [938ad95] 2017-01-25 fixed sending request in DebugAction [@hiqsol]
     - [3f77a7f] 2017-01-25 renamed a bit [@hiqsol]
-- Implemented **cURL** transport
+- Removed **cURL** transport into separate package [yii2-hiart-curl]
+    - [777df5f] 2017-01-28 removed curl transport to yii2-hiart-curl [@hiqsol]
     - [e80a08d] 2017-01-27 refactored setCurlOptions -> prepareCurlOptions [@hiqsol]
     - [951ae15] 2017-01-26 csfixed [@SilverFire]
     - [a2a733f] 2017-01-26 Implemented cURL transport [@SilverFire]
@@ -281,6 +294,7 @@ hiqdev/yii2-hiart
 
 ## [Development started] - 2015-04-17
 
+[yii2-hiart-curl]: https://github.com/hiqdev/yii2-hiart-curl
 [@hiqsol]: https://github.com/hiqsol
 [sol@hiqdev.com]: https://github.com/hiqsol
 [@SilverFire]: https://github.com/SilverFire
@@ -514,3 +528,14 @@ hiqdev/yii2-hiart
 [9182f1d]: https://github.com/hiqdev/yii2-hiart/commit/9182f1d
 [3e5573c]: https://github.com/hiqdev/yii2-hiart/commit/3e5573c
 [140aa1b]: https://github.com/hiqdev/yii2-hiart/commit/140aa1b
+[c478145]: https://github.com/hiqdev/yii2-hiart/commit/c478145
+[e7b0e12]: https://github.com/hiqdev/yii2-hiart/commit/e7b0e12
+[f00d744]: https://github.com/hiqdev/yii2-hiart/commit/f00d744
+[ae55bad]: https://github.com/hiqdev/yii2-hiart/commit/ae55bad
+[9f0144b]: https://github.com/hiqdev/yii2-hiart/commit/9f0144b
+[4033561]: https://github.com/hiqdev/yii2-hiart/commit/4033561
+[87486fb]: https://github.com/hiqdev/yii2-hiart/commit/87486fb
+[777df5f]: https://github.com/hiqdev/yii2-hiart/commit/777df5f
+[2993c1e]: https://github.com/hiqdev/yii2-hiart/commit/2993c1e
+[84b4362]: https://github.com/hiqdev/yii2-hiart/commit/84b4362
+[0.1.1]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...0.1.1
