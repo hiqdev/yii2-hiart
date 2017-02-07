@@ -28,4 +28,6 @@ $user->save();
 $admins = User::find()->where(['type' => User::ADMIN_TYPE])->all();
 ```
 
-Basically all features of Yii ActiveRecords work if your API provides them.
+Basically all features of [Yii2 ActiveRecord] work if your API provides them.
+
+[Yii2 ActiveRecord]: http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
