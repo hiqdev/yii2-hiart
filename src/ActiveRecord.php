@@ -257,7 +257,7 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * Provides a correspondance array: scenario -> API action.
-     * E.g. ['update-name' => 'set-name']
+     * E.g. ['update-name' => 'set-name'].
      * @return array
      */
     public function scenarioActions()
