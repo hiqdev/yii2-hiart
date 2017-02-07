@@ -1,11 +1,14 @@
 hiqdev/yii2-hiart
 -----------------
 
-## [Under development]
+## [0.1.1] - 2017-02-07
 
-- Changed: renamed `from` -> `tableName` in ActiveRecord ([@hiqsol], [@SilverFire])
-- Changed: refactored a lot, removed junk, improved PHPDocs ([@hiqsol], [@SilverFire])
-- Implemented **cURL** transport ([@hiqsol], [@SilverFire])
+- Renamed performScenario to `query` and `batchQuery` ([@hiqsol])
+- Added `batchPerform` ([@hiqsol])
+- Renamed scenarioCommands to `scenarioActions` ([@hiqsol])
+- Renamed from -> `tableName` in ActiveRecord ([@hiqsol], [@SilverFire])
+- Refactored a lot, removed junk, improved docs ([@hiqsol], [@SilverFire])
+- Removed **cURL** transport into separate package [yii2-hiart-curl] ([@hiqsol], [@SilverFire])
 - Refactored exceptions ([@SilverFire])
 
 ## [0.1.0] - 2017-01-25
@@ -62,6 +65,7 @@ hiqdev/yii2-hiart
 
 ## [Development started] - 2015-04-17
 
+[yii2-hiart-curl]: https://github.com/hiqdev/yii2-hiart-curl
 [@hiqsol]: https://github.com/hiqsol
 [sol@hiqdev.com]: https://github.com/hiqsol
 [@SilverFire]: https://github.com/SilverFire
@@ -76,3 +80,4 @@ hiqdev/yii2-hiart
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/hiqdev/yii2-hiart/releases/tag/0.0.1
 [0.1.0]: https://github.com/hiqdev/yii2-hiart/compare/0.0.4...0.1.0
+[0.1.1]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...0.1.1
