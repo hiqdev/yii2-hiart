@@ -78,12 +78,19 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     protected $_errorChecker;
 
     /**
-     * @param null $dbname
+     * @param null $name
      * @return ConnectionInterface|AbstractConnection
      */
-    public static function getDb($dbname = null)
+    public static function getDb($name = null, $class = ConnectionInterface::class)
     {
-        return $dbname ? Yii::$app->get($dbname) : Yii::$container->get(ConnectionInterface::class);
+        if ($name) {
+            return Yii::$app->get($name);
+        }
+        if (Yii::$container->hasSingleton($class)) {
+            return Yii::$container->get($class);
+        }
+
+        return Yii::$app->get(static::$dbname);
     }
 
     public function setAuth($auth)
