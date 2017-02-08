@@ -1,6 +1,14 @@
 hiqdev/yii2-hiart
 -----------------
 
+## [0.1.2] - 2017-02-08
+
+- Improved `AbstractConnection::getDb` to work without DI too
+    - [a1de4ba] 2017-02-08 csfixed [@hiqsol]
+    - [8d26e37] 2017-02-08 added functional test for simple config (no DI) [@hiqsol]
+    - [045478b] 2017-02-08 improved `AbstractConnection::getDb` to work without DI too [@hiqsol]
+    - [c3bf1d9] 2017-02-07 fixed `Connection::getBaseUri` [@hiqsol]
+
 ## [0.1.1] - 2017-02-07
 
 - Renamed performScenario to `query` and `batchQuery`
@@ -493,7 +501,7 @@ hiqdev/yii2-hiart
 [d3756e4]: https://github.com/hiqdev/yii2-hiart/commit/d3756e4
 [ea50c04]: https://github.com/hiqdev/yii2-hiart/commit/ea50c04
 [8047d37]: https://github.com/hiqdev/yii2-hiart/commit/8047d37
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -539,3 +547,8 @@ hiqdev/yii2-hiart
 [2993c1e]: https://github.com/hiqdev/yii2-hiart/commit/2993c1e
 [84b4362]: https://github.com/hiqdev/yii2-hiart/commit/84b4362
 [0.1.1]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...0.1.1
+[8d26e37]: https://github.com/hiqdev/yii2-hiart/commit/8d26e37
+[045478b]: https://github.com/hiqdev/yii2-hiart/commit/045478b
+[c3bf1d9]: https://github.com/hiqdev/yii2-hiart/commit/c3bf1d9
+[a1de4ba]: https://github.com/hiqdev/yii2-hiart/commit/a1de4ba
+[0.1.2]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...0.1.2
