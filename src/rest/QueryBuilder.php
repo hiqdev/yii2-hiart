@@ -64,7 +64,7 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 
     public function buildQueryParams(Query $query)
     {
-        return [];
+        return $query->where;
     }
 
     public function buildFormParams(Query $query)
