@@ -110,8 +110,8 @@ class Timing
 
     public function getNewTabLink()
     {
-        $uri = $this->request->getFullUri();
-        $sign = strpos($uri, '?') === false ? '?' : '';
+        $uri = rtrim($this->request->getFullUri(), '?');
+        $sign = strpos($uri, '?') === false ? '?' : '&';
         $newTabUrl = rtrim($uri, '&') . $sign . $this->request->getBody();
 
         return Html::a('to new tab', $newTabUrl, ['target' => '_blank']);
