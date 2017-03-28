@@ -17,6 +17,9 @@ use yii\helpers\Url;
 
 class Timing
 {
+    /**
+     * @var DebugPanel
+     */
     protected $panel;
 
     protected $logId;
@@ -90,7 +93,7 @@ class Timing
             $result .= Html::ul($this->traces, [
                 'class' => 'trace',
                 'item' => function ($trace) {
-                    return "<li>{$trace['file']}({$trace['line']})</li>";
+                    return "<li>" . $this->panel->getTraceLine($trace) . "</li>";
                 },
             ]);
         }
