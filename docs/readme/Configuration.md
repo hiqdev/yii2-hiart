@@ -4,7 +4,7 @@ To use this extension, configure hiart component in your application config:
     'components' => [
         'hiart' => [
             'class' => \hiqdev\hiart\rest\Connection::class,
-            'requestClass' => \hiqdev\hiart\curl\Request::class,
+            'requestClass' => \hiqdev\hiart\auto\Request::class,
             'baseUri' => 'https://site.com/api/v3/',
         ],
     ],
@@ -13,15 +13,16 @@ To use this extension, configure hiart component in your application config:
 Note three main options:
 
 - `class` specifies class that actually implements API to be accessed, **REST** in this case
-- `requestClass` specifies transport implementation to be used, **cURL** in this case
+- `requestClass` specifies transport implementation to be used, **auto** in this case
 - `baseUri` specifies starting point of the API
 
 ### Transports
 
 Available transports are:
 
-- [PHP streams](http://php.net/manual/en/book.stream.php), **default**, included in this package
-- [cURL](http://php.net/manual/en/book.curl.php), provided with [yii2-hiart-curl](https://github.com/hiqdev/yii2-hiart-curl)
+- **auto** - auto detects best supported transport
+- [PHP streams](http://php.net/manual/en/book.stream.php), the most generic fallback, included in this package
+- [cURL](http://php.net/manual/en/book.curl.php), included in this package
 - [Guzzle](https://github.com/guzzle/guzzle), provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
 - [yii2-httpclient](https://github.com/yiisoft/yii2-httpclient), provided with [yii2-hiart-httpclient](https://github.com/hiqdev/yii2-hiart-httpclient)
 
