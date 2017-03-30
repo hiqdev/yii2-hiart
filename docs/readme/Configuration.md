@@ -21,10 +21,15 @@ Note three main options:
 Available transports are:
 
 - **auto** - autodetects best supported transport
-- [PHP streams](http://php.net/manual/en/book.stream.php), the most generic fallback, included in this package
-- [cURL](http://php.net/manual/en/book.curl.php), included in this package
-- [Guzzle](https://github.com/guzzle/guzzle), provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
-- [yii2-httpclient](https://github.com/yiisoft/yii2-httpclient), provided with [yii2-hiart-httpclient](https://github.com/hiqdev/yii2-hiart-httpclient)
+- [PHP streams], the most generic fallback, included in this package
+- [cURL], included in this package
+- [Guzzle], provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
+- [yii2-httpclient], provided with [yii2-hiart-httpclient](https://github.com/hiqdev/yii2-hiart-httpclient)
+
+[PHP streams]:      http://php.net/manual/en/book.stream.php
+[cURL]:             http://php.net/manual/en/book.curl.php
+[Guzzle]:           https://github.com/guzzle/guzzle
+[yii2-httpclient]:  https://github.com/yiisoft/yii2-httpclient
 
 You can implement your own transport.
 All you need is to create two classes: `Request` and `Response`, it's not difficult see available implementations.

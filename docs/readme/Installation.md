@@ -4,17 +4,8 @@ The preferred way to install this yii2-extension is through [composer](http://ge
 composer require "hiqdev/yii2-hiart"
 ```
 
-### Performance
-
-This package provides only **PHP streams** implementation which is clearly slower then **cURL**.
-So if you have cURL extension available in your system please use `hiqdev/yii2-hiart-curl` package instead.
+But if you prefer [Guzzle] transport use `yii2-hiart-guzzle` package:
 
 ```sh
-composer require "hiqdev/yii2-hiart-curl"
-```
-
-or add these lines to the require section of your composer.json:
-
-```json
-    "hiqdev/yii2-hiart-curl": "*"
+composer require "hiqdev/yii2-hiart-guzzle"
 ```
