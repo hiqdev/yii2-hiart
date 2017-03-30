@@ -111,4 +111,9 @@ class Request extends AbstractRequest
 
         return $result;
     }
+
+    public static function isSupported()
+    {
+        return true;
+    }
 }

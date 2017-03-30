@@ -34,4 +34,10 @@ interface RequestInterface extends \Serializable
      * @return string
      */
     public function getMethod();
+
+    /**
+     * Returns true if this transport is supported.
+     * @return bool
+     */
+    public static function isSupported();
 }

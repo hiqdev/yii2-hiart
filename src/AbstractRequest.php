@@ -265,4 +265,6 @@ abstract class AbstractRequest implements RequestInterface
     {
         return isset($this->builder) ? $this->builder->db : AbstractConnection::getDb($this->dbname);
     }
+
+    abstract public static function isSupported();
 }

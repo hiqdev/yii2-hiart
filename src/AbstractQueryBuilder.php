@@ -45,7 +45,9 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
 
     public function createRequest($query)
     {
-        return new $this->db->requestClass($this, $query);
+        $request = new $this->db->requestClass($this, $query);
+
+        return $request instanceof RequestCreatorInterface ? $request->createRequest() : $request;
     }
 
     /**

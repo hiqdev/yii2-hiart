@@ -11,7 +11,7 @@
 return [
     'hiart.enabled'         => true,
     'hiart.class'           => \hiqdev\hiart\rest\Connection::class,
-    'hiart.requestClass'    => \hiqdev\hiart\stream\Request::class,
+    'hiart.requestClass'    => \hiqdev\hiart\auto\Request::class,
     'hiart.dbname'          => 'hiart',
     'hiart.auth'            => [],
     'hiart.config'          => [],
