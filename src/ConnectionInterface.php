@@ -25,7 +25,7 @@ interface ConnectionInterface
     /**
      * Creates API command.
      * @param array $config
-     * @return mixed response
+     * @return Command response
      */
     public function createCommand(array $config = []);
 }
