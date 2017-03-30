@@ -60,7 +60,7 @@ Note three main options:
 
 Available transports are:
 
-- **auto** - auto detects best supported transport
+- **auto** - autodetects best supported transport
 - [PHP streams](http://php.net/manual/en/book.stream.php), the most generic fallback, included in this package
 - [cURL](http://php.net/manual/en/book.curl.php), included in this package
 - [Guzzle](https://github.com/guzzle/guzzle), provided with [yii2-hiart-guzzle](https://github.com/hiqdev/yii2-hiart-guzzle)
