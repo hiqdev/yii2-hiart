@@ -266,5 +266,12 @@ abstract class AbstractRequest implements RequestInterface
         return isset($this->builder) ? $this->builder->db : AbstractConnection::getDb($this->dbname);
     }
 
-    abstract public static function isSupported();
+    /**
+     * {@inheritdoc}
+     * Should be declared abstract, but it is not supported in PHP5.
+     */
+    public static function isSupported()
+    {
+        return false;
+    }
 }
