@@ -1,5 +1,4 @@
-HiArt
-=====
+# HiArt
 
 **ActiveRecord for API**
 

@@ -48,7 +48,6 @@
         "yiisoft/yii2": "~2.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
         "yiisoft/yii2": "dev-master",
         "hiqdev/yii2-hiart-github": "dev-master",
         "hiqdev/hidev-php": "<2.0",

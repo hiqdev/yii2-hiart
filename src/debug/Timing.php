@@ -93,7 +93,7 @@ class Timing
             $result .= Html::ul($this->traces, [
                 'class' => 'trace',
                 'item' => function ($trace) {
-                    return "<li>" . $this->panel->getTraceLine($trace) . "</li>";
+                    return '<li>' . $this->panel->getTraceLine($trace) . '</li>';
                 },
             ]);
         }
