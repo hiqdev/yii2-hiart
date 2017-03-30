@@ -16,7 +16,7 @@ use Yii;
 /**
  * Command test class.
  */
-class CommandTest extends \PHPUnit_Framework_TestCase
+class CommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Command

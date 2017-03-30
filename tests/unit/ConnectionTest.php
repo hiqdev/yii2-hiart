@@ -15,7 +15,7 @@ use hiqdev\hiart\rest\Connection;
 /**
  * Connection test class.
  */
-class ConnectionTest extends \PHPUnit_Framework_TestCase
+class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
     protected $shortUri = 'http://api.dev';
 
