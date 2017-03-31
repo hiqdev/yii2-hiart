@@ -202,6 +202,26 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     }
 
     /**
+     * Disables auth and calls $closure
+     *
+     * @param Closure $closure
+     * @return mixed
+     */
+    public function callWithDisabledAuth(Closure $closure)
+    {
+        if ($this->isDisabledAuth()) {
+            return call_user_func($closure);
+        }
+
+        try {
+            $this->disableAuth();
+            return call_user_func($closure);
+        } finally {
+            $this->enableAuth();
+        }
+    }
+
+    /**
      * Try to decode error information if it is valid json, return it if not.
      * @param $body
      * @return mixed
