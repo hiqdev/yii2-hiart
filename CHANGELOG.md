@@ -1,12 +1,14 @@
 hiqdev/yii2-hiart
 -----------------
 
-## [Under development]
+## [0.2.0] - 2017-04-15
 
 - Added transport autodetection with `auto/Request.php` ([@hiqsol])
+- Moved CURL transport here, deprecated `yii2-hiart-curl` ([@hiqsol])
+- Switched to PHPUnit 6 ([@hiqsol])
 - Improved docs ([@hiqsol], [@SilverFire])
 - Added `callWithDisabledAuth` ([@SilverFire])
-- Fixed minor issues ([@hiqsol], [@SilverFire])
+- Fixed minor issues ([@SilverFire], [@hiqsol])
 
 ## [0.1.2] - 2017-02-08
 
@@ -93,3 +95,4 @@ hiqdev/yii2-hiart
 [0.1.0]: https://github.com/hiqdev/yii2-hiart/compare/0.0.4...0.1.0
 [0.1.1]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...0.1.1
 [0.1.2]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...0.1.2
+[0.2.0]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...0.2.0

@@ -1,13 +1,17 @@
 hiqdev/yii2-hiart
 -----------------
 
-## [Under development]
+## [0.2.0] - 2017-04-15
 
 - Added transport autodetection with `auto/Request.php`
     - [986d1a2] 2017-03-30 changed AbstractRequest::isSupported - abstract static is not supported in PHP5 [@hiqsol]
     - [9a90cf6] 2017-03-30 csfixed [@hiqsol]
     - [a6bda1e] 2017-03-30 added request(transport) autodetection with `auto/Request.php` [@hiqsol]
+- Moved CURL transport here, deprecated `yii2-hiart-curl`
     - [7bfbc4d] 2017-03-30 moved curl transport here from `yii2-hiart-curl` which will be deleted [@hiqsol]
+- Switched to PHPUnit 6
+    - [ce46b7c] 2017-04-15 removed PHPUNIT 5 <-> 6 compatibility dirty hack [@hiqsol]
+    - [d7a000e] 2017-03-30 added phpunit 5 <-> 6 compatibility dirty hack [@hiqsol]
     - [3a8d8ca] 2017-03-30 switched to phpunit 6.0 classes [@hiqsol]
 - Improved docs
     - [b84723b] 2017-03-30 docs [@hiqsol]
@@ -16,8 +20,6 @@ hiqdev/yii2-hiart
 - Added `callWithDisabledAuth`
     - [122a889] 2017-03-31 Added AbstractConnection::callWithDisabledAuth() [@SilverFire]
 - Fixed minor issues
-    - [ce46b7c] 2017-04-15 removed PHPUNIT 5 <-> 6 compatibility dirty hack [@hiqsol]
-    - [d7a000e] 2017-03-30 added phpunit 5 <-> 6 compatibility dirty hack [@hiqsol]
     - [36fb734] 2017-03-28 Timing::getTrace() enhanced to render paths with DebugPanel::getTraceLine() method [@SilverFire]
     - [9388e48] 2017-03-17 fixed building debug panel new tab link [@hiqsol]
     - [e27a319] 2017-03-05 changed QueryBBuilder to pass where as query params [@hiqsol]
@@ -587,3 +589,4 @@ hiqdev/yii2-hiart
 [36fb734]: https://github.com/hiqdev/yii2-hiart/commit/36fb734
 [9388e48]: https://github.com/hiqdev/yii2-hiart/commit/9388e48
 [e27a319]: https://github.com/hiqdev/yii2-hiart/commit/e27a319
+[0.2.0]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...0.2.0
