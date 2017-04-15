@@ -1,6 +1,13 @@
 hiqdev/yii2-hiart
 -----------------
 
+## [Under development]
+
+- Added transport autodetection with `auto/Request.php` ([@hiqsol])
+- Improved docs ([@hiqsol], [@SilverFire])
+- Added `callWithDisabledAuth` ([@SilverFire])
+- Fixed minor issues ([@hiqsol], [@SilverFire])
+
 ## [0.1.2] - 2017-02-08
 
 - Improved `AbstractConnection::getDb` to work without DI too ([@hiqsol])
@@ -78,7 +85,7 @@ hiqdev/yii2-hiart
 [andreyklochok@gmail.com]: https://github.com/tafid
 [@BladeRoot]: https://github.com/BladeRoot
 [bladeroot@gmail.com]: https://github.com/BladeRoot
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2

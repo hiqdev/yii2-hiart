@@ -1,6 +1,27 @@
 hiqdev/yii2-hiart
 -----------------
 
+## [Under development]
+
+- Added transport autodetection with `auto/Request.php`
+    - [986d1a2] 2017-03-30 changed AbstractRequest::isSupported - abstract static is not supported in PHP5 [@hiqsol]
+    - [9a90cf6] 2017-03-30 csfixed [@hiqsol]
+    - [a6bda1e] 2017-03-30 added request(transport) autodetection with `auto/Request.php` [@hiqsol]
+    - [7bfbc4d] 2017-03-30 moved curl transport here from `yii2-hiart-curl` which will be deleted [@hiqsol]
+    - [3a8d8ca] 2017-03-30 switched to phpunit 6.0 classes [@hiqsol]
+- Improved docs
+    - [b84723b] 2017-03-30 docs [@hiqsol]
+    - [5998c9c] 2017-03-30 docs [@hiqsol]
+    - [f4889ad] 2017-03-30 PHPDocs enhanced [@SilverFire]
+- Added `callWithDisabledAuth`
+    - [122a889] 2017-03-31 Added AbstractConnection::callWithDisabledAuth() [@SilverFire]
+- Fixed minor issues
+    - [ce46b7c] 2017-04-15 removed PHPUNIT 5 <-> 6 compatibility dirty hack [@hiqsol]
+    - [d7a000e] 2017-03-30 added phpunit 5 <-> 6 compatibility dirty hack [@hiqsol]
+    - [36fb734] 2017-03-28 Timing::getTrace() enhanced to render paths with DebugPanel::getTraceLine() method [@SilverFire]
+    - [9388e48] 2017-03-17 fixed building debug panel new tab link [@hiqsol]
+    - [e27a319] 2017-03-05 changed QueryBBuilder to pass where as query params [@hiqsol]
+
 ## [0.1.2] - 2017-02-08
 
 - Improved `AbstractConnection::getDb` to work without DI too
@@ -501,7 +522,7 @@ hiqdev/yii2-hiart
 [d3756e4]: https://github.com/hiqdev/yii2-hiart/commit/d3756e4
 [ea50c04]: https://github.com/hiqdev/yii2-hiart/commit/ea50c04
 [8047d37]: https://github.com/hiqdev/yii2-hiart/commit/8047d37
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -552,3 +573,17 @@ hiqdev/yii2-hiart
 [c3bf1d9]: https://github.com/hiqdev/yii2-hiart/commit/c3bf1d9
 [a1de4ba]: https://github.com/hiqdev/yii2-hiart/commit/a1de4ba
 [0.1.2]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...0.1.2
+[ce46b7c]: https://github.com/hiqdev/yii2-hiart/commit/ce46b7c
+[122a889]: https://github.com/hiqdev/yii2-hiart/commit/122a889
+[b84723b]: https://github.com/hiqdev/yii2-hiart/commit/b84723b
+[986d1a2]: https://github.com/hiqdev/yii2-hiart/commit/986d1a2
+[5998c9c]: https://github.com/hiqdev/yii2-hiart/commit/5998c9c
+[d7a000e]: https://github.com/hiqdev/yii2-hiart/commit/d7a000e
+[9a90cf6]: https://github.com/hiqdev/yii2-hiart/commit/9a90cf6
+[a6bda1e]: https://github.com/hiqdev/yii2-hiart/commit/a6bda1e
+[7bfbc4d]: https://github.com/hiqdev/yii2-hiart/commit/7bfbc4d
+[3a8d8ca]: https://github.com/hiqdev/yii2-hiart/commit/3a8d8ca
+[f4889ad]: https://github.com/hiqdev/yii2-hiart/commit/f4889ad
+[36fb734]: https://github.com/hiqdev/yii2-hiart/commit/36fb734
+[9388e48]: https://github.com/hiqdev/yii2-hiart/commit/9388e48
+[e27a319]: https://github.com/hiqdev/yii2-hiart/commit/e27a319
