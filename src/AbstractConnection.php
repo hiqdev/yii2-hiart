@@ -202,7 +202,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     }
 
     /**
-     * Disables auth and calls $closure
+     * Disables auth and calls $closure.
      *
      * @param Closure $closure
      * @return mixed
