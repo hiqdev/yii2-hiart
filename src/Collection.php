@@ -92,6 +92,21 @@ class Collection extends Component
     public $attributes;
 
     /**
+     * @var Closure a closure that will used to collect data from [[models]] before saving.
+     * Signature:
+     * ```php
+     * function ($model, $collection)
+     * ```
+     *
+     * Method must return array of two elements:
+     *  - 0: key of the model in resulting array
+     *  - 1: corresponding value
+     *
+     * @see collectData
+     */
+    public $dataCollector;
+
+    /**
      * Sets the model of the collection.
      * @param ActiveRecord|array $model if the model is an instance of [[Model]] - sets it, otherwise - creates the model
      * using given options array
@@ -127,9 +142,8 @@ class Collection extends Component
     public function getIds()
     {
         $ids = [];
-        $pk = reset($this->first->primaryKey());
         foreach ($this->models as $model) {
-            $ids[] = $model->$pk;
+            $ids[] = $model->getPrimaryKey();
         }
 
         return $ids;
@@ -271,7 +285,7 @@ class Collection extends Component
         $this->first = $first;
 
         $this->formName = $first->formName();
-        $this->model    = $first->className();
+        $this->model    = $this->setModel($first);
         $this->models   = $models;
 
         if ($this->checkConsistency && !$this->isConsistent()) {
@@ -391,8 +405,13 @@ class Collection extends Component
     {
         $data = [];
         foreach ($this->models as $model) {
-            $key = $model->getPrimaryKey();
-            $row = $model->getAttributes($attributes);
+            if ($this->dataCollector instanceof Closure) {
+                list ($key, $row) = call_user_func($this->dataCollector, $model, $this);
+            } else {
+                $key = $model->getPrimaryKey();
+                $row = $model->getAttributes($attributes);
+            }
+
             if ($key) {
                 $data[$key] = $row;
             } else {
