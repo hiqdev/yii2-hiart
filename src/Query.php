@@ -77,12 +77,12 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function searchOne($db = null)
     {
-        return $this->limit(1)->addOption('batch', false)->search();
+        return $this->limit(1)->addOption('batch', false)->search($db);
     }
 
     public function all($db = null)
     {
-        $rows = $this->searchAll();
+        $rows = $this->searchAll($db);
 
         if (!empty($rows) && $this->indexBy !== null) {
             $result = [];
@@ -102,7 +102,7 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function searchAll($db = null)
     {
-        return $this->addOption('batch', true)->search();
+        return $this->addOption('batch', true)->search($db);
     }
 
     public function search($db = null)
@@ -119,7 +119,7 @@ class Query extends \yii\db\Query implements QueryInterface
     {
         $this->count = $q;
 
-        return (int) $this->searchAll();
+        return (int) $this->searchAll($db);
     }
 
     public function exists($db = null)
