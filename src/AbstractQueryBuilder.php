@@ -97,6 +97,7 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
      * Creates update request.
      * @param string $table
      * @param array $columns
+     * @param array $condition
      * @param array $options
      * @return AbstractRequest
      */
@@ -107,6 +108,13 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
         return $this->createRequest($query);
     }
 
+    /**
+     * Creates delete request.
+     * @param string $table
+     * @param array $condition
+     * @param array $options
+     * @return AbstractRequest
+     */
     public function delete($table, $condition = [], array $options = [])
     {
         $query = $this->createQuery('delete', $table, $options)->where($condition);
@@ -114,6 +122,14 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
         return $this->createRequest($query);
     }
 
+    /**
+     * Creates request for given action.
+     * @param string $action
+     * @param string $table
+     * @param mixed $body
+     * @param array $options
+     * @return AbstractRequest
+     */
     public function perform($action, $table, $body, $options = [])
     {
         $query = $this->createQuery($action, $table, $options)->body($body);
