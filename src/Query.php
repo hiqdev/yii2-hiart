@@ -77,6 +77,11 @@ class Query extends \yii\db\Query implements QueryInterface
 
     public function searchOne($db = null)
     {
+        return $this->searchSingle($db)->getData();
+    }
+
+    public function searchSingle($db = null)
+    {
         return $this->limit(1)->addOption('batch', false)->search($db);
     }
 
@@ -101,6 +106,11 @@ class Query extends \yii\db\Query implements QueryInterface
     }
 
     public function searchAll($db = null)
+    {
+        return $this->searchBatch($db)->getData();
+    }
+
+    public function searchBatch($db = null)
     {
         return $this->addOption('batch', true)->search($db);
     }
