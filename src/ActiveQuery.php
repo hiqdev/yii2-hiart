@@ -92,9 +92,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->from = $modelClass::tableName();
         }
 
-        $commandConfig = $db->getQueryBuilder()->build($this);
-
-        return $db->createCommand($commandConfig);
+        return parent::createCommand($db);
     }
 
     /**
