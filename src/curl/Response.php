@@ -76,7 +76,7 @@ class Response extends AbstractResponse
      */
     public function getHeader($name)
     {
-        return isset($this->headers[$name]) ? $this->headers[$name] : null;
+        return isset($this->headers[strtolower($name)]) ? $this->headers[strtolower($name)] : null;
     }
 
     /**
@@ -122,7 +122,7 @@ class Response extends AbstractResponse
             }
 
             list($key, $value) = explode(': ', $line);
-            $result['headers'][$key][] = $value;
+            $result['headers'][strtolower($key)][] = $value;
         }
 
         return $result;
