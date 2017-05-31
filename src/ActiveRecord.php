@@ -230,7 +230,7 @@ class ActiveRecord extends BaseActiveRecord
 
     public static function perform($action, $data = [], array $options = [])
     {
-        return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options);
+        return static::getDb()->createCommand()->perform($action, static::tableName(), $data, $options)->getData();
     }
 
     /**

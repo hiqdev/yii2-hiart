@@ -39,7 +39,7 @@ class Command extends \yii\base\Component
      * In API this could be get, search or list request.
      * @param array $options send options
      * @throws ResponseErrorException
-     * @return mixed response data
+     * @return ResponseInterface response object
      */
     public function search($options = [])
     {
@@ -77,6 +77,13 @@ class Command extends \yii\base\Component
         return $this->setRequest($request);
     }
 
+    /**
+     * Sends a request to delete data.
+     * @param mixed $table entity to update
+     * @param array $condition
+     * @param array $params request parameters
+     * @return $this
+     */
     public function delete($table, $condition, array $params = [])
     {
         $request = $this->db->getQueryBuilder()->delete($table, $condition, $params);
@@ -90,7 +97,7 @@ class Command extends \yii\base\Component
      * @param string $table
      * @param mixed $body
      * @param array $params request parameters
-     * @return mixed response data
+     * @return ResponseInterface response object
      */
     public function perform($action, $table, $body = [], array $params = [])
     {
@@ -103,7 +110,7 @@ class Command extends \yii\base\Component
     /**
      * Executes the request.
      * @param array $options send options
-     * @return mixed response data
+     * @return ResponseInterface response object
      */
     public function send($options = [])
     {
@@ -114,7 +121,7 @@ class Command extends \yii\base\Component
         Yii::endProfile($profile, $category);
         $this->db->checkResponse($response);
 
-        return $response->getData();
+        return $response;
     }
 
     public static function getProfileCategory()
