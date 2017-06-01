@@ -267,7 +267,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             return parent::all($db);
         }
 
-        $rows = $this->searchAll();
+        $rows = $this->searchAll($db);
 
         return $this->populate($rows);
     }
