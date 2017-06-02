@@ -1,8 +1,8 @@
 <?php
 /**
- * ActiveRecord for API
+ * ActiveRecord for API.
  *
- * @link      https://github.com/hiqdev/yii2-hiart
+ * @see      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
@@ -10,7 +10,11 @@
 
 namespace hiqdev\hiart;
 
+use Exception;
+use yii\caching\Dependency;
+use yii\db\Query as BaseQuery;
 use yii\db\QueryInterface;
+use yii\helpers\ArrayHelper;
 
 /**
  * Query represents API query in a way that is independent from a concrete API.
@@ -31,7 +35,7 @@ use yii\db\QueryInterface;
  * - other standard query options provided with QueryTrait:
  *      - where, limit, offset, orderBy, indexBy.
  */
-class Query extends \yii\db\Query implements QueryInterface
+class Query extends BaseQuery implements QueryInterface
 {
     /**
      * @var string action that this query performs
@@ -43,179 +47,77 @@ class Query extends \yii\db\Query implements QueryInterface
      */
     public $options = [];
 
+    /**
+     * @var string the COUNT expression
+     */
     public $count;
 
-    public $body = [];
-
-    public static function instantiate($action, $from, array $options = [])
-    {
-        $query = new static();
-
-        return $query->action($action)->from($from)->options($options);
-    }
+    /**
+     * @var int the default number of seconds that query results can remain valid in cache.
+     * Use 0 to indicate that the cached data will never expire. And use a negative number to indicate
+     * query cache should not be used.
+     * @see cache()
+     */
+    public $queryCacheDuration;
 
     /**
-     * @param null $db
-     * @throws \Exception
+     * @var Dependency the dependency to be associated with the cached query result for this command
+     * @see cache()
+     */
+    public $queryCacheDependency;
+
+    /**
+     * @param null|Connection $db
+     * @throws Exception
      * @return Command
      */
     public function createCommand($db = null)
     {
         if ($db === null) {
-            throw new \Exception('no db given to Query::createCommand');
+            throw new Exception('no db given to Query::createCommand');
         }
 
-        $commandConfig = $db->getQueryBuilder()->build($this);
+        $request = $db->getQueryBuilder()->build($this);
 
-        return $db->createCommand($commandConfig);
+        $command = $db->createCommand($request);
+
+        if ($this->queryCacheDuration !== null) {
+            $command->cache($this->queryCacheDuration, $this->queryCacheDependency);
+        }
+
+        return $command;
+    }
+
+    /**
+     * Enables query cache for this command.
+     * @param int $duration the number of seconds that query result of this command can remain valid in the cache.
+     * If this is not set, the value of [[Connection::queryCacheDuration]] will be used instead.
+     * Use 0 to indicate that the cached data will never expire.
+     * @param Dependency $dependency the cache dependency associated with the cached query result
+     * @return $this the command object itself
+     */
+    public function cache($duration = null, $dependency = null)
+    {
+        $this->queryCacheDuration = $duration;
+        $this->queryCacheDependency = $dependency;
+        return $this;
     }
 
     public function one($db = null)
     {
-        return $this->searchOne($db);
-    }
+        $this->limit(1);
 
-    public function searchOne($db = null)
-    {
-        return $this->searchSingle($db)->getData();
-    }
-
-    public function searchSingle($db = null)
-    {
-        return $this->limit(1)->addOption('batch', false)->search($db);
-    }
-
-    public function all($db = null)
-    {
-        $rows = $this->searchAll($db);
-
-        if (!empty($rows) && $this->indexBy !== null) {
-            $result = [];
-            foreach ($rows as $row) {
-                if ($this->indexBy instanceof \Closure) {
-                    $key = call_user_func($this->indexBy, $row);
-                } else {
-                    $key = $row[$this->indexBy];
-                }
-                $result[$key] = $row;
-            }
-            $rows = $result;
+        $row = parent::one($db);
+        if (ArrayHelper::isIndexed($row)) {
+            return reset($row);
         }
 
-        return $rows;
-    }
-
-    public function searchAll($db = null)
-    {
-        return $this->searchBatch($db)->getData();
-    }
-
-    public function searchBatch($db = null)
-    {
-        return $this->addOption('batch', true)->search($db);
-    }
-
-    public function search($db = null)
-    {
-        return $this->createCommand($db)->search();
-    }
-
-    public function delete($db = null, $options = [])
-    {
-        return $this->createCommand($db)->deleteByQuery($options);
+        return $row;
     }
 
     public function count($q = '*', $db = null)
     {
         $this->count = $q;
-
-        return (int) $this->searchAll($db);
-    }
-
-    public function exists($db = null)
-    {
-        return !empty(self::one($db));
-    }
-
-    public function action($action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
-
-    public function addAction($action)
-    {
-        if (empty($this->action)) {
-            $this->action = $action;
-        }
-
-        return $this;
-    }
-
-    public function addOption($name, $value)
-    {
-        if (!isset($this->options[$name])) {
-            $this->options[$name] = $value;
-        }
-
-        return $this;
-    }
-
-    public function getOption($name)
-    {
-        return isset($this->options[$name]) ? $this->options[$name] : null;
-    }
-
-    public function options($options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-    public function addOptions($options)
-    {
-        if (!empty($options)) {
-            $this->options = array_merge($this->options, $options);
-        }
-
-        return $this;
-    }
-
-    public function body($body)
-    {
-        $this->body = $body;
-
-        return $this;
-    }
-
-    public function innerJoin($table, $on = '', $params = [])
-    {
-        $this->join[] = (array) $table;
-
-        return $this;
-    }
-
-    public function fields($fields)
-    {
-        if (is_array($fields) || $fields === null) {
-            $this->fields = $fields;
-        } else {
-            $this->fields = func_get_args();
-        }
-
-        return $this;
-    }
-
-    public function source($source)
-    {
-        if (is_array($source) || $source === null) {
-            $this->source = $source;
-        } else {
-            $this->source = func_get_args();
-        }
-
-        return $this;
+        return $this->createCommand($db)->count();
     }
 }

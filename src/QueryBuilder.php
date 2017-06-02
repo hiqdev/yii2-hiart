@@ -1,8 +1,8 @@
 <?php
 /**
- * ActiveRecord for API
+ * ActiveRecord for API.
  *
- * @link      https://github.com/hiqdev/yii2-hiart
+ * @see      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
@@ -12,17 +12,19 @@ namespace hiqdev\hiart;
 
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
+use yii\base\Object;
 use yii\helpers\ArrayHelper;
+use yii\httpclient\Request;
 
 /**
  * Abstract QueryBuilder.
  *
  * QueryBuilder builds a request from the specification given as a [[Query]] object.
  */
-abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBuilderInterface
+class QueryBuilder extends Object
 {
     /**
-     * @var AbstractConnection
+     * @var Connection
      */
     public $db;
 
@@ -33,79 +35,142 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
     }
 
     /**
+     * @param array $params
+     * @return Request
+     */
+    public function createRequest($params = [])
+    {
+        return $this->db->createRequest();
+    }
+
+    /**
      * Builds config array to create Command.
      * @param Query $query
      * @throws NotSupportedException
-     * @return array
+     * @return Request
      */
-    public function build(Query $query)
+    public function build(Query $query, $params = [], array $options = [])
     {
-        return ['request' => $this->createRequest($query)];
+        $query = $query->prepare($this);
+        $params = empty($params) ? $query->params : array_merge($params, $query->params);
+
+        $request = $this->createRequest($params);
+
+        $this->buildAuth($request, $params);
+        $this->buildMethod($request, 'select', $params);
+        $this->buildFrom($request, $query->from, $params);
+        $this->buildWhere($request, $query->where, $params);
+
+        $this->buildCount($request, $query->count, $params);
+        $this->buildOrderBy($request, $query->orderBy, $params);
+        $this->buildLimit($request, $query->limit, $query->offset, $params);
+
+        $request->setOptions($options);
+
+        return $request;
     }
 
-    public function createRequest($query)
+    public function buildAuth(Request $request, $params = [])
     {
-        $request = new $this->db->requestClass($this, $query);
-
-        return $request instanceof RequestCreatorInterface ? $request->createRequest() : $request;
+        return $request;
     }
 
-    /**
-     * Prepares query before actual building.
-     * This function for you to redefine.
-     * It will be called before other build functions.
-     * @param Query $query
-     */
-    public function prepare(Query $query)
+    public function buildMethod(Request $request, $action, $params = [])
     {
-        return $query->prepare($this);
+        static $defaultMethods = [
+            'delete' => 'DELETE',
+            'get'    => 'GET',
+            'head'   => 'HEAD',
+            'insert' => 'POST',
+            'post'   => 'GET',
+            'put'    => 'PUT',
+            'search' => 'GET',
+            'select' => 'GET',
+            'update' => 'PUT',
+        ];
+
+        $method = isset($defaultMethods[$action]) ? $defaultMethods[$action] : 'POST';
+        return $request->setMethod($method);
     }
 
-    /**
-     * This function is for you to provide your authentication.
-     * @param Query $query
-     */
-    abstract public function buildAuth(Query $query);
+    public function buildFrom(Request $request, $from, $params = [])
+    {
+        return $request->setUrl($from);
+    }
 
-    abstract public function buildMethod(Query $query);
+    public function buildWhere(Request $request, $condition, $params = [])
+    {
+        $where = $this->buildCondition($condition, $params);
 
-    abstract public function buildUri(Query $query);
+        if ($where) {
+            $request->addData($where);
+        }
 
-    abstract public function buildHeaders(Query $query);
+        return $request;
+    }
 
-    abstract public function buildProtocolVersion(Query $query);
+    public function buildCount(Request $request, $count, $params = [])
+    {
+        if ($count) {
+            $request->on(Request::EVENT_AFTER_SEND, function (\yii\httpclient\RequestEvent $event) {
+                $data = $event->response->getData();
+                $event->response->setData(count($data));
+            });
+        }
 
-    abstract public function buildQueryParams(Query $query);
+        return $request;
+    }
 
-    abstract public function buildFormParams(Query $query);
+    public function buildOrderBy(Request $request, $orderBy, $params = [])
+    {
+        return $request;
+    }
 
-    abstract public function buildBody(Query $query);
+    public function buildLimit(Request $request, $limit, $offset = 0, $params = [])
+    {
+        return $request;
+    }
 
     /**
      * Creates insert request.
-     * @param string $table
+     * @param string $url
      * @param array $columns
      * @param array $options
-     * @return AbstractRequest
+     * @return AbstractTransport
      */
-    public function insert($table, $columns, array $options = [])
+    public function insert($url, $columns, &$params = [], array $options = [])
     {
-        return $this->perform('insert', $table, $columns, $options);
+        $request = $this->createRequest();
+
+        $this->buildMethod($request, 'insert', $params);
+        $this->buildFrom($request, url, $params);
+
+        $request->setData($columns);
+        $request->setOptions($options);
+
+        return $request;
     }
 
     /**
      * Creates update request.
-     * @param string $table
+     * @param string $url
      * @param array $columns
      * @param array $condition
      * @param array $options
-     * @return AbstractRequest
+     * @return AbstractTransport
      */
-    public function update($table, $columns, $condition = [], array $options = [])
+    public function update($url, $columns, $condition = [], &$params = [], array $options = [])
     {
-        $query = $this->createQuery('update', $table, $options)->body($columns)->where($condition);
+        $request = $this->createRequest();
+        $this->buildMethod($request, 'update', $params);
+        $this->buildFrom($request, url, $params);
 
-        return $this->createRequest($query);
+        $this->buildWhere($request, $condition, $params);
+
+        $request->addData($columns);
+        $request->setOptions($options);
+
+        return $request;
     }
 
     /**
@@ -113,13 +178,18 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
      * @param string $table
      * @param array $condition
      * @param array $options
-     * @return AbstractRequest
+     * @return AbstractTransport
      */
-    public function delete($table, $condition = [], array $options = [])
+    public function delete($table, $condition = [], &$params = [], array $options = [])
     {
-        $query = $this->createQuery('delete', $table, $options)->where($condition);
+        $request = $this->createRequest();
+        $this->buildMethod($request, 'update', $params);
+        $this->buildFrom($request, url, $params);
+        $this->buildWhere($request, $condition, $params);
 
-        return $this->createRequest($query);
+        $request->setOptions($options);
+
+        return $request;
     }
 
     /**
@@ -128,20 +198,13 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
      * @param string $table
      * @param mixed $body
      * @param array $options
-     * @return AbstractRequest
+     * @return AbstractTransport
      */
     public function perform($action, $table, $body, $options = [])
     {
         $query = $this->createQuery($action, $table, $options)->body($body);
 
         return $this->createRequest($query);
-    }
-
-    public function createQuery($action, $table, array $options = [])
-    {
-        $class = $this->db->queryClass;
-
-        return $class::instantiate($action, $table, $options);
     }
 
     public function buildCondition($condition)

@@ -1,8 +1,8 @@
 <?php
 /**
- * ActiveRecord for API
+ * ActiveRecord for API.
  *
- * @link      https://github.com/hiqdev/yii2-hiart
+ * @see      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
@@ -11,121 +11,128 @@
 namespace hiqdev\hiart;
 
 use Yii;
+use yii\base\Component;
+use yii\caching\Cache;
+use yii\caching\Dependency;
+use yii\httpclient\Request;
 
 /**
  * The Command class implements execution of request.
  */
-class Command extends \yii\base\Component
+class Command extends Component
 {
     /**
-     * @var AbstractConnection
+     * @var Connection
      */
     public $db;
 
     /**
-     * @var RequestInterface request object
+     * @var Request request object
      */
     protected $request;
 
-    public function setRequest(RequestInterface $request)
+    /**
+     * @var int the default number of seconds that query results can remain valid in cache.
+     * Use 0 to indicate that the cached data will never expire. And use a negative number to indicate
+     * query cache should not be used.
+     * @see cache()
+     */
+    public $queryCacheDuration;
+
+    /**
+     * @var Dependency the dependency to be associated with the cached query result for this command
+     * @see cache()
+     */
+    public $queryCacheDependency;
+
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    public function setRequest(Request $request)
     {
         $this->request = $request;
 
         return $this;
     }
 
-    /**
-     * Sends a request to retrieve data.
-     * In API this could be get, search or list request.
-     * @param array $options send options
-     * @throws ResponseErrorException
-     * @return ResponseInterface response object
-     */
-    public function search($options = [])
+    public function queryInternal($default = null)
     {
-        $this->request->getQuery()->addAction('search');
+        $rawRequest = $this->request->toString();
 
-        return $this->send($options);
+        $info = $this->db->getQueryCacheInfo($this->queryCacheDuration, $this->queryCacheDependency);
+        if (is_array($info)) {
+            /* @var $cache Cache */
+            $cache = $info[0];
+            $cacheKey = [
+                __CLASS__,
+                $this->db->baseUrl,
+                $rawRequest,
+            ];
+            $result = $cache->get($cacheKey);
+            if (is_array($result) && isset($result[0])) {
+                Yii::trace("Query result served from cache:\n$rawRequest", __METHOD__);
+                return $result[0];
+            }
+        }
+
+        Yii::beginProfile($rawRequest, __METHOD__);
+
+        $response = $this->db->send($this->request);
+
+        Yii::endProfile($rawRequest, __METHOD__);
+
+        if ($response->isOk) {
+            $result = $response->getData();
+            if (isset($cache, $cacheKey, $info)) {
+                $cache->set($cacheKey, [$result], $info[1], $info[2]);
+                Yii::trace('Saved query result in cache', __METHOD__);
+            }
+
+            return $result;
+        }
+
+        return $default;
+    }
+
+    public function queryOne()
+    {
+        return $this->queryInternal(null);
+    }
+
+    public function queryAll()
+    {
+        return $this->queryInternal([]);
+    }
+
+    public function count()
+    {
+        return $this->queryInternal(0);
     }
 
     /**
-     * Sends a request to create/insert data.
-     * @param mixed $table entity to create
-     * @param mixed $columns attributes of object to create
-     * @param array $params request parameters
-     * @return $this
+     * Enables query cache for this command.
+     * @param int $duration the number of seconds that query result of this command can remain valid in the cache.
+     * If this is not set, the value of [[Connection::queryCacheDuration]] will be used instead.
+     * Use 0 to indicate that the cached data will never expire.
+     * @param Dependency $dependency the cache dependency associated with the cached query result
+     * @return $this the command object itself
      */
-    public function insert($table, $columns, array $params = [])
+    public function cache($duration = null, $dependency = null)
     {
-        $request = $this->db->getQueryBuilder()->insert($table, $columns, $params);
-
-        return $this->setRequest($request);
+        $this->queryCacheDuration = $duration === null ? $this->db->queryCacheDuration : $duration;
+        $this->queryCacheDependency = $dependency;
+        return $this;
     }
 
     /**
-     * Sends a request to update data.
-     * @param mixed $table entity to update
-     * @param mixed $columns attributes of object to update
-     * @param array $condition
-     * @param array $params request parameters
-     * @return $this
+     * Disables query cache for this command.
+     * @return $this the command object itself
      */
-    public function update($table, $columns, $condition = [], array $params = [])
+    public function noCache()
     {
-        $request = $this->db->getQueryBuilder()->update($table, $columns, $condition, $params);
-
-        return $this->setRequest($request);
-    }
-
-    /**
-     * Sends a request to delete data.
-     * @param mixed $table entity to update
-     * @param array $condition
-     * @param array $params request parameters
-     * @return $this
-     */
-    public function delete($table, $condition, array $params = [])
-    {
-        $request = $this->db->getQueryBuilder()->delete($table, $condition, $params);
-
-        return $this->setRequest($request);
-    }
-
-    /**
-     * Creates and executes request with given data.
-     * @param string $action
-     * @param string $table
-     * @param mixed $body
-     * @param array $params request parameters
-     * @return ResponseInterface response object
-     */
-    public function perform($action, $table, $body = [], array $params = [])
-    {
-        $request = $this->db->getQueryBuilder()->perform($action, $table, $body, $params);
-        $this->setRequest($request);
-
-        return $this->send();
-    }
-
-    /**
-     * Executes the request.
-     * @param array $options send options
-     * @return ResponseInterface response object
-     */
-    public function send($options = [])
-    {
-        $profile = serialize($this->request);
-        $category = static::getProfileCategory();
-        Yii::beginProfile($profile, $category);
-        $response = $this->request->send($options);
-        Yii::endProfile($profile, $category);
-        $this->db->checkResponse($response);
-
-        return $response;
-    }
-
-    public static function getProfileCategory()
-    {
-        return __METHOD__;
+        $this->queryCacheDuration = -1;
+        return $this;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * ActiveRecord for API
+ * ActiveRecord for API.
  *
- * @link      https://github.com/hiqdev/yii2-hiart
+ * @see      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
@@ -24,11 +24,11 @@ class ActiveRecord extends BaseActiveRecord
      * By default, the "hiart" application component is used as the database connection.
      * You may override this method if you want to use a different database connection.
      *
-     * @return AbstractConnection the database connection used by this AR class
+     * @return Connection the database connection used by this AR class
      */
     public static function getDb()
     {
-        return AbstractConnection::getDb();
+        return Connection::getDb();
     }
 
     /**
