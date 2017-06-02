@@ -1,8 +1,8 @@
 <?php
 /**
- * ActiveRecord for API
+ * ActiveRecord for API.
  *
- * @link      https://github.com/hiqdev/yii2-hiart
+ * @see      https://github.com/hiqdev/yii2-hiart
  * @package   yii2-hiart
  * @license   BSD-3-Clause
  * @copyright Copyright (c) 2015-2017, HiQDev (http://hiqdev.com/)
@@ -243,16 +243,13 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function one($db = null)
     {
-        if ($this->asArray) {
-            return parent::one($db);
-        }
-
-        $row = $this->searchOne($db);
-        if ($row === null) {
+        $row = parent::one($db);
+        if ($row !== false) {
+            $models = $this->populate([$row]);
+            return reset($models) ?: null;
+        } else {
             return null;
         }
-
-        return reset($this->populate([$row]));
     }
 
     /**
@@ -261,16 +258,16 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * If null, the DB connection returned by [[modelClass]] will be used.
      * @return array|ActiveRecord[] the query results. If the query results in nothing, an empty array will be returned.
      */
-    public function all($db = null)
-    {
-        if ($this->asArray) {
-            return parent::all($db);
-        }
-
-        $rows = $this->searchAll($db);
-
-        return $this->populate($rows);
-    }
+//    public function all($db = null)
+//    {
+//        if ($this->asArray) {
+//            return parent::all($db);
+//        }
+//
+//        $rows = $this->searchAll($db);
+//
+//        return $this->populate($rows);
+//    }
 
     public function populate($rows)
     {
