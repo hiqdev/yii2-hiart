@@ -25,6 +25,7 @@ class Mock
     {
         $this->name = $name;
         $this->args = $args;
+
         return $this->result;
     }
 }

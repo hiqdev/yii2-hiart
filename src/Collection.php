@@ -406,7 +406,7 @@ class Collection extends Component
         $data = [];
         foreach ($this->models as $model) {
             if ($this->dataCollector instanceof Closure) {
-                list ($key, $row) = call_user_func($this->dataCollector, $model, $this);
+                list($key, $row) = call_user_func($this->dataCollector, $model, $this);
             } else {
                 $key = $model->getPrimaryKey();
                 $row = $model->getAttributes($attributes);

@@ -12,7 +12,6 @@ namespace hiqdev\hiart\curl;
 
 use hiqdev\hiart\AbstractRequest;
 use hiqdev\hiart\AbstractResponse;
-use hiqdev\hiart\ResponseErrorException;
 
 /**
  * For creating response manually.

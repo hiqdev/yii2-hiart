@@ -215,6 +215,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
 
         try {
             $this->disableAuth();
+
             return call_user_func($closure);
         } finally {
             $this->enableAuth();

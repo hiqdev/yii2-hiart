@@ -264,6 +264,7 @@ abstract class AbstractQueryBuilder extends \yii\base\Object implements QueryBui
         } else {
             $key = $column . '_in';
         }
+
         return [$key => $values];
     }
 

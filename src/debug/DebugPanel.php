@@ -126,6 +126,7 @@ class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
         if ($this->_viewPath === null) {
             $this->_viewPath = dirname(__DIR__) . '/views/debug';
         }
+
         return $this->_viewPath;
     }
 
