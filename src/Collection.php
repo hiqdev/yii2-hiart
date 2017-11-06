@@ -317,7 +317,7 @@ class Collection extends Component
         if ($this->isEmpty()) {
             throw new InvalidCallException('Collection is empty, nothing to save');
         }
-        $options = array_merge($options, $this->queryOptions);
+        $options = array_merge($this->queryOptions, $options);
 
         if ($this->first->getIsNewRecord()) {
             return $this->insert($runValidation, $attributes, $options);
@@ -338,8 +338,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes);
-        $results = $this->isBatch($options) ? $this->first->batchQuery('create', $data, $options) : $this->first->query('create', reset($data), $options);
+        $data    = $this->collectData($attributes, $options);
+        $results = $this->first->query('create', $data, $options);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -371,8 +371,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes);
-        $results = $this->isBatch($options) ? $this->first->batchQuery('update', $data, $options) : $this->first->query('update', reset($data), $options);
+        $data    = $this->collectData($attributes, $options);
+        $results = $this->first->query('update', $data, $options);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -406,9 +406,10 @@ class Collection extends Component
     /**
      * Collects data from the stored models.
      * @param string|array $attributes list of attributes names
+     * @param array $options
      * @return array
      */
-    public function collectData($attributes = null)
+    public function collectData($attributes = null, $options = [])
     {
         $data = [];
         foreach ($this->models as $model) {
@@ -426,7 +427,7 @@ class Collection extends Component
             }
         }
 
-        return $data;
+        return $this->isBatch($options) ? $data : reset($data);
     }
 
     /**
@@ -601,7 +602,7 @@ class Collection extends Component
     public function isBatch($options = [])
     {
         if (isset($options['batch'])) {
-           return (bool)$options['batch'];
+           return (bool) $options['batch'];
         }
 
         return  true;
