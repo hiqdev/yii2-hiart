@@ -81,6 +81,12 @@ class Collection extends Component
     public $modelOptions = [];
 
     /**
+     * Perform query options
+     * @var array
+     */
+    public $queryOptions = [];
+
+    /**
      * @var ActiveRecord the first model of the set. Fills automatically by [[set()]]
      * @see set()
      */
@@ -311,6 +317,7 @@ class Collection extends Component
         if ($this->isEmpty()) {
             throw new InvalidCallException('Collection is empty, nothing to save');
         }
+        $options = array_merge($options, $this->queryOptions);
 
         if ($this->first->getIsNewRecord()) {
             return $this->insert($runValidation, $attributes, $options);
@@ -332,7 +339,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes);
-        $results = $this->first->batchQuery('create', $data, $options);
+        $results = $this->isBatch($options) ? $this->first->batchQuery('create', $data, $options) : $this->first->query('create', reset($data), $options);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -365,7 +372,7 @@ class Collection extends Component
         }
 
         $data    = $this->collectData($attributes);
-        $results = $this->first->batchQuery('update', $data, $options);
+        $results = $this->isBatch($options) ? $this->first->batchQuery('update', $data, $options) : $this->first->query('update', reset($data), $options);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -585,5 +592,18 @@ class Collection extends Component
     public function isEmpty()
     {
         return empty($this->models);
+    }
+
+    /**
+     * @param array $options
+     * @return bool
+     */
+    public function isBatch($options = [])
+    {
+        if (isset($options['batch'])) {
+           return (bool)$options['batch'];
+        }
+
+        return  true;
     }
 }
