@@ -81,8 +81,8 @@ class Collection extends Component
     public $modelOptions = [];
 
     /**
-     * Perform query options
-     * @var array
+     * @var array Options that will be passed to [[ActiveRecord::query()]] method as third argument.
+     * @see ActiveRecord::query()
      */
     public $queryOptions = [];
 
@@ -111,6 +111,14 @@ class Collection extends Component
      * @see collectData
      */
     public $dataCollector;
+
+
+    public function init()
+    {
+        if (!isset($this->queryOptions['batch'])) {
+            $this->queryOptions['batch'] = true;
+        }
+    }
 
     /**
      * Sets the model of the collection.
@@ -326,7 +334,7 @@ class Collection extends Component
         }
     }
 
-    public function insert($runValidation = true, $attributes = null, array $options = [])
+    public function insert($runValidation = true, $attributes = null, array $queryOptions = [])
     {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
@@ -338,8 +346,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $options);
-        $results = $this->first->query('create', $data, $options);
+        $data    = $this->collectData($attributes, $queryOptions);
+        $results = $this->first->query('create', $data, $queryOptions);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -359,7 +367,7 @@ class Collection extends Component
         return true;
     }
 
-    public function update($runValidation = true, $attributes = null, array $options = [])
+    public function update($runValidation = true, $attributes = null, array $queryOptions = [])
     {
         if (!$attributes) {
             $attributes = $this->attributes ?: $this->first->activeAttributes();
@@ -371,8 +379,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $options);
-        $results = $this->first->query('update', $data, $options);
+        $data    = $this->collectData($attributes, $queryOptions);
+        $results = $this->first->query('update', $data, $queryOptions);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -406,10 +414,10 @@ class Collection extends Component
     /**
      * Collects data from the stored models.
      * @param string|array $attributes list of attributes names
-     * @param array $options
+     * @param array $queryOptions options that are going to be
      * @return array
      */
-    public function collectData($attributes = null, $options = [])
+    public function collectData($attributes = null, $queryOptions = [])
     {
         $data = [];
         foreach ($this->models as $model) {
@@ -427,7 +435,11 @@ class Collection extends Component
             }
         }
 
-        return $this->isBatch($options) ? $data : reset($data);
+        if (isset($queryOptions['batch']) && (bool)$queryOptions['batch'] === true) {
+            return $data;
+        }
+
+        return reset($data);
     }
 
     /**
@@ -593,18 +605,5 @@ class Collection extends Component
     public function isEmpty()
     {
         return empty($this->models);
-    }
-
-    /**
-     * @param array $options
-     * @return bool
-     */
-    public function isBatch($options = [])
-    {
-        if (isset($options['batch'])) {
-           return (bool) $options['batch'];
-        }
-
-        return  true;
     }
 }
