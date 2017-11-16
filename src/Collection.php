@@ -346,8 +346,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $queryOptions);
-        $results = $this->first->query('create', $data, $queryOptions);
+        $data    = $this->collectData($attributes);
+        $results = $this->first->batchQuery('create', $data, $queryOptions);
         $pk      = $this->first->primaryKey()[0];
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
@@ -379,8 +379,8 @@ class Collection extends Component
             return false;
         }
 
-        $data    = $this->collectData($attributes, $queryOptions);
-        $results = $this->first->query('update', $data, $queryOptions);
+        $data    = $this->collectData($attributes);
+        $results = $this->first->batchQuery('update', $data, $queryOptions);
 
         foreach ($this->models as $key => $model) {
             $changedAttributes = [];
@@ -414,10 +414,9 @@ class Collection extends Component
     /**
      * Collects data from the stored models.
      * @param string|array $attributes list of attributes names
-     * @param array $queryOptions options that are going to be
      * @return array
      */
-    public function collectData($attributes = null, $queryOptions = [])
+    public function collectData($attributes = null)
     {
         $data = [];
         foreach ($this->models as $model) {
@@ -435,11 +434,7 @@ class Collection extends Component
             }
         }
 
-        if (isset($queryOptions['batch']) && (bool)$queryOptions['batch'] === true) {
-            return $data;
-        }
-
-        return reset($data);
+        return $data;
     }
 
     /**

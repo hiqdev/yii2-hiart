@@ -207,13 +207,41 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
+    /**
+     * Perform batch query.
+     * Attention: takes bulk data and returns bulk result.
+     * @param string $defaultScenario
+     * @param array $data bulk data
+     * @param array $options
+     * @return array bulk results
+     */
     public function batchQuery($defaultScenario, $data = [], array $options = [])
     {
-        $options['batch'] = true;
+        $batch = isset($options['batch']) ? (bool)$options['batch'] : true;
+        $options['batch'] = $batch;
 
-        return $this->query($defaultScenario, $data, $options);
+        if (!$batch) {
+            $val = reset($data);
+            $key = key($data);
+            $data = $val;
+        }
+
+        $result = $this->query($defaultScenario, $data, $options);
+
+        if (!$batch) {
+            $result = [$key = $result];
+        }
+
+        return $result;
     }
 
+    /**
+     * Perform query.
+     * @param string $defaultScenario
+     * @param array $data data
+     * @param array $options
+     * @return array result
+     */
     public function query($defaultScenario, $data = [], array $options = [])
     {
         $action = $this->getScenarioAction($defaultScenario);
