@@ -24,6 +24,8 @@ use yii\helpers\ArrayHelper;
  * Class Collection manages the collection of the models.
  *
  * @var ActiveRecord[] the array of models in the collection
+ *
+ * @property Model[] $models
  */
 class Collection extends Component
 {
