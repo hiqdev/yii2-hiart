@@ -229,7 +229,7 @@ class ActiveRecord extends BaseActiveRecord
         $result = $this->query($defaultScenario, $data, $options);
 
         if (!$batch) {
-            $result = [$key = $result];
+            $result = [$key => $result];
         }
 
         return $result;
