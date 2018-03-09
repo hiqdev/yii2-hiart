@@ -354,6 +354,9 @@ class Collection extends Component
         foreach ($this->models as $key => $model) {
             $values = &$data[$key];
             $result = &$results[$key];
+            if (!$result) {
+                $result = $this->findAssociatedModelData($results, $model, $pk);
+            }
 
             $model->{$pk} = $result['id'];
             if ($pk !== 'id') {
@@ -367,6 +370,24 @@ class Collection extends Component
         $this->afterSave();
 
         return true;
+    }
+
+    /**
+     * Try to find the model data if the response from the API came without an index by ID
+     *
+     * @param $data
+     * @param $model
+     * @param $pk
+     * @return mixed
+     */
+    private function findAssociatedModelData($data, $model, $pk)
+    {
+        if (isset($data[$pk])) {
+            return $data;
+        }
+
+        // todo: Add implementation for batch response
+        throw new InvalidValueException('There is no implementation for a response from api without an index on ID');
     }
 
     public function update($runValidation = true, $attributes = null, array $queryOptions = [])
