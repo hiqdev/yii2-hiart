@@ -68,8 +68,9 @@ class ResponseErrorException extends Exception
 
         return [
             'statusCode' => $response->getStatusCode(),
-            'data' => $response->getData(),
             'headers' => $response->getHeaders(),
+            'rawData' => $response->getRawData(),
+            'data' => $response->getData(),
             'request' => [
                 'method' => $request->getMethod(),
                 'uri' => $request->getFullUri(),
