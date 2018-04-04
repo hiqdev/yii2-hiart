@@ -45,7 +45,7 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "~2.0.0"
+        "yiisoft/yii2": "2.1.x-dev"
     },
     "require-dev": {
         "yiisoft/yii2": "dev-master",
