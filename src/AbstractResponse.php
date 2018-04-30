@@ -55,7 +55,7 @@ abstract class AbstractResponse implements ResponseInterface
         }
 
         if ($this->isJson()) {
-            return Json::decode($data);
+            return $this->decodeJson($data);
         }
 
         // TODO: implement decoding for XML and other types
@@ -100,4 +100,13 @@ abstract class AbstractResponse implements ResponseInterface
      * @return array
      */
     abstract public function getHeader($name);
+
+    /**
+     * @param string $data JSON data
+     * @return array
+     */
+    protected function decodeJson($data)
+    {
+        return Json::decode($data);
+    }
 }

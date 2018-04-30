@@ -10,6 +10,8 @@
 
 namespace hiqdev\hiart\proxy;
 
+use GuzzleHttp\Exception\BadResponseException;
+
 abstract class Request extends \hiqdev\hiart\AbstractRequest
 {
     /**
@@ -21,13 +23,17 @@ abstract class Request extends \hiqdev\hiart\AbstractRequest
 
     public function send($options = [])
     {
-        $responseWorker = $this->getHandler()->send($this->getWorker(), $options);
+        try {
+            $responseWorker = $this->getHandler()->send($this->getWorker(), $options);
+        } catch (BadResponseException $exception) {
+            $responseWorker = $exception->getResponse();
+        }
 
         return new $this->responseClass($this, $responseWorker);
     }
 
     /**
-     * @return Worker
+     * @return object Worker
      */
     public function getWorker()
     {
