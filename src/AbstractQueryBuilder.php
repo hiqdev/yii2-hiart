@@ -244,7 +244,7 @@ abstract class AbstractQueryBuilder extends \yii\base\BaseObject implements Quer
 
         list($column, $values) = $operands;
 
-        if (count($column) > 1) {
+        if ($column instanceof \Countable && count($column) > 1) {
             return $this->buildCompositeInCondition($operator, $column, $values);
         } elseif (is_array($column)) {
             $column = reset($column);
