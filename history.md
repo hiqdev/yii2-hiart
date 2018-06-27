@@ -1,5 +1,37 @@
-hiqdev/yii2-hiart
------------------
+# hiqdev/yii2-hiart
+
+## [0.3.0] - 2018-06-27
+
+- Fixed bugs
+    - [98384bd] 2018-06-27 csfixed [@hiqsol]
+    - [7390245] 2018-05-21 Fixed AbstractQueryBuilder::buildInCondition(), added check if $column is \Countable otherwise it will Exception [@tafid]
+    - [04e1cf5] 2018-04-30 Updated Request::send() not to throw exception when response is not 200-OK [@SilverFire]
+    - [f22fddc] 2018-03-12 Merge pull request #13 from bladeroot/rawData-in-exception [@SilverFire]
+    - [3760c4b] 2018-03-12 add get rawData to error exception [@BladeRoot]
+    - [87b6aca] 2018-03-09 Added Collection::findAssociatedModelData(), because if the response from the api came without an index by ID [@tafid]
+    - [a8f41eb] 2018-02-09 Fixed typo in code [@SilverFire]
+    - [5460e99] 2018-01-30 Updated PHPDocs [@SilverFire]
+    - [b74101e] 2018-01-28 csfixed [@hiqsol]
+    - [c9b9571] 2017-11-16 Merge pull request #12 from hiqsol/master [@hiqsol]
+    - [d5c996d] 2017-11-16 Still fixing running non batch queries from Collection [@hiqsol]
+    - [028c161] 2017-11-10 Fixed bug introduced by #11 [@SilverFire]
+    - [5d5f608] 2017-11-06 Merge pull request #11 from tafid/master [@hiqsol]
+    - [4e2fa99] 2017-11-06 Fixed [@tafid]
+    - [24cdbd6] 2017-11-06 Added attribute `queryOptions` and sent it to like query options. Added Collection::isBatch() method in order to determine whether is neede to do batch query. [@tafid]
+    - [a35aa74] 2017-10-13 csfixed [@hiqsol]
+    - [7b06057] 2017-06-01 fixed ActiveQuery::all to pass $db [@hiqsol]
+    - [3bd52a1] 2017-05-31 added ManualResponse [@hiqsol]
+    - [c309679] 2017-05-31 added searchSingle/Batch [@hiqsol]
+    - [172eca7] 2017-05-31 phpdocs [@hiqsol]
+    - [7584eae] 2017-05-31 DANGEROUS change: Command::send returns response not data [@hiqsol]
+    - [a9aaaec] 2017-05-31 added case insensitivity in cURL response [@hiqsol]
+    - [e4ab8ff] 2017-05-29 fixed passing `$db` in Query [@hiqsol]
+    - [2a2f131] 2017-05-22 simplified config [@hiqsol]
+    - [a3ca17a] 2017-05-22 csfixed [@hiqsol]
+    - [59ee8c2] 2017-05-22 renamed `hidev.yml` [@hiqsol]
+    - [2518063] 2017-05-07 Added Collection::dataCollector [@SilverFire]
+- Fixed PHP 7.2 compatibility
+    - [e2e1279] 2018-02-09 Enhanced PHP 7.2 compatibility [@SilverFire]
 
 ## [0.2.0] - 2017-04-15
 
@@ -524,7 +556,7 @@ hiqdev/yii2-hiart
 [d3756e4]: https://github.com/hiqdev/yii2-hiart/commit/d3756e4
 [ea50c04]: https://github.com/hiqdev/yii2-hiart/commit/ea50c04
 [8047d37]: https://github.com/hiqdev/yii2-hiart/commit/8047d37
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -590,3 +622,32 @@ hiqdev/yii2-hiart
 [9388e48]: https://github.com/hiqdev/yii2-hiart/commit/9388e48
 [e27a319]: https://github.com/hiqdev/yii2-hiart/commit/e27a319
 [0.2.0]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...0.2.0
+[98384bd]: https://github.com/hiqdev/yii2-hiart/commit/98384bd
+[7390245]: https://github.com/hiqdev/yii2-hiart/commit/7390245
+[04e1cf5]: https://github.com/hiqdev/yii2-hiart/commit/04e1cf5
+[f22fddc]: https://github.com/hiqdev/yii2-hiart/commit/f22fddc
+[3760c4b]: https://github.com/hiqdev/yii2-hiart/commit/3760c4b
+[87b6aca]: https://github.com/hiqdev/yii2-hiart/commit/87b6aca
+[e2e1279]: https://github.com/hiqdev/yii2-hiart/commit/e2e1279
+[a8f41eb]: https://github.com/hiqdev/yii2-hiart/commit/a8f41eb
+[5460e99]: https://github.com/hiqdev/yii2-hiart/commit/5460e99
+[b74101e]: https://github.com/hiqdev/yii2-hiart/commit/b74101e
+[c9b9571]: https://github.com/hiqdev/yii2-hiart/commit/c9b9571
+[d5c996d]: https://github.com/hiqdev/yii2-hiart/commit/d5c996d
+[028c161]: https://github.com/hiqdev/yii2-hiart/commit/028c161
+[5d5f608]: https://github.com/hiqdev/yii2-hiart/commit/5d5f608
+[4e2fa99]: https://github.com/hiqdev/yii2-hiart/commit/4e2fa99
+[24cdbd6]: https://github.com/hiqdev/yii2-hiart/commit/24cdbd6
+[a35aa74]: https://github.com/hiqdev/yii2-hiart/commit/a35aa74
+[7b06057]: https://github.com/hiqdev/yii2-hiart/commit/7b06057
+[3bd52a1]: https://github.com/hiqdev/yii2-hiart/commit/3bd52a1
+[c309679]: https://github.com/hiqdev/yii2-hiart/commit/c309679
+[172eca7]: https://github.com/hiqdev/yii2-hiart/commit/172eca7
+[7584eae]: https://github.com/hiqdev/yii2-hiart/commit/7584eae
+[a9aaaec]: https://github.com/hiqdev/yii2-hiart/commit/a9aaaec
+[e4ab8ff]: https://github.com/hiqdev/yii2-hiart/commit/e4ab8ff
+[2a2f131]: https://github.com/hiqdev/yii2-hiart/commit/2a2f131
+[a3ca17a]: https://github.com/hiqdev/yii2-hiart/commit/a3ca17a
+[59ee8c2]: https://github.com/hiqdev/yii2-hiart/commit/59ee8c2
+[2518063]: https://github.com/hiqdev/yii2-hiart/commit/2518063
+[0.3.0]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...0.3.0

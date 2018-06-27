@@ -1,5 +1,9 @@
-hiqdev/yii2-hiart
------------------
+# hiqdev/yii2-hiart
+
+## [0.3.0] - 2018-06-27
+
+- Fixed bugs ([@hiqsol], [@tafid], [@SilverFire], [@BladeRoot])
+- Fixed PHP 7.2 compatibility ([@SilverFire])
 
 ## [0.2.0] - 2017-04-15
 
@@ -87,7 +91,7 @@ hiqdev/yii2-hiart
 [andreyklochok@gmail.com]: https://github.com/tafid
 [@BladeRoot]: https://github.com/BladeRoot
 [bladeroot@gmail.com]: https://github.com/BladeRoot
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -96,3 +100,4 @@ hiqdev/yii2-hiart
 [0.1.1]: https://github.com/hiqdev/yii2-hiart/compare/0.1.0...0.1.1
 [0.1.2]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...0.1.2
 [0.2.0]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...0.2.0
+[0.3.0]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...0.3.0
