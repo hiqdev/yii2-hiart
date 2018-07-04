@@ -251,8 +251,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         if ($row === null) {
             return null;
         }
+        $models = $this->populate([$row]);
 
-        return reset($this->populate([$row]));
+        return reset($models);
     }
 
     /**
