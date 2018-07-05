@@ -49,7 +49,7 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 
     public function buildUri(Query $query)
     {
-        return $query->from;
+        return is_array($query->from) ? reset($query->from) : $query->from;
     }
 
     public function buildHeaders(Query $query)
