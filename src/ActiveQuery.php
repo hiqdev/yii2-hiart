@@ -329,7 +329,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 continue;
             }
             foreach ($this->join as $join) {
-                $name = array_shift(array_keys($join));
+                $keys = array_keys($join);
+                $name = array_shift($keys);
                 $closure = array_shift($join);
 
                 if (is_int($name)) {
