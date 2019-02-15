@@ -14,6 +14,7 @@ use hiqdev\hiart\rest\QueryBuilder;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
 use yii\db\ActiveRelationTrait;
+use yii\db\BaseActiveRecord;
 
 class ActiveQuery extends Query implements ActiveQueryInterface
 {
@@ -358,6 +359,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                         $relatedModelClass::populateRecord($relatedModel, $item);
                         $relation->populateJoinedRelations($relatedModel, $item);
                         $relation->addInverseRelation($relatedModel, $model);
+                        $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
                         if ($relation->indexBy !== null) {
                             $index = is_string($relation->indexBy)
                                 ? $relatedModel[$relation->indexBy]
@@ -373,6 +375,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                     $relatedModelClass::populateRecord($relatedModel, $value);
                     $relation->populateJoinedRelations($relatedModel, $value);
                     $relation->addInverseRelation($relatedModel, $model);
+                    $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
                     $records = $relatedModel;
                 }
 
