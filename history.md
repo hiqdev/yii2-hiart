@@ -1,5 +1,20 @@
 # hiqdev/yii2-hiart
 
+## [0.4.0] - 2019-02-20
+
+- Fixed Debug panel to follow Yii API changes
+    - [3bca836] 2019-02-20 Add CSRF token to "Run query" link, enhanced JSON formatting [@SilverFire]
+- Trigger `EVENT_AFTER_FIND` for joined relations after poppulation for consistency reasons
+    - [8b81afe] 2019-02-15 Trigger EVENT_AFTER_FIND for joined relations for consistency [@SilverFire]
+- Allowed array `Query::$from` in REST QueryBuilder
+    - [1f887c5] 2018-07-05 Allowed array `Query::$from` in REST QueryBuilder [@hiqsol]
+    - [ddbc454] 2018-07-05 Query from accepte Array [guillaume.pignolet@inadvans.com]
+- Other minor improvements
+    - [c1fac46] 2019-02-20 csfixed [@SilverFire]
+    - [93cf023] 2019-02-20 hideved [@SilverFire]
+    - [2b27164] 2019-01-29 Reduce notices [@SilverFire]
+    - [1c46fad] 2018-07-04 fixed #19 PHP notice only variables should be passed by reference [@hiqsol]
+
 ## [0.3.0] - 2018-06-27
 
 - Fixed bugs
@@ -254,7 +269,6 @@
     - [b69881a] 2016-01-14 HiArtException - changed user-friendly message [@SilverFire]
     - [f9cb92b] 2016-01-14 Added Collection::checkConsistency property [@SilverFire]
     - [3b7614f] 2016-01-13 PHPDoc improved [@SilverFire]
-    - [1d1d191] 2016-01-13 Merge branch 'bscheshirwork-master' [@SilverFire]
     - [19aea44] 2016-01-13 The errorChecker should be set first [bscheshir.work@gmail.com]
     - [747d1a7] 2016-01-11 PHPDocs improved [@SilverFire]
     - [cb1f5be] 2016-01-11 STARTED REDOING with Guzzle [@hiqsol]
@@ -394,7 +408,6 @@
 [b69881a]: https://github.com/hiqdev/yii2-hiart/commit/b69881a
 [f9cb92b]: https://github.com/hiqdev/yii2-hiart/commit/f9cb92b
 [3b7614f]: https://github.com/hiqdev/yii2-hiart/commit/3b7614f
-[1d1d191]: https://github.com/hiqdev/yii2-hiart/commit/1d1d191
 [19aea44]: https://github.com/hiqdev/yii2-hiart/commit/19aea44
 [747d1a7]: https://github.com/hiqdev/yii2-hiart/commit/747d1a7
 [cb1f5be]: https://github.com/hiqdev/yii2-hiart/commit/cb1f5be
@@ -556,7 +569,7 @@
 [d3756e4]: https://github.com/hiqdev/yii2-hiart/commit/d3756e4
 [ea50c04]: https://github.com/hiqdev/yii2-hiart/commit/ea50c04
 [8047d37]: https://github.com/hiqdev/yii2-hiart/commit/8047d37
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.3.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -651,3 +664,12 @@
 [59ee8c2]: https://github.com/hiqdev/yii2-hiart/commit/59ee8c2
 [2518063]: https://github.com/hiqdev/yii2-hiart/commit/2518063
 [0.3.0]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...0.3.0
+[c1fac46]: https://github.com/hiqdev/yii2-hiart/commit/c1fac46
+[93cf023]: https://github.com/hiqdev/yii2-hiart/commit/93cf023
+[3bca836]: https://github.com/hiqdev/yii2-hiart/commit/3bca836
+[8b81afe]: https://github.com/hiqdev/yii2-hiart/commit/8b81afe
+[2b27164]: https://github.com/hiqdev/yii2-hiart/commit/2b27164
+[1f887c5]: https://github.com/hiqdev/yii2-hiart/commit/1f887c5
+[ddbc454]: https://github.com/hiqdev/yii2-hiart/commit/ddbc454
+[1c46fad]: https://github.com/hiqdev/yii2-hiart/commit/1c46fad
+[0.4.0]: https://github.com/hiqdev/yii2-hiart/compare/0.3.0...0.4.0

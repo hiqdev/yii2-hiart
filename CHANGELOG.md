@@ -1,5 +1,12 @@
 # hiqdev/yii2-hiart
 
+## [0.4.0] - 2019-02-20
+
+- Fixed Debug panel to follow Yii API changes ([@SilverFire])
+- Trigger `EVENT_AFTER_FIND` for joined relations after poppulation for consistency reasons ([@SilverFire])
+- Allowed array `Query::$from` in REST QueryBuilder ([@hiqsol], [guillaume.pignolet@inadvans.com])
+- Other minor improvements ([@SilverFire], [@hiqsol])
+
 ## [0.3.0] - 2018-06-27
 
 - Fixed bugs ([@hiqsol], [@tafid], [@SilverFire], [@BladeRoot])
@@ -91,7 +98,7 @@
 [andreyklochok@gmail.com]: https://github.com/tafid
 [@BladeRoot]: https://github.com/BladeRoot
 [bladeroot@gmail.com]: https://github.com/BladeRoot
-[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...HEAD
+[Under development]: https://github.com/hiqdev/yii2-hiart/compare/0.3.0...HEAD
 [0.0.4]: https://github.com/hiqdev/yii2-hiart/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/hiqdev/yii2-hiart/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/hiqdev/yii2-hiart/compare/0.0.1...0.0.2
@@ -101,3 +108,4 @@
 [0.1.2]: https://github.com/hiqdev/yii2-hiart/compare/0.1.1...0.1.2
 [0.2.0]: https://github.com/hiqdev/yii2-hiart/compare/0.1.2...0.2.0
 [0.3.0]: https://github.com/hiqdev/yii2-hiart/compare/0.2.0...0.3.0
+[0.4.0]: https://github.com/hiqdev/yii2-hiart/compare/0.3.0...0.4.0
