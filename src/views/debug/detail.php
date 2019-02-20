@@ -12,7 +12,7 @@ $this->registerCss(<<<'CSS'
 CSS
 );
 
-$this->registerJs(<<<JS
+$this->registerJs(<<<'JS'
     function syntaxHighlight(json) {
         json = json.replace(/&/g, '&').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
@@ -42,8 +42,11 @@ $this->registerJs(<<<JS
         $.ajax({
             type: 'POST',
             url: $(this).attr('href'),
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name=csrf-token]').attr('content'))
+            },
             success: function (data, status, xhr) {
-                result.find('.result').html( syntaxHighlight( JSON.stringify( data.result, undefined, 10) ) );
+                result.find('.result').html($('<pre>').html(syntaxHighlight(JSON.stringify( data.result, undefined, 2))));
                 result.find('.time').html(data.time);
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -74,7 +77,7 @@ JS
                 <td style="width: 10%"><?= $timing->getDuration() ?></td>
                 <td style="width: 75%" class="white-space-normal">
                     <b><?= $timing->getMethod() ?> <?= $timing->getUrlEncoded() ?></b><br/>
-                    <p><?= $timing->getBodyEncoded() ?></p>
+                    <p style="overflow: scroll"><?= $timing->getBodyEncoded() ?></p>
                     <?= $timing->getTrace() ?>
                 </div></td>
                 <td style="width: 15%" class="white-space-normal">
