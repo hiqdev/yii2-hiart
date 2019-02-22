@@ -156,10 +156,11 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         if (empty($this->select) || true) {
             $this->addSelect(['*' => '*']);
             foreach ($this->joinWith as $join) {
-                $key = array_shift(array_keys($join));
+                $keys = array_keys($join);
+                $key = array_shift($keys);
                 $closure = array_shift($join);
 
-                $this->addSelect(is_int($key) ? $closure : $key);
+                $this->addSelect(\is_int($key) ? $closure : $key);
             }
         }
     }
@@ -170,6 +171,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     protected function joinWithRelations($model, $with)
     {
+        $relations = [];
         foreach ($with as $name => $callback) {
             if (is_int($name)) {
                 $name = $callback;
