@@ -40,6 +40,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
 
     public function testInsert()
     {
-        $this->command->insert($this->table, $this->columns);
+        $res = $this->command->insert($this->table, $this->columns);
+        $this->assertInstanceOf(Command::class, $res);
     }
 }
