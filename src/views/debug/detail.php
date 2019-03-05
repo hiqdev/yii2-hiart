@@ -77,7 +77,7 @@ JS
                 <td style="width: 10%"><?= $timing->getDuration() ?></td>
                 <td style="width: 75%" class="white-space-normal">
                     <b><?= $timing->getMethod() ?> <?= $timing->getUrlEncoded() ?></b><br/>
-                    <p style="overflow: scroll"><?= $timing->getBodyEncoded() ?></p>
+                    <p style="word-wrap: break-word;"><?= $timing->getBodyEncoded() ?></p>
                     <?= $timing->getTrace() ?>
                 </div></td>
                 <td style="width: 15%" class="white-space-normal">
