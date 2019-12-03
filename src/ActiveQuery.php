@@ -131,7 +131,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $join = $this->join;
         $this->join = [];
 
-        $model = new $this->modelClass();
+        /** @var ActiveRecord $model */
+        $model = \Yii::createObject($this->modelClass);
 
         foreach ($this->joinWith as $with) {
             $this->joinWithRelations($model, $with);
