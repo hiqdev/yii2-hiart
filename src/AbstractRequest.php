@@ -115,7 +115,7 @@ abstract class AbstractRequest implements RequestInterface
         return $this->query;
     }
 
-    protected function build()
+    public function build()
     {
         if ($this->isBuilt === null) {
             if (!empty($this->query)) {
