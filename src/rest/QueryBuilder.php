@@ -64,7 +64,7 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 
     public function buildQueryParams(Query $query)
     {
-        return $query->where;
+        return null;
     }
 
     public function buildFormParams(Query $query)
@@ -74,6 +74,6 @@ class QueryBuilder extends \hiqdev\hiart\AbstractQueryBuilder
 
     public function buildBody(Query $query)
     {
-        return null;
+        return $query->where;
     }
 }
