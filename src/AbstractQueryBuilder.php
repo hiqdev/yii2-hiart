@@ -188,7 +188,7 @@ abstract class AbstractQueryBuilder extends \yii\base\BaseObject implements Quer
         foreach ($condition as $attribute => $value) {
             if (is_array($value)) { // IN condition
                 // $parts[] = [$attribute.'s' => join(',',$value)];
-                $parts[$attribute . 's'] = implode(',', $value);
+                $parts[$attribute] = implode(',', $value);
             } else {
                 $parts[$attribute] = $value;
             }
