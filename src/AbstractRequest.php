@@ -267,6 +267,22 @@ abstract class AbstractRequest implements RequestInterface
     }
 
     /**
+     * @param string $header
+     * @param string $value
+     * @return $this
+     */
+    public function addHeader($header, $value)
+    {
+        if (!isset($this->headers[$header])) {
+            $this->headers[$header] = [];
+        }
+
+        $this->headers[$header][] = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      * Should be declared abstract, but it is not supported in PHP5.
      */
