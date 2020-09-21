@@ -371,24 +371,6 @@ class Collection extends Component
         return true;
     }
 
-    /**
-     * Try to find the model data if the response from the API came without an index by ID.
-     *
-     * @param $data
-     * @param $model
-     * @param $pk
-     * @return mixed
-     */
-    private function findAssociatedModelData($data, $model, $pk)
-    {
-        if (isset($data[$pk])) {
-            return $data;
-        }
-
-        // todo: Add implementation for batch response
-        throw new InvalidValueException('There is no implementation for a response from api without an index on ID');
-    }
-
     public function update($runValidation = true, $attributes = null, array $queryOptions = [])
     {
         if (!$attributes) {
@@ -623,4 +605,24 @@ class Collection extends Component
     {
         return empty($this->models);
     }
+
+    /**
+     * Try to find the model data if the response from the API came without an index by ID.
+     *
+     * @param $data
+     * @param $model
+     * @param $pk
+     * @return mixed
+     */
+    protected function findAssociatedModelData($data, $model, $pk)
+    {
+        if (isset($data[$pk])) {
+            return $data;
+        }
+
+        // todo: Add implementation for batch response
+        throw new InvalidValueException('There is no implementation for a response from api without an index on ID');
+    }
+
+
 }
