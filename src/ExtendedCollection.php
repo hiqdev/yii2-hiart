@@ -53,7 +53,7 @@ class ExtendedCollection extends Collection
     protected function performOperation(string $command, array $data, array $queryOptions = []) : array
     {
         if ($this->isConsistent()) {
-            return $this->first->batchQuery($command, $data, $queryOptions);
+            return parent::performOperation($command, $data, $queryOptions);
         }
 
         foreach ($data as $key => $record) {
