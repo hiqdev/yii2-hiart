@@ -17,4 +17,16 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      * if it is not explicitly set
      */
     public $query;
+
+    public bool $useRealCount = false;
+
+    public function enableCount(): void
+    {
+        $this->useRealCount = true;
+    }
+
+    protected function prepareTotalCount()
+    {
+        return $this->useRealCount ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
+    }
 }
