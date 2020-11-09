@@ -25,15 +25,15 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      *
      * @var bool
      */
-    public bool $useRealCount = false;
+    public bool $countSynchronously = false;
 
-    public function enableCount(): void
+    public function enableSynchronouslyCount(): void
     {
-        $this->useRealCount = true;
+        $this->countSynchronously = true;
     }
 
     protected function prepareTotalCount()
     {
-        return $this->useRealCount ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
+        return $this->countSynchronously ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
     }
 }
