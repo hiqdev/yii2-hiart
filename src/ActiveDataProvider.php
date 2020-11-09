@@ -27,7 +27,7 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      */
     public bool $countSynchronously = false;
 
-    public function enableSynchronouslyCount(): void
+    public function enableSynchronousCount(): void
     {
         $this->countSynchronously = true;
     }
