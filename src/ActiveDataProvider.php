@@ -18,6 +18,13 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      */
     public $query;
 
+    /**
+     * To improve performance, implemented grid summary and pager loading via AJAX when this attribute is `false`
+     * There is a possibility set this attribute via DI
+     * @see \hipanel\base\SearchModelTrait::search()
+     *
+     * @var bool
+     */
     public bool $useRealCount = false;
 
     public function enableCount(): void
