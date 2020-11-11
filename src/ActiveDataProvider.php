@@ -17,4 +17,23 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      * if it is not explicitly set
      */
     public $query;
+
+    /**
+     * To improve performance, implemented grid summary and pager loading via AJAX when this attribute is `false`
+     * There is a possibility set this attribute via DI
+     * @see \hipanel\base\SearchModelTrait::search()
+     *
+     * @var bool
+     */
+    public bool $countSynchronously = false;
+
+    public function enableSynchronousCount(): void
+    {
+        $this->countSynchronously = true;
+    }
+
+    protected function prepareTotalCount()
+    {
+        return $this->countSynchronously ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
+    }
 }
