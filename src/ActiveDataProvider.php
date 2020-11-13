@@ -32,8 +32,15 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
         $this->countSynchronously = true;
     }
 
-    protected function prepareTotalCount()
+    /**
+     * When receiving the pager and summary through AJAX, to calculate the limit and offset of Grid,
+     * you need to get the maximum possible total count, otherwise the Grid pages will not switch
+     *
+     * @return int
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function prepareTotalCount(): int
     {
-        return $this->countSynchronously ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
+        return $this->countSynchronously ? parent::prepareTotalCount() : PHP_INT_MAX;
     }
 }
