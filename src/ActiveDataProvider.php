@@ -34,6 +34,6 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
 
     protected function prepareTotalCount()
     {
-        return $this->countSynchronously ? parent::prepareTotalCount() : $this->getPagination()->pageSize + 1;
+        return $this->countSynchronously ? parent::prepareTotalCount() : 999999;
     }
 }
