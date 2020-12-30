@@ -394,6 +394,12 @@ class Collection extends Component
                 $model->setOldAttribute($name, $value);
             }
             $model->afterSave(false, $changedAttributes);
+            // update models
+            foreach ($results as $id => $payload) {
+                if ((int)$model->id === (int)$id) {
+                    $model->setAttributes($payload);
+                }
+            }
         }
 
         $this->afterSave();
