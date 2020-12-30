@@ -397,7 +397,7 @@ class Collection extends Component
             // update models
             foreach ($results as $id => $payload) {
                 $pk = $this->first->primaryKey()[0];
-                if ((int)$model->{$pk} === (int)$id) {
+                if ((string)$model->{$pk} === (string)$id) {
                     $model->setAttributes($payload);
                     break;
                 }
