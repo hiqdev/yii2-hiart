@@ -10,9 +10,12 @@
 
 namespace hiqdev\hiart\debug;
 
+use hiqdev\hiart\helpers\Request2Curl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 
 class Timing
 {
@@ -22,8 +25,11 @@ class Timing
     protected $panel;
 
     protected $logId;
+
     protected $duration;
+
     protected $traces;
+
     protected $request;
 
     public function __construct(DebugPanel $panel, $logId)
@@ -55,9 +61,9 @@ class Timing
 
     public function updateFromRaw($rawTiming)
     {
-        $this->request  = unserialize($rawTiming[1]);
+        $this->request = unserialize($rawTiming[1]);
         $this->duration = $rawTiming[3];
-        $this->traces   = $rawTiming[4];
+        $this->traces = $rawTiming[4];
     }
 
     public function getLogId()
@@ -78,6 +84,16 @@ class Timing
     public function getBodyEncoded()
     {
         return Html::encode($this->request->getBody());
+    }
+
+    public function getHeaders(): array
+    {
+        $headers = [];
+        foreach ($this->request->getHeaders() as $header => $value) {
+            $headers[] = Html::encode("$header: $value");
+        }
+
+        return $headers;
     }
 
     public function getDuration()
@@ -117,5 +133,34 @@ class Timing
         $newTabUrl = rtrim($uri, '&') . $sign . $this->request->getBody();
 
         return Html::a('to new tab', $newTabUrl, ['target' => '_blank']);
+    }
+
+    public function getCopyAsCurlLink(): string
+    {
+        $curl = Json::htmlEncode((string)(new Request2Curl($this->request)));
+
+        return Html::a('copy as cURL', '#', [
+            'onclick' => new JsExpression("
+                (function () {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        return navigator.clipboard.writeText(textToCopy);
+                    } else {
+                        let textArea = document.createElement('textarea');
+                        textArea.value = '$curl';
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-999999px';
+                        textArea.style.top = '-999999px';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        return new Promise((res, rej) => {
+                            document.execCommand('copy') ? res() : rej();
+                            textArea.remove();
+                        });
+                    }
+                })();
+                return false;
+            "),
+        ]);
     }
 }
