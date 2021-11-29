@@ -78,11 +78,17 @@ JS
                 <td style="width: 75%" class="white-space-normal">
                     <b><?= $timing->getMethod() ?> <?= $timing->getUrlEncoded() ?></b><br/>
                     <p style="word-wrap: break-word;"><?= $timing->getBodyEncoded() ?></p>
+                    <ul class="list-unstyled">
+                    <?php foreach ($timing->getHeaders() as $header): ?>
+                        <li><?= $header ?></li>
+                    <?php endforeach ?>
+                    </ul>
                     <?= $timing->getTrace() ?>
                 </div></td>
                 <td style="width: 15%" class="white-space-normal">
                     <?= $timing->getRunLink() ?><br/>
-                    <?= $timing->getNewTabLink() ?>
+                    <?= $timing->getNewTabLink() ?><br/>
+                    <?= $timing->getCopyAsCurlLink() ?>
                 </td>
             </tr>
             <tr style="display: none" class="hiart-wrapper" data-id="<?= $timing->getLogId() ?>">
