@@ -143,7 +143,7 @@ class Timing
             'onclick' => new JsExpression("
                 (function () {
                     if (navigator.clipboard && window.isSecureContext) {
-                        return navigator.clipboard.writeText(textToCopy);
+                        return navigator.clipboard.writeText('$curl');
                     } else {
                         let textArea = document.createElement('textarea');
                         textArea.value = '$curl';
