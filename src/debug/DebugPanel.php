@@ -13,12 +13,13 @@ namespace hiqdev\hiart\debug;
 use hiqdev\hiart\Command;
 use Yii;
 use yii\base\ViewContextInterface;
+use yii\debug\Panel;
 use yii\log\Logger;
 
 /**
  * Debugger panel that collects and displays HiArt queries performed.
  */
-class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
+class DebugPanel extends Panel implements ViewContextInterface
 {
     public function init()
     {
@@ -81,7 +82,7 @@ class DebugPanel extends \yii\debug\Panel implements ViewContextInterface
         $timings = [];
         $stack = [];
         foreach ($messages as $i => $log) {
-            list($token, $level, $category, $timestamp) = $log;
+            [$token, $level, $category, $timestamp] = $log;
             $log[5] = $i;
             if ($level === Logger::LEVEL_PROFILE_BEGIN) {
                 $stack[] = $log;

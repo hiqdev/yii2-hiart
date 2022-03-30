@@ -6,13 +6,13 @@ use hiqdev\hiart\RequestInterface;
 
 final class Request2Curl
 {
-    public const DOUBLE_QOUTE = '"';
+    public const DOUBLE_QUOTE = '"';
 
-    private string $method;
+    private ?string $method;
 
     private string $url;
 
-    private string $body;
+    private ?string $body;
 
     private array $headers;
 
@@ -66,14 +66,16 @@ final class Request2Curl
 
     public function __toString(): string
     {
-        return "curl --insecure "
+        return 'curl --insecure '
             . '-X ' . $this->getMethod()
-            . ' ' . self::DOUBLE_QOUTE . $this->getFullURLPart() . self::DOUBLE_QOUTE
+            . ' ' . self::DOUBLE_QUOTE
+            . $this->getFullURLPart()
+            . self::DOUBLE_QUOTE
             . $this->getHeadersPart()
             . $this->getRequestBodyPart();
     }
 
-    private function getMethod(): string
+    private function getMethod(): ?string
     {
         return $this->method;
     }
@@ -97,26 +99,13 @@ final class Request2Curl
 
     private function getRequestBodyPart(): string
     {
-        switch ($this->getMethod()) {
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE':
-                switch ($this->guessedContentType) {
-                    case self::CONTENT_TYPE_FORM_DATA:
-                        return " --form '$this->body'";
-                    case self::CONTENT_TYPE_FORM_URL_ENCODED:
-                        $data = $this->body;
-
-                        return " --data '$data'";
-                }
-                break;
-            case 'OPTIONS':
-                return '';
-                break;
-        }
-
-        return '';
+        return match ($this->getMethod()) {
+            'POST', 'PUT', 'PATCH', 'DELETE' => match ($this->guessedContentType) {
+                self::CONTENT_TYPE_FORM_DATA => " --form '$this->body'",
+                self::CONTENT_TYPE_FORM_URL_ENCODED => " --data '$this->body'",
+            },
+            'OPTIONS' => ''
+        };
     }
 
     private function getHeadersArray(): array

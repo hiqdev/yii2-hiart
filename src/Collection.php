@@ -183,11 +183,11 @@ class Collection extends Component
 
     /**
      * Gets the scenario the default model.
-     * @return string the scenario
+     * @return string|null the scenario
      */
-    public function getScenario()
+    public function getScenario(): ?string
     {
-        return $this->modelOptions['scenario'];
+        return $this->modelOptions['scenario'] ?? null;
     }
 
     /**
@@ -257,7 +257,8 @@ class Collection extends Component
             } elseif ($data['selection']) {
                 $res = [];
                 foreach ($data['selection'] as $id) {
-                    $res[$id] = [reset($this->model->primaryKey()) => $id];
+                    $array = $this->model->primaryKey();
+                    $res[$id] = [reset($array) => $id];
                 }
                 $data = $res;
             }
@@ -433,7 +434,7 @@ class Collection extends Component
         $data = [];
         foreach ($this->models as $model) {
             if ($this->dataCollector instanceof Closure) {
-                list($key, $row) = call_user_func($this->dataCollector, $model, $this);
+                [$key, $row] = call_user_func($this->dataCollector, $model, $this);
             } else {
                 $key = $model->getPrimaryKey();
                 $row = $model->getAttributes($attributes);

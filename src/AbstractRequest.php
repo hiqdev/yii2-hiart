@@ -47,7 +47,7 @@ abstract class AbstractRequest implements RequestInterface
     protected $version;
 
     protected $isBuilt;
-    protected $parts = [];
+    protected array $parts = [];
     protected $fullUri;
 
     abstract public function send($options = []);
@@ -89,7 +89,7 @@ abstract class AbstractRequest implements RequestInterface
 
     public function isFullUri($uri)
     {
-        return preg_match('/^https?:\\/\\//i', $uri);
+        return preg_match('/^https?:\\/\\//i', (string)$uri);
     }
 
     public function getHeaders()
@@ -202,19 +202,29 @@ abstract class AbstractRequest implements RequestInterface
         $this->version = $this->builder->buildProtocolVersion($this->query) ?: '1.1';
     }
 
-    public function serialize()
+    public function serialize(): string
     {
-        return serialize($this->getParts());
+        return serialize($this->__serialize());
     }
 
-    public function unserialize($string)
+    public function __serialize(): array
     {
-        foreach (unserialize($string) as $key => $value) {
+        return $this->getParts();
+    }
+
+    public function unserialize(string $serialized): void
+    {
+        $this->__unserialize(unserialize($serialized));
+    }
+
+    public function __unserialize(array $serialized): void
+    {
+        foreach ($serialized as $key => $value) {
             $this->{$key} = $value;
         }
     }
 
-    public function getParts()
+    public function getParts(): array
     {
         if (empty($this->parts)) {
             $this->build();
