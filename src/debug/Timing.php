@@ -143,10 +143,10 @@ class Timing
             'onclick' => new JsExpression("
                 (function () {
                     if (navigator.clipboard && window.isSecureContext) {
-                        return navigator.clipboard.writeText('$curl');
+                        return navigator.clipboard.writeText($curl);
                     } else {
                         let textArea = document.createElement('textarea');
-                        textArea.value = '$curl';
+                        textArea.value = $curl;
                         textArea.style.position = 'fixed';
                         textArea.style.left = '-999999px';
                         textArea.style.top = '-999999px';
