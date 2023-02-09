@@ -232,7 +232,7 @@ class ActiveRecord extends BaseActiveRecord
             $result = [$key => $result];
         }
 
-        return $result;
+        return is_array($result) ? $result : [];
     }
 
     /**
