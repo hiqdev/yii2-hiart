@@ -232,19 +232,20 @@ class Collection extends Component
      * @throws InvalidConfigException
      * @return Collection
      */
-    public function load($data = null)
+    public function load($formData = null): Collection
     {
-        $models    = [];
+        $models = [];
         $finalData = [];
+        $data = [];
 
-        if ($data === null) {
-            $data = Yii::$app->request->post();
+        if ($formData === null) {
+            $formData = Yii::$app->request->post();
 
-            if (isset($data[$this->formName])) {
-                $data = $data[$this->formName];
+            if (isset($formData[$this->formName]) && !empty(array_filter($formData[$this->formName], 'strlen'))) {
+                $formData = $formData[$this->formName];
 
                 $is_batch = true;
-                foreach ($data as $k => $v) {
+                foreach ($formData as $v) {
                     if (!is_array($v)) {
                         $is_batch = false;
                         break;
@@ -252,33 +253,33 @@ class Collection extends Component
                 }
 
                 if (!$is_batch) {
-                    $data = [$data];
+                    $data = [$formData];
                 }
-            } elseif ($data['selection']) {
+            } elseif ($formData['selection']) {
                 $res = [];
-                foreach ($data['selection'] as $id) {
-                    $array = $this->model->primaryKey();
+                foreach ($formData['selection'] as $id) {
+                    $array = $this->model::primaryKey();
                     $res[$id] = [reset($array) => $id];
                 }
                 $data = $res;
             }
-        } elseif ($data instanceof Closure) {
-            $data = call_user_func($data, $this->model, $this->formName);
+        } elseif ($formData instanceof Closure) {
+            $data = $formData($this->model, $this->formName);
         }
 
         foreach ($data as $key => $value) {
             if ($this->loadFormatter instanceof Closure) {
                 $item = call_user_func($this->loadFormatter, $this->model, $key, $value);
-                $key  = $item[0];
+                $key = $item[0];
             } else {
                 $item = [$key, $value];
             }
-            $options      = ArrayHelper::merge(['class' => $this->model->className()], $this->modelOptions);
+            $options = ArrayHelper::merge(['class' => $this->model::class], $this->modelOptions);
             $models[$key] = Yii::createObject($options);
 
             $finalData[$this->formName][$key] = $item[1];
         }
-        $this->model->loadMultiple($models, $finalData);
+        $this->model::loadMultiple($models, $finalData);
 
         return $this->set($models);
     }
