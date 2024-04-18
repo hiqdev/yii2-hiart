@@ -43,4 +43,11 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
     {
         return $this->countSynchronously ? parent::prepareTotalCount() : PHP_INT_MAX;
     }
+
+    public function refresh(bool $keepTotalCount = false): void
+    {
+        $tc = $this->getTotalCount();
+        parent::refresh();
+        $this->setTotalCount($tc);
+    }
 }
