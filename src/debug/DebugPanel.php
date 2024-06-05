@@ -14,6 +14,7 @@ use hiqdev\hiart\Command;
 use Yii;
 use yii\base\ViewContextInterface;
 use yii\debug\Panel;
+use yii\helpers\ArrayHelper;
 use yii\log\Logger;
 
 /**
@@ -49,7 +50,7 @@ class DebugPanel extends Panel implements ViewContextInterface
         }
 
         return $this->render('summary', [
-            'url'   => $this->getUrl(),
+            'url' => $this->getUrl(),
             'count' => count($timings),
             'total' => number_format($total * 1000) . ' ms',
         ]);
@@ -81,23 +82,20 @@ class DebugPanel extends Panel implements ViewContextInterface
         $messages = $this->data['messages'];
         $timings = [];
         $stack = [];
-        foreach ($messages as $i => $log) {
-            [$token, $level, $category, $timestamp] = $log;
-            $log[5] = $i;
-            if ($level === Logger::LEVEL_PROFILE_BEGIN) {
-                $stack[] = $log;
-            } elseif ($level === Logger::LEVEL_PROFILE_END) {
-                $last = array_pop($stack);
-                if ($last !== null && $last[0] === $token) {
-                    $timings[$last[5]] = [count($stack), $token, $last[3], $timestamp - $last[3], $last[4]];
-                }
+        $groups = ArrayHelper::index($messages, 1, 0);
+        foreach ($groups as $token => $logs) {
+            if (count($logs) !== 2) {
+                continue;
             }
-        }
-
-        $now = microtime(true);
-        while (($last = array_pop($stack)) !== null) {
-            $delta = $now - $last[3];
-            $timings[$last[5]] = [count($stack), $last[0], $last[2], $delta, $last[4]];
+            $begin = $logs[Logger::LEVEL_PROFILE_BEGIN];
+            $end = $logs[Logger::LEVEL_PROFILE_END];
+            $timings[$begin[5]] = [
+                count($stack),
+                $token,
+                $end[3],
+                $end[3] - $begin[3],
+                $begin[4],
+            ];
         }
         ksort($timings);
 
