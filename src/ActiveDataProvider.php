@@ -48,6 +48,8 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
     {
         $tc = $this->getTotalCount();
         parent::refresh();
-        $this->setTotalCount($tc);
+        if ($keepTotalCount) {
+            $this->setTotalCount($tc);
+        }
     }
 }
