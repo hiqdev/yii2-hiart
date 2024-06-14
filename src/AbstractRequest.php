@@ -241,7 +241,7 @@ abstract class AbstractRequest implements RequestInterface
         return !empty($this->query->options['raw']);
     }
 
-    protected function getHandler()
+    public function getHandler()
     {
         $handler = $this->getDb()->getHandler();
         if ($handler === null) {

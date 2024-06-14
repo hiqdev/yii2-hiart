@@ -10,6 +10,9 @@
 
 namespace hiqdev\hiart;
 
+use yii\base\InvalidConfigException;
+use yii\db\QueryInterface;
+
 class ActiveDataProvider extends \yii\data\ActiveDataProvider
 {
     /**
@@ -51,5 +54,22 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
         if ($keepTotalCount) {
             $this->setTotalCount($tc);
         }
+    }
+
+    public function prepareQuery(): QueryInterface
+    {
+        if (!$this->query instanceof QueryInterface) {
+            throw new InvalidConfigException('The "query" property must be an instance of a class that implements the QueryInterface e.g. yii\db\Query or its subclasses.');
+        }
+        $query = clone $this->query;
+        if (($pagination = $this->getPagination()) !== false) {
+            $pagination->totalCount = $this->getTotalCount();
+            $query->limit($pagination->getLimit())->offset($pagination->getOffset());
+        }
+        if (($sort = $this->getSort()) !== false) {
+            $query->addOrderBy($sort->getOrders());
+        }
+
+        return $query;
     }
 }
