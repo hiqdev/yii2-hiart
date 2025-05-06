@@ -254,7 +254,7 @@ class Collection extends Component
                 if (!$is_batch) {
                     $data = [$data];
                 }
-            } elseif ($data['selection']) {
+            } elseif (isset($data['selection']) && is_iterable($data['selection'])) {
                 $res = [];
                 foreach ($data['selection'] as $id) {
                     $array = $this->model->primaryKey();
