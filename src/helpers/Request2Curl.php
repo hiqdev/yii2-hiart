@@ -104,7 +104,7 @@ final class Request2Curl
                 self::CONTENT_TYPE_FORM_DATA => " --form '$this->body'",
                 self::CONTENT_TYPE_FORM_URL_ENCODED => " --data '$this->body'",
             },
-            'OPTIONS' => ''
+            'OPTIONS', 'GET' => ''
         };
     }
 
