@@ -177,6 +177,7 @@ abstract class AbstractRequest implements RequestInterface
         if (empty($this->headers['User-Agent'])) {
             $this->headers['User-Agent'] = $this->prepareUserAgent();
         }
+        $this->headers['traceparent'] = $this->getDb()->getTraceparentHeader();
     }
 
     protected function buildBody()

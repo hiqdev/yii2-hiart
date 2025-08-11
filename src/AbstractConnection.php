@@ -300,4 +300,19 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     {
         return $this->userAgent;
     }
+
+    /**
+     * Stores a trace ID in the format '00-<traceId>-<parentId>-01'
+     */
+    private string $traceparentHeader;
+    public function getTraceparentHeader(): string
+    {
+        if (!isset($this->traceparentHeader)) {
+            $traceId = bin2hex(random_bytes(16)); // Generate a random 16-byte trace ID
+            $parentId = bin2hex(random_bytes(8)); // Generate a random 8-byte parent ID
+            $this->traceparentHeader = "00-{$traceId}-{$parentId}-01";
+        }
+
+        return $this->traceparentHeader;
+    }
 }
