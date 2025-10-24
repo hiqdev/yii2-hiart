@@ -27,6 +27,8 @@ class Response extends AbstractResponse
 
     protected $reasonPhrase;
 
+    protected $version;
+
     public function __construct(Request $request, $rawData, array $rawHeaders)
     {
         $this->request = $request;
