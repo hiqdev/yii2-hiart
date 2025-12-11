@@ -10,6 +10,7 @@
 
 namespace hiqdev\hiart;
 
+use Closure;
 use hiqdev\hiart\rest\QueryBuilder;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveQueryTrait;
@@ -24,15 +25,19 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * @event Event an event that is triggered when the query is initialized via [[init()]].
      */
-    const EVENT_INIT = 'init';
+    const string EVENT_INIT = 'init';
 
     /**
      * @var array|null a list of relations that this query should be joined with
      */
-    public $joinWith = [];
+    public ?array $joinWith = [];
 
     /**
-     * Constructor.
+     * @var bool flag to track if joinWith has been processed
+     */
+    private bool $joinWithProcessed = false;
+
+    /**
      * @param string $modelClass the model class associated with this query
      * @param array $config configurations to be applied to the newly created query object
      */
@@ -57,9 +62,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * Creates a DB command that can be used to execute this query.
-     * @param AbstractConnection $db the DB connection used to create the DB command.
+     * @param null $db the DB connection used to create the DB command.
      * If null, the DB connection returned by [[modelClass]] will be used.
      * @return Command the created DB command instance
+     * @throws \Exception
      */
     public function createCommand($db = null)
     {
@@ -67,8 +73,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             // lazy loading
             if (is_array($this->via)) {
                 // via relation
-                /** @var $viaQuery ActiveQuery */
-                list($viaName, $viaQuery) = $this->via;
+                /** @var ActiveQuery $viaQuery  */
+                [$viaName, $viaQuery] = $this->via;
                 if ($viaQuery->multiple) {
                     $viaModels = $viaQuery->all();
                     $this->primaryModel->populateRelation($viaName, $viaModels);
@@ -97,41 +103,42 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * Prepares query for use. See NOTE.
+     * Prepares a query for use. See NOTE.
      * @param QueryBuilder $builder
      * @return static
      */
     public function prepare($builder = null)
     {
         // NOTE: because the same ActiveQuery may be used to build different SQL statements
-        // (e.g. by ActiveDataProvider, one for count query, the other for row data query,
+        // (e.g. by ActiveDataProvider, one for the count query, the other for row data query,
         // it is important to make sure the same ActiveQuery can be used to build SQL statements
         // multiple times.
-        if (!empty($this->joinWith)) {
+        if (!empty($this->joinWith) && !$this->joinWithProcessed) {
             $this->buildJoinWith();
-            $this->joinWith = null;
+            $this->joinWithProcessed = true;
         }
 
         return $this;
     }
 
     /**
-     * @param $with
+     * @param array|string $with
      * @return static
      */
-    public function joinWith($with)
+    public function joinWith(array|string $with): self
     {
-        $this->joinWith[] = (array) $with;
+        $this->joinWith[] = (array)$with;
 
         return $this;
     }
 
-    private function buildJoinWith()
+    private function buildJoinWith(): void
     {
         $join = $this->join;
         $this->join = [];
 
-        $model = new $this->modelClass();
+        $modelClass = $this->modelClass;
+        $model = new $modelClass();
 
         foreach ($this->joinWith as $with) {
             $this->joinWithRelations($model, $with);
@@ -142,8 +149,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 } else {
                     $this->innerJoin([$name => $callback]);
                 }
-
-                unset($with[$name]);
             }
         }
 
@@ -153,7 +158,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->join = empty($this->join) ? $join : array_merge($this->join, $join);
         }
 
-        if (empty($this->select) || true) {
+        if (empty($this->select)) {
             $this->addSelect(['*' => '*']);
             foreach ($this->joinWith as $join) {
                 $keys = array_keys($join);
@@ -167,9 +172,10 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * @param ActiveRecord $model
-     * @param $with
+     * @param array $with
+     * @return void
      */
-    protected function joinWithRelations($model, $with)
+    private function joinWithRelations(ActiveRecord $model, array $with): void
     {
         $relations = [];
         foreach ($with as $name => $callback) {
@@ -184,7 +190,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             if (!isset($relations[$name])) {
                 $relations[$name] = $relation = $primaryModel->getRelation($name);
                 if ($callback !== null) {
-                    call_user_func($callback, $relation);
+                    $callback($relation);
                 }
                 if (!empty($relation->joinWith)) {
                     $relation->buildJoinWith();
@@ -199,8 +205,9 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * The current query object will be modified accordingly.
      * @param ActiveQuery $parent
      * @param ActiveQuery $child
+     * @return void
      */
-    private function joinWithRelation($parent, $child)
+    private function joinWithRelation($parent, $child): void
     {
         if (!empty($child->join)) {
             foreach ($child->join as $join) {
@@ -220,7 +227,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * @param array|string $columns
      * @return $this
      */
-    public function addSelect($columns)
+    public function addSelect($columns): self
     {
         if (!is_array($columns)) {
             $columns = (array) $columns;
@@ -276,7 +283,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return $this->populate($rows);
     }
 
-    public function populate($rows)
+    /**
+     * Converts raw query results into model instances.
+     * @param array $rows
+     * @return array
+     */
+    public function populate($rows): array
     {
         if (empty($rows)) {
             return [];
@@ -295,20 +307,30 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return $models;
     }
 
-    private function createModels($rows)
+    /**
+     * Creates model instances from raw data rows.
+     * @param array $rows
+     * @return array
+     */
+    private function createModels(array $rows): array
     {
         $models = [];
         $class = $this->modelClass;
+        $indexBy = $this->indexBy;
+        $isIndexByClosure = $indexBy instanceof Closure;
+
         foreach ($rows as $row) {
+            /** @var ActiveRecord $model */
             $model = $class::instantiate($row);
             $modelClass = get_class($model);
             $modelClass::populateRecord($model, $row);
             $this->populateJoinedRelations($model, $row);
-            if ($this->indexBy) {
-                if ($this->indexBy instanceof \Closure) {
-                    $key = call_user_func($this->indexBy, $model);
+
+            if ($indexBy !== null) {
+                if ($isIndexByClosure) {
+                    $key = $indexBy($model);
                 } else {
-                    $key = $model->{$this->indexBy};
+                    $key = $model->{$indexBy};
                 }
                 $models[$key] = $model;
             } else {
@@ -320,76 +342,94 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     }
 
     /**
-     * Populates joined relations from [[join]] array.
+     * Populates joined relations from the [[join]] array.
      *
      * @param ActiveRecord $model
      * @param array $row
+     * @return void
      */
-    public function populateJoinedRelations($model, array $row)
+    public function populateJoinedRelations(ActiveRecord $model, array $row): void
     {
+        if (empty($this->join)) {
+            return;
+        }
+
+        // Build joins map for O(1) lookup
+        $joinsMap = [];
+        foreach ($this->join as $join) {
+            $keys = array_keys($join);
+            $name = array_shift($keys);
+            $closure = array_shift($join);
+
+            if (is_int($name)) {
+                $name = $closure;
+                $closure = null;
+            }
+            $joinsMap[$name] = $closure;
+        }
+
         foreach ($row as $key => $value) {
-            if (empty($this->join) || !is_array($value) || $model->hasAttribute($key)) {
+            if (!is_array($value) || !array_key_exists($key, $joinsMap) || $model->hasAttribute($key)) {
                 continue;
             }
-            foreach ($this->join as $join) {
-                $keys = array_keys($join);
-                $name = array_shift($keys);
-                $closure = array_shift($join);
 
-                if (is_int($name)) {
-                    $name = $closure;
-                    $closure = null;
-                }
-                if ($name !== $key) {
-                    continue;
-                }
-                if ($model->isRelationPopulated($name)) {
-                    continue 2;
-                }
-                $records = [];
-                $relation = $model->getRelation($name);
-                $relationClass = $relation->modelClass;
-                if ($closure !== null) {
-                    call_user_func($closure, $relation);
-                }
-                $relation->prepare();
-
-                if ($relation->multiple) {
-                    foreach ($value as $item) {
-                        $relatedModel = $relationClass::instantiate($item);
-                        $relatedModelClass = get_class($relatedModel);
-                        $relatedModelClass::populateRecord($relatedModel, $item);
-                        $relation->populateJoinedRelations($relatedModel, $item);
-                        $relation->addInverseRelation($relatedModel, $model);
-                        $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
-                        if ($relation->indexBy !== null) {
-                            $index = is_string($relation->indexBy)
-                                ? $relatedModel[$relation->indexBy]
-                                : call_user_func($relation->indexBy, $relatedModel);
-                            $records[$index] = $relatedModel;
-                        } else {
-                            $records[] = $relatedModel;
-                        }
-                    }
-                } else {
-                    $relatedModel = $relationClass::instantiate($value);
-                    $relatedModelClass = get_class($relatedModel);
-                    $relatedModelClass::populateRecord($relatedModel, $value);
-                    $relation->populateJoinedRelations($relatedModel, $value);
-                    $relation->addInverseRelation($relatedModel, $model);
-                    $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
-                    $records = $relatedModel;
-                }
-
-                $model->populateRelation($name, $records);
+            if ($model->isRelationPopulated($key)) {
+                continue;
             }
+
+            $closure = $joinsMap[$key];
+            $relation = $model->getRelation($key);
+            $relationClass = $relation->modelClass;
+
+            if ($closure !== null) {
+                $closure($relation);
+            }
+            $relation->prepare();
+
+            if ($relation->multiple) {
+                $records = [];
+                $indexBy = $relation->indexBy;
+                $isIndexByString = is_string($indexBy);
+
+                foreach ($value as $item) {
+                    /** @var ActiveRecord $relatedModel */
+                    $relatedModel = $relationClass::instantiate($item);
+                    $relatedModelClass = get_class($relatedModel);
+                    $relatedModelClass::populateRecord($relatedModel, $item);
+                    $relation->populateJoinedRelations($relatedModel, $item);
+                    $relation->addInverseRelation($relatedModel);
+                    $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
+
+                    if ($indexBy !== null) {
+                        $index = $isIndexByString
+                            ? $relatedModel[$indexBy]
+                            : $indexBy($relatedModel);
+                        $records[$index] = $relatedModel;
+                    } else {
+                        $records[] = $relatedModel;
+                    }
+                }
+            } else {
+                /** @var ActiveRecord $relatedModel */
+                $relatedModel = $relationClass::instantiate($value);
+                $relatedModelClass = get_class($relatedModel);
+                $relatedModelClass::populateRecord($relatedModel, $value);
+                $relation->populateJoinedRelations($relatedModel, $value);
+                $relation->addInverseRelation($relatedModel);
+                $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
+                $records = $relatedModel;
+            }
+
+            $model->populateRelation($key, $records);
         }
     }
 
     /**
-     * @param $relatedModel
+     * Adds inverse relation to the related model.
+     * @param ActiveRecord $relatedModel
+     * @return void
      */
-    private function addInverseRelation($relatedModel)
+    private function addInverseRelation(ActiveRecord $relatedModel): void
     {
         if ($this->inverseOf === null) {
             return;
