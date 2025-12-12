@@ -73,7 +73,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             // lazy loading
             if (is_array($this->via)) {
                 // via relation
-                /** @var ActiveQuery $viaQuery  */
+                /** @var ActiveQuery $viaQuery */
                 [$viaName, $viaQuery] = $this->via;
                 if ($viaQuery->multiple) {
                     $viaModels = $viaQuery->all();
@@ -132,7 +132,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         return $this;
     }
 
-    private function buildJoinWith(): void
+    protected function buildJoinWith(): void
     {
         $join = $this->join;
         $this->join = [];
@@ -230,7 +230,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     public function addSelect($columns): self
     {
         if (!is_array($columns)) {
-            $columns = (array) $columns;
+            $columns = (array)$columns;
         }
 
         if ($this->select === null) {
@@ -296,6 +296,12 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         $models = $this->createModels($rows);
 
+        // Force garbage collection after freeing row data
+        // This ensures freed memory is actually released before loading relations
+        if (function_exists('gc_mem_caches')) {
+            gc_mem_caches();
+        }
+
         if (!empty($this->with)) {
             $this->findWith($this->with, $models);
         }
@@ -309,6 +315,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * Creates model instances from raw data rows.
+     * Memory optimized: unsets processed rows to free memory during iteration
      * @param array $rows
      * @return array
      */
@@ -318,55 +325,74 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         $class = $this->modelClass;
         $indexBy = $this->indexBy;
         $isIndexByClosure = $indexBy instanceof Closure;
+        $counter = 0;
 
-        foreach ($rows as $row) {
-            /** @var ActiveRecord $model */
-            $model = $class::instantiate($row);
-            $modelClass = get_class($model);
-            $modelClass::populateRecord($model, $row);
+        foreach ($rows as $rowKey => $row) {
+            $model = $this->instantiateAndPopulateModel($class, $row);
             $this->populateJoinedRelations($model, $row);
 
-            if ($indexBy !== null) {
-                if ($isIndexByClosure) {
-                    $key = $indexBy($model);
-                } else {
-                    $key = $model->{$indexBy};
-                }
+            $key = $this->resolveModelKey($model, $indexBy, $isIndexByClosure);
+            if ($key !== null) {
                 $models[$key] = $model;
             } else {
                 $models[] = $model;
+            }
+
+            // Free row data immediately
+            unset($rows[$rowKey], $row);
+
+            // Force GC every 50 records to keep memory usage low
+            if (++$counter % 50 === 0 && function_exists('gc_mem_caches')) {
+                gc_mem_caches();
             }
         }
 
         return $models;
     }
 
-    /**
-     * Populates joined relations from the [[join]] array.
-     *
-     * @param ActiveRecord $model
-     * @param array $row
-     * @return void
-     */
-    public function populateJoinedRelations(ActiveRecord $model, array $row): void
+    private function instantiateAndPopulateModel(string $class, array $row): ActiveRecord
     {
-        if (empty($this->join)) {
-            return;
+        /** @var ActiveRecord $model */
+        $model = $class::instantiate($row);
+        $modelClass = get_class($model);
+        $modelClass::populateRecord($model, $row);
+
+        return $model;
+    }
+
+    private function resolveModelKey(ActiveRecord $model, $indexBy, bool $isIndexByClosure)
+    {
+        if ($indexBy === null) {
+            return null;
         }
 
-        // Build joins map for O(1) lookup
+        return $isIndexByClosure ? $indexBy($model) : $model->{$indexBy};
+    }
+
+    private function buildJoinsMap(): array
+    {
         $joinsMap = [];
         foreach ($this->join as $join) {
             $keys = array_keys($join);
             $name = array_shift($keys);
             $closure = array_shift($join);
-
             if (is_int($name)) {
                 $name = $closure;
                 $closure = null;
             }
             $joinsMap[$name] = $closure;
         }
+
+        return $joinsMap;
+    }
+
+    private function populateJoinedRelations(ActiveRecord $model, array $row): void
+    {
+        if (empty($this->join)) {
+            return;
+        }
+
+        $joinsMap = $this->buildJoinsMap();
 
         foreach ($row as $key => $value) {
             if (!is_array($value) || !array_key_exists($key, $joinsMap) || $model->hasAttribute($key)) {
@@ -386,42 +412,55 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             }
             $relation->prepare();
 
-            if ($relation->multiple) {
-                $records = [];
-                $indexBy = $relation->indexBy;
-                $isIndexByString = is_string($indexBy);
-
-                foreach ($value as $item) {
-                    /** @var ActiveRecord $relatedModel */
-                    $relatedModel = $relationClass::instantiate($item);
-                    $relatedModelClass = get_class($relatedModel);
-                    $relatedModelClass::populateRecord($relatedModel, $item);
-                    $relation->populateJoinedRelations($relatedModel, $item);
-                    $relation->addInverseRelation($relatedModel);
-                    $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
-
-                    if ($indexBy !== null) {
-                        $index = $isIndexByString
-                            ? $relatedModel[$indexBy]
-                            : $indexBy($relatedModel);
-                        $records[$index] = $relatedModel;
-                    } else {
-                        $records[] = $relatedModel;
-                    }
-                }
-            } else {
-                /** @var ActiveRecord $relatedModel */
-                $relatedModel = $relationClass::instantiate($value);
-                $relatedModelClass = get_class($relatedModel);
-                $relatedModelClass::populateRecord($relatedModel, $value);
-                $relation->populateJoinedRelations($relatedModel, $value);
-                $relation->addInverseRelation($relatedModel);
-                $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
-                $records = $relatedModel;
-            }
+            $records = $relation->multiple
+                ? $this->populateMultipleRelatedModels($relationClass, $value, $relation)
+                : $this->populateSingleRelatedModel($relationClass, $value, $relation);
 
             $model->populateRelation($key, $records);
         }
+    }
+
+    private function populateMultipleRelatedModels(string $relationClass, array $value, self $relation): array
+    {
+        $records = [];
+        $indexBy = $relation->indexBy;
+        $isIndexByString = is_string($indexBy);
+
+        foreach ($value as $itemKey => $item) {
+            $relatedModel = $this->instantiateAndPopulateModel($relationClass, $item);
+            $relation->populateJoinedRelations($relatedModel, $item);
+            $relation->addInverseRelation($relatedModel);
+            $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
+
+            $index = $this->resolveRelatedModelKey($relatedModel, $indexBy, $isIndexByString);
+            if ($index !== null) {
+                $records[$index] = $relatedModel;
+            } else {
+                $records[] = $relatedModel;
+            }
+            unset($value[$itemKey]);
+        }
+
+        return $records;
+    }
+
+    private function populateSingleRelatedModel(string $relationClass, array $value, self $relation): ActiveRecord
+    {
+        $relatedModel = $this->instantiateAndPopulateModel($relationClass, $value);
+        $relation->populateJoinedRelations($relatedModel, $value);
+        $relation->addInverseRelation($relatedModel);
+        $relatedModel->trigger(BaseActiveRecord::EVENT_AFTER_FIND);
+
+        return $relatedModel;
+    }
+
+    private function resolveRelatedModelKey(ActiveRecord $model, $indexBy, bool $isIndexByString)
+    {
+        if ($indexBy === null) {
+            return null;
+        }
+
+        return $isIndexByString ? $model[$indexBy] : $indexBy($model);
     }
 
     /**
