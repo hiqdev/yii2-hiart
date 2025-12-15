@@ -30,7 +30,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     /**
      * @var array|null a list of relations that this query should be joined with
      */
-    public ?array $joinWith = [];
+    public array|null $joinWith = [];
 
     /**
      * @var bool flag to track if joinWith has been processed
@@ -298,8 +298,8 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         // Force garbage collection after freeing row data
         // This ensures freed memory is actually released before loading relations
-        if (function_exists('gc_mem_caches')) {
-            gc_mem_caches();
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
         }
 
         if (!empty($this->with)) {
@@ -319,7 +319,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * @param array $rows
      * @return array
      */
-    private function createModels(array $rows): array
+    private function createModels(array &$rows): array
     {
         $models = [];
         $class = $this->modelClass;
@@ -420,7 +420,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
         }
     }
 
-    private function populateMultipleRelatedModels(string $relationClass, array $value, self $relation): array
+    private function populateMultipleRelatedModels(string $relationClass, array &$value, self $relation): array
     {
         $records = [];
         $indexBy = $relation->indexBy;

@@ -300,7 +300,7 @@ class ActiveQueryTest extends TestCase
     }
 
     #[Test]
-    #[TestDox('All return an empty array when asArray is false and no results')]
+    #[TestDox('All returns an empty array when asArray is false and no results')]
     public function testAllReturnsEmptyArrayWhenNoResults(): void
     {
         $query = new class($this->testModelClass) extends ActiveQuery {
