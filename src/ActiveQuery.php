@@ -298,7 +298,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         // Force garbage collection after freeing row data
         // This ensures freed memory is actually released before loading relations
-        // It is free about ~2MB
+        // This frees approximately ~2MB
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
@@ -452,7 +452,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             return null;
         }
 
-        return $isIndexByString ? $model[$indexBy] : $indexBy($model);
+        return $isIndexByString ? $model->{$indexBy} : $indexBy($model);
     }
 
     /**
