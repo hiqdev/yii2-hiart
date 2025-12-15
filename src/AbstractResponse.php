@@ -101,11 +101,7 @@ abstract class AbstractResponse implements ResponseInterface
      */
     abstract public function getHeader($name);
 
-    /**
-     * @param string $data JSON data
-     * @return array
-     */
-    protected function decodeJson($data)
+    protected function decodeJson(string $data)
     {
         return Json::decode($data);
     }

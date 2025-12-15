@@ -55,11 +55,7 @@
     },
     "autoload": {
         "psr-4": {
-            "hiqdev\\hiart\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
+            "hiqdev\\hiart\\": "src",
             "hiqdev\\hiart\\tests\\": "tests"
         }
     },
