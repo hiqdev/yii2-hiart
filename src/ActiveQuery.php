@@ -298,6 +298,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
         // Force garbage collection after freeing row data
         // This ensures freed memory is actually released before loading relations
+        // It is free about ~2MB
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
         }
@@ -319,15 +320,14 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * @param array $rows
      * @return array
      */
-    private function createModels(array &$rows): array
+    private function createModels(array $rows): array
     {
         $models = [];
         $class = $this->modelClass;
         $indexBy = $this->indexBy;
         $isIndexByClosure = $indexBy instanceof Closure;
-        $counter = 0;
 
-        foreach ($rows as $rowKey => $row) {
+        foreach ($rows as $row) {
             $model = $this->instantiateAndPopulateModel($class, $row);
             $this->populateJoinedRelations($model, $row);
 
@@ -336,14 +336,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 $models[$key] = $model;
             } else {
                 $models[] = $model;
-            }
-
-            // Free row data immediately
-            unset($rows[$rowKey], $row);
-
-            // Force GC every 50 records to keep memory usage low
-            if (++$counter % 50 === 0 && function_exists('gc_mem_caches')) {
-                gc_mem_caches();
             }
         }
 
