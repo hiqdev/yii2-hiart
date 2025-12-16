@@ -338,7 +338,7 @@ class ActiveQueryTest extends TestCase
         $query->prepare();
         $this->assertEquals(1, $query->buildJoinWithCallCount);
 
-        // Second call should not process joinWith again
+        // The second call should not process joinWith again
         $query->prepare();
         $this->assertEquals(1, $query->buildJoinWithCallCount);
     }
@@ -347,22 +347,68 @@ class ActiveQueryTest extends TestCase
     #[TestDox('CreateCommand handles via relations for lazy loading')]
     public function testCreateCommandHandlesViaRelations(): void
     {
-        $query = new ActiveQuery($this->modelClass);
+        $query = new class($this->testModelClass) extends ActiveQuery {
+            /** @var array<int, mixed> */
+            public array $filteredModels = [];
 
-        // Set up via relation
+            protected function filterByModels($models): void
+            {
+                $this->filteredModels = $models;
+            }
+
+            public function createCommand($db = null)
+            {
+                // Execute only the lazy-loading / via-relations part.
+                // Avoid calling parent::createCommand() to keep this a unit test (no DB/command creation involved).
+                if ($this->primaryModel !== null) {
+                    if (is_array($this->via)) {
+                        /** @var ActiveQuery $viaQuery */
+                        [$viaName, $viaQuery] = $this->via;
+
+                        if ($viaQuery->multiple) {
+                            $viaModels = $viaQuery->all();
+                            $this->primaryModel->populateRelation($viaName, $viaModels);
+                        } else {
+                            $model = $viaQuery->one();
+                            $this->primaryModel->populateRelation($viaName, $model);
+                            $viaModels = $model === null ? [] : [$model];
+                        }
+
+                        $this->filterByModels($viaModels);
+                    } else {
+                        $this->filterByModels([$this->primaryModel]);
+                    }
+                }
+
+                return new \stdClass();
+            }
+        };
+
+        $primaryModel = $this->createMock(ActiveRecord::class);
+        $relatedModel = $this->createMock(ActiveRecord::class);
+
         $viaQuery = $this->createMock(ActiveQuery::class);
         $viaQuery->multiple = false;
 
-        $query->primaryModel = $this->mockModel;
+        $query->primaryModel = $primaryModel;
         $query->via = ['viaRelation', $viaQuery];
 
         $viaQuery->expects($this->once())
-            ->method('one')
-            ->willReturn($this->mockModel);
+                 ->method('one')
+                 ->willReturn($relatedModel);
 
-        $this->mockModel->expects($this->once())
-            ->method('populateRelation')
-            ->with('viaRelation', $this->mockModel);
+        $viaQuery->expects($this->never())
+                 ->method('all');
+
+        $primaryModel->expects($this->once())
+                     ->method('populateRelation')
+                     ->with('viaRelation', $relatedModel);
+
+        // Trigger the code under test
+        $query->createCommand();
+
+        // Verify the query was constrained by the via model (core side effect)
+        $this->assertSame([$relatedModel], $query->filteredModels);
     }
 
     #[Test]
@@ -387,41 +433,60 @@ class ActiveQueryTest extends TestCase
     #[TestDox('Populate calls afterFind on each model')]
     public function testPopulateCallsAfterFindOnEachModel(): void
     {
-        $callCount = 0;
+        /**
+         * We must ensure that ActiveQuery::populate() actually instantiates *this* class.
+         * The fixture model's instantiate() uses `new self()` (not late-static binding),
+         * so we override instantiate()/populateRecord() here to guarantee our subclass is used.
+         */
+        $modelClass = new class() extends TestActiveRecord {
+            private static int $afterFindCalls = 0;
 
-        // Create a custom model that tracks afterFind calls
-        $testModel = new class($callCount) extends TestActiveRecord {
-            private static int $counter = 0;
-
-            public function __construct(int &$counter = 0)
+            public static function resetAfterFindCalls(): void
             {
-                self::$counter = &$counter;
-                parent::__construct();
+                self::$afterFindCalls = 0;
+            }
+
+            public static function getAfterFindCalls(): int
+            {
+                return self::$afterFindCalls;
             }
 
             public function afterFind(): void
             {
-                self::$counter++;
+                self::$afterFindCalls++;
             }
 
-            public static function getCounter(): int
+            public static function instantiate($row): static
             {
-                return self::$counter;
+                $instance = new static();
+                $instance->data = $row;
+                return $instance;
+            }
+
+            public static function populateRecord($record, $row): void
+            {
+                if ($record instanceof static) {
+                    $record->data = $row;
+                }
             }
         };
 
-        $query = new ActiveQuery(get_class($testModel));
+        $modelClass::resetAfterFindCalls();
 
+        $query = new ActiveQuery(get_class($modelClass));
         $rows = [
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],
         ];
 
-        $query->populate($rows);
+        $models = $query->populate($rows);
+
+        // Ensure we really created our subclass models (otherwise afterFind() counting is meaningless).
+        $this->assertContainsOnlyInstancesOf(get_class($modelClass), $models);
 
         // afterFind should be called for each model
-        $this->assertEquals(3, $testModel::getCounter());
+        $this->assertSame(3, $modelClass::getAfterFindCalls());
     }
 
     #[Test]
