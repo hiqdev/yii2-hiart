@@ -158,15 +158,18 @@ class ActiveQuery extends Query implements ActiveQueryInterface
             $this->join = empty($this->join) ? $join : array_merge($this->join, $join);
         }
 
-        if (empty($this->select)) {
-            $this->addSelect(['*' => '*']);
-            foreach ($this->joinWith as $join) {
-                $keys = array_keys($join);
-                $key = array_shift($keys);
-                $closure = array_shift($join);
+        $this->select = !empty($this->select) ? $this->select : $this->addSelect(['*' => '*']);
 
-                $this->addSelect(\is_int($key) ? $closure : $key);
-            }
+        if (empty($this->joinWith)) {
+            return ;
+        }
+
+        foreach ($this->joinWith as $join) {
+            $keys = array_keys($join);
+            $key = array_shift($keys);
+            $closure = array_shift($join);
+
+            $this->addSelect(\is_int($key) ? $closure : $key);
         }
     }
 
