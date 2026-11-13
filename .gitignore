@@ -36,3 +36,4 @@ php-cs-fixer.phar
 phpstan.phar
 phpunit-skelgen.phar
 phpunit.phar
+.phpunit.cache
