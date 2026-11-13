@@ -21,6 +21,10 @@ use hiqdev\hiart\RequestErrorException;
  */
 class Request implements RequestCreatorInterface
 {
+    protected $builder;
+
+    protected $query;
+
     /**
      * {@inheritdoc}
      */

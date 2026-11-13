@@ -21,12 +21,14 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     protected $fixedUri = 'http://api.dev/';
 
-    protected function setUp()
+    protected Connection $db;
+
+    protected function setUp(): void
     {
         $this->db = new Connection();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
     }
 

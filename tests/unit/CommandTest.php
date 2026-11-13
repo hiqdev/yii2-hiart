@@ -26,7 +26,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
     protected $table = 'testAction';
     protected $columns = ['a' => 'b'];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->command = Yii::createObject([
             'class' => Command::class,
@@ -34,7 +34,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
     }
 

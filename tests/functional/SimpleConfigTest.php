@@ -32,7 +32,7 @@ class SimpleConfigTest extends \PHPUnit\Framework\TestCase
     private $app;
     private $container;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->app = Yii::$app;
         $this->container = Yii::$container;
@@ -40,8 +40,9 @@ class SimpleConfigTest extends \PHPUnit\Framework\TestCase
         Yii::$container = new yii\di\Container();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
+        Yii::$app->getErrorHandler()->unregister();
         Yii::$app = $this->app;
         Yii::$container = $this->container;
     }

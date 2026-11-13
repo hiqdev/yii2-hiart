@@ -8,16 +8,19 @@
  * @copyright Copyright (c) 2015-2019, HiQDev (http://hiqdev.com/)
  */
 
-use yii\web\Application;
-use Yiisoft\Composer\Config\Builder;
+use yii\console\Application;
 
 error_reporting(E_ALL & ~E_NOTICE);
 date_default_timezone_set('UTC');
 
-require_once __DIR__ . '/../../../autoload.php';
-require_once __DIR__ . '/../../../yiisoft/yii2/Yii.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
-$config = require Builder::path('web');
+$params = require __DIR__ . '/../config/params.php';
+$config = require __DIR__ . '/../config/common.php';
 
-\Yii::setAlias('@root', dirname(__DIR__, 4));
-\Yii::$app = new Application($config);
+\Yii::$app = new Application(array_merge([
+    'id' => 'hiart-tests',
+    'basePath' => dirname(__DIR__),
+    'params' => $params,
+], $config));
