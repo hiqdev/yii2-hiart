@@ -51,7 +51,7 @@
     "require-dev": {
         "yiisoft/yii2": "dev-master",
         "phpunit/phpunit": "^12.5",
-        "vimeo/psalm": "^6.0",
+        "vimeo/psalm": "^6.14",
         "yiisoft/yii2-debug": "^2.1",
         "guzzlehttp/guzzle": "^7.0"
     },
