@@ -13,7 +13,7 @@ namespace hiqdev\hiart;
 class ResponseDecodingException extends ResponseErrorException
 {
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {

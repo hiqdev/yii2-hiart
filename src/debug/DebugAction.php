@@ -17,6 +17,8 @@ use yii\web\Response;
 
 /**
  * Debug Action is used by [[DebugPanel]] to perform HiArt queries using ajax.
+ *
+ * @extends \yii\base\Action<\yii\debug\controllers\DefaultController>
  */
 class DebugAction extends \yii\base\Action
 {

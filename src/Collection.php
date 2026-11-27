@@ -244,7 +244,7 @@ class Collection extends Component
                 $data = $data[$this->formName];
 
                 $is_batch = true;
-                foreach ($data as $k => $v) {
+                foreach ($data as $v) {
                     if (!is_array($v)) {
                         $is_batch = false;
                         break;

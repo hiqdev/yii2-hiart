@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.21.4@72023213487628df0bc5b2e02d68cbac614b7ef5">
+  <file src="src/AbstractConnection.php">
+    <ParamNameMismatch>
+      <code><![CDATA[$name]]></code>
+    </ParamNameMismatch>
+  </file>
+  <file src="src/AbstractQueryBuilder.php">
+    <InvalidArgument>
+      <code><![CDATA[$this]]></code>
+    </InvalidArgument>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$columns]]></code>
+      <code><![CDATA[$operands]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$operator]]></code>
+      <code><![CDATA[$values]]></code>
+    </PossiblyUnusedParam>
+  </file>
+  <file src="src/AbstractRequest.php">
+    <ParamNameMismatch>
+      <code><![CDATA[$serialized]]></code>
+    </ParamNameMismatch>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getBaseUri]]></code>
+      <code><![CDATA[getHandler]]></code>
+      <code><![CDATA[getTraceparentHeader]]></code>
+      <code><![CDATA[getUserAgent]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/AbstractResponse.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[isRaw]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/ActiveQuery.php">
+    <FalsableReturnStatement>
+      <code><![CDATA[reset($models)]]></code>
+    </FalsableReturnStatement>
+    <InvalidArgument>
+      <code><![CDATA[$db]]></code>
+      <code><![CDATA[$db]]></code>
+    </InvalidArgument>
+    <InvalidReturnStatement>
+      <code><![CDATA[parent::one($db)]]></code>
+    </InvalidReturnStatement>
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$columns]]></code>
+      <code><![CDATA[$db]]></code>
+    </MoreSpecificImplementedParamType>
+    <NoValue>
+      <code><![CDATA[$this->join]]></code>
+    </NoValue>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[buildJoinWith]]></code>
+      <code><![CDATA[prepare]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/ActiveRecord.php">
+    <PossiblyUndefinedIntArrayOffset>
+      <code><![CDATA[static::primaryKey()[0]]]></code>
+    </PossiblyUndefinedIntArrayOffset>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$result['id']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+  </file>
+  <file src="src/Collection.php">
+    <InvalidArrayOffset>
+      <code><![CDATA[[reset($array) => $id]]]></code>
+    </InvalidArrayOffset>
+    <PossiblyUndefinedIntArrayOffset>
+      <code><![CDATA[$this->first->primaryKey()[0]]]></code>
+      <code><![CDATA[$this->first->primaryKey()[0]]]></code>
+    </PossiblyUndefinedIntArrayOffset>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$model]]></code>
+    </PossiblyUnusedParam>
+  </file>
+  <file src="src/Command.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getQuery]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/ManualResponse.php">
+    <LessSpecificImplementedReturnType>
+      <code><![CDATA[array]]></code>
+      <code><![CDATA[mixed]]></code>
+      <code><![CDATA[mixed]]></code>
+    </LessSpecificImplementedReturnType>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$data]]></code>
+      <code><![CDATA[$headers]]></code>
+      <code><![CDATA[$reasonPhrase]]></code>
+      <code><![CDATA[$request]]></code>
+      <code><![CDATA[$statusCode]]></code>
+    </PossiblyUnusedParam>
+    <UndefinedClass>
+      <code><![CDATA[AbstractRequest]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="src/Query.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$db]]></code>
+    </MoreSpecificImplementedParamType>
+    <UndefinedThisPropertyAssignment>
+      <code><![CDATA[$this->fields]]></code>
+      <code><![CDATA[$this->fields]]></code>
+      <code><![CDATA[$this->source]]></code>
+      <code><![CDATA[$this->source]]></code>
+    </UndefinedThisPropertyAssignment>
+  </file>
+  <file src="src/RequestErrorException.php">
+    <InvalidArgument>
+      <code><![CDATA[$code]]></code>
+    </InvalidArgument>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$this->errorInfo['request']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+  </file>
+  <file src="src/ResponseErrorException.php">
+    <InvalidArgument>
+      <code><![CDATA[$code]]></code>
+    </InvalidArgument>
+  </file>
+  <file src="src/auto/Request.php">
+    <TooFewArguments>
+      <code><![CDATA[new RequestErrorException('could not auto detect Request class')]]></code>
+    </TooFewArguments>
+    <UndefinedClass>
+      <code><![CDATA[\hiqdev\hiart\guzzle\Request]]></code>
+      <code><![CDATA[\hiqdev\hiart\httpclient\Request]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="src/curl/Response.php">
+    <LessSpecificImplementedReturnType>
+      <code><![CDATA[array]]></code>
+      <code><![CDATA[mixed|string]]></code>
+      <code><![CDATA[mixed|string]]></code>
+    </LessSpecificImplementedReturnType>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$result['reasonPhrase']]]></code>
+      <code><![CDATA[$result['statusCode']]]></code>
+    </PossiblyUndefinedArrayOffset>
+    <PossiblyUndefinedIntArrayOffset>
+      <code><![CDATA[$value]]></code>
+    </PossiblyUndefinedIntArrayOffset>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$info['header_size']]]></code>
+      <code><![CDATA[$parsedResponse['data']]]></code>
+      <code><![CDATA[$parsedResponse['headers']]]></code>
+      <code><![CDATA[$parsedResponse['reasonPhrase']]]></code>
+      <code><![CDATA[$parsedResponse['statusCode']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+  </file>
+  <file src="src/debug/DebugAction.php">
+    <InvalidArgument>
+      <code><![CDATA[3]]></code>
+    </InvalidArgument>
+  </file>
+  <file src="src/debug/DebugPanel.php">
+    <InvalidArgument>
+      <code><![CDATA[0]]></code>
+      <code><![CDATA[1]]></code>
+    </InvalidArgument>
+  </file>
+  <file src="src/debug/Timing.php">
+    <InvalidArgument>
+      <code><![CDATA[3]]></code>
+    </InvalidArgument>
+  </file>
+  <file src="src/helpers/Request2Curl.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getHeaders]]></code>
+    </UndefinedInterfaceMethod>
+    <UnhandledMatchCondition>
+      <code><![CDATA[$this->guessedContentType]]></code>
+    </UnhandledMatchCondition>
+  </file>
+  <file src="src/stream/Response.php">
+    <NullableReturnStatement>
+      <code><![CDATA[isset($this->headers[$name]) ? $this->headers[$name] : null]]></code>
+    </NullableReturnStatement>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$parts[1]]]></code>
+      <code><![CDATA[$parts[2]]]></code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+</files>

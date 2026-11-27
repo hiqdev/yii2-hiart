@@ -78,7 +78,7 @@ abstract class AbstractConnection extends Component implements ConnectionInterfa
     protected $_errorChecker;
 
     /**
-     * @param null $name
+     * @param string|null $name
      * @return ConnectionInterface|AbstractConnection
      */
     public static function getDb($name = null, $class = ConnectionInterface::class)

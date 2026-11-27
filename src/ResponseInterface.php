@@ -54,7 +54,7 @@ interface ResponseInterface
     public function getStatusCode();
 
     /**
-     * @return static
+     * @return string
      */
     public function getReasonPhrase();
 }

@@ -38,7 +38,7 @@ abstract class AbstractRequest implements RequestInterface
     protected $dbname;
 
     /**
-     * @var array request method
+     * @var string request method
      */
     protected $method;
     protected $uri;

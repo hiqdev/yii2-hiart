@@ -50,7 +50,10 @@
     },
     "require-dev": {
         "yiisoft/yii2": "dev-master",
-        "phpunit/phpunit": "^12.5"
+        "phpunit/phpunit": "^12.5",
+        "vimeo/psalm": "^6.0",
+        "yiisoft/yii2-debug": "^2.1",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
         "psr-4": {

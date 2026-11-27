@@ -28,7 +28,7 @@ interface QueryBuilderInterface
     /**
      * Builds transport protocol version.
      * @param Query $query
-     * @return string
+     * @return string|null
      */
     public function buildProtocolVersion(Query $query);
 

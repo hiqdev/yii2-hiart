@@ -156,6 +156,7 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * {@inheritdoc}
+     * @return bool
      */
     public function delete($options = [])
     {
@@ -172,6 +173,9 @@ class ActiveRecord extends BaseActiveRecord
         return $result === false ? false : true;
     }
 
+    /**
+     * @return int|bool
+     */
     public function update($runValidation = true, $attributeNames = null, $options = [])
     {
         if ($runValidation && !$this->validate($attributeNames)) {
@@ -181,6 +185,9 @@ class ActiveRecord extends BaseActiveRecord
         return $this->updateInternal($attributeNames, $options);
     }
 
+    /**
+     * @return int|bool
+     */
     protected function updateInternal($attributes = null, $options = [])
     {
         if (!$this->beforeSave(false)) {
@@ -322,7 +329,7 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * {@inheritdoc}
      *
-     * @return ActiveQueryInterface|ActiveQuery the relational query object. If the relation does not exist
+     * @return ActiveQueryInterface|ActiveQuery|null the relational query object. If the relation does not exist
      *                                          and `$throwException` is false, null will be returned.
      */
     public function getRelation($name, $throwException = true)
