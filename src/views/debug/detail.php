@@ -2,6 +2,9 @@
 
 use yii\web\View;
 
+/** @var View $this */
+/** @var \hiqdev\hiart\debug\Timing[] $timings */
+
 $this->registerCss(<<<'CSS'
     .string { color: green; }
     .number { color: darkorange; }

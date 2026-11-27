@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="5"
+    phpVersion="8.5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    xmlns="https://getpsalm.org/schema/config"
+    strictBinaryOperands="true"
+    allowStringToStandInForClass="true"
+    usePhpDocPropertiesWithoutMagicCall="true"
+    usePhpDocMethodsWithoutMagicCall="true"
+    ignoreInternalFunctionNullReturn="false"
+    findUnusedVariablesAndParams="true"
+    findUnusedPsalmSuppress="true"
+    ensureArrayStringOffsetsExist="true"
+    ensureArrayIntOffsetsExist="true"
+    ignoreInternalFunctionFalseReturn="false"
+    errorBaseline="psalm-baseline.xml"
+>
+    <projectFiles>
+        <directory name="src"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+    <stubs>
+        <file name="vendor/yiisoft/yii2/Yii.php"/>
+    </stubs>
+    <issueHandlers>
+        <PossiblyUndefinedStringArrayOffset errorLevel="error" />
+        <PossiblyUndefinedIntArrayOffset errorLevel="error" />
+        <PossiblyUndefinedArrayOffset errorLevel="error" />
+
+        <UnusedClass errorLevel="suppress" />
+        <PossiblyUnusedMethod errorLevel="suppress" />
+        <PossiblyUnusedProperty errorLevel="suppress" />
+        <PossiblyUnusedReturnValue errorLevel="suppress" />
+
+        <MissingOverrideAttribute errorLevel="suppress" />
+    </issueHandlers>
+</psalm>

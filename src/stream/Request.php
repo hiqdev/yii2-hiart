@@ -12,6 +12,7 @@ namespace hiqdev\hiart\stream;
 
 use hiqdev\hiart\AbstractRequest;
 use hiqdev\hiart\RequestErrorException;
+use hiqdev\hiart\ResponseInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
@@ -36,7 +37,7 @@ class Request extends AbstractRequest
     /**
      * @param array $options
      * @throws RequestErrorException
-     * @return mixed
+     * @return ResponseInterface
      */
     public function send($options = [])
     {

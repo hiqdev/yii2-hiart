@@ -1,5 +1,9 @@
 <?php
 
+/** @var string $url */
+/** @var int $count */
+/** @var string $total */
+
 ?>
 <div class="yii-debug-toolbar__block">
     <a href="<?= $url ?>" title="Executed <?= $count ?> queries which took <?= $total ?>.">
